@@ -40,10 +40,6 @@ survey_crossref
 
 # Exploration
 
-```{r}
-View(dataset)
-```
-
 ## Calcul indicateurs
 
 ```{r}
