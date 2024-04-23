@@ -117,6 +117,6 @@ Source
 survey_answers
 }
 \description{
-Description.
+All answers from the survey
 }
 \keyword{datasets}
