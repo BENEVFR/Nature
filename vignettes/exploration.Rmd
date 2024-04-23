@@ -89,26 +89,33 @@ Jardin =~ CN14 + CN8
 
 ```
 
+
+```{txt}
+
+BE : bien-etre
+Nature = Campagne + ville + jardin
+
+```
+
+
+
 ```{r}
-
-
 
 dataset_avec_score <- dataset %>% 
   rowwise() %>% 
   mutate(
-    # Dim2 = mean(BE7ENV, BE8ENV, BE22ENV)
-    BE = mean(BE3PS , BE4SP, BE10PH , BE15PH , BE17PH , BE18PS , BE19RS , BE20RS , BE26PSR , BE7ENV , BE8ENV , BE22ENV , BE1PH , BE2PH , BE14PH , BE28G , BE11ENV , BE12ENV , BE13ENV , BE9PH),
+BE = mean(BE3PS , BE4SP, BE10PH , BE15PH , BE17PH , BE18PS , BE19RS , BE20RS , BE26PSR , BE7ENV , BE8ENV , BE22ENV , BE1PH , BE2PH , BE14PH , BE28G , BE11ENV , BE12ENV , BE13ENV , BE9PH),
 Dim1  = mean( BE3PS , BE4SP, BE10PH , BE15PH , BE17PH , BE18PS , BE19RS , BE20RS , BE26PSR),
 Dim2= mean( BE7ENV , BE8ENV , BE22ENV),
-Dim3 =mean( BE1PH , BE2PH , BE14PH , BE28G),
-Dim4 =mean(  BE11ENV , BE12ENV , BE13ENV , BE9PH),
-Campagne =mean(  CN1 , CN2 ,CN4 ,CN11 ,CN12 ,CN15 ,CN17),
-Ville =mean( CN3 , CN5 ,CN6 ,CN7 ,CN9 ,CN10 ,CN13),
-Jardin =mean( CN14 , CN8),
-Extérieure =mean(   EXP1 ,EXP2 , EXP3 , EXP5),
-Intérieure =mean(  EXP4 ,EXP6),
-Active =mean(   ACT1 ,ACT2 , ACT3),
-Passive =mean(  ACT4 ,ACT5 , ACT6)
+Dim3 = mean( BE1PH , BE2PH , BE14PH , BE28G),
+Dim4 = mean(  BE11ENV , BE12ENV , BE13ENV , BE9PH),
+Campagne = mean(  CN1 , CN2 ,CN4 ,CN11 ,CN12 ,CN15 ,CN17),
+Ville = mean( CN3 , CN5 ,CN6 ,CN7 ,CN9 ,CN10 ,CN13),
+Jardin = mean( CN14 , CN8),
+Extérieure = mean(   EXP1 ,EXP2 , EXP3 , EXP5),
+Intérieure = mean(  EXP4 ,EXP6),
+Active = mean(   ACT1 ,ACT2 , ACT3),
+Passive = mean(  ACT4 ,ACT5 , ACT6)
     
     )
 
