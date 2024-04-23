@@ -16,111 +16,38 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(nature)
-library(readxl)
-library(tidyverse)
 ```
 
-
-# import des données
+# Presentation des donnees
 
 ## donnees enquete 
 
 ```{r}
-dataset <- read_excel(path = "../data-raw/2997_reponses_codees_V2.xls")
-excel_sheets(path = "../data-raw/2997_reponses_codees_V2.xls")
-correspondances  <- read_excel(path = "../data-raw/2997_reponses_codees_V2.xls",sheet = "2997_quotas_RepNat_2532pi")
-
-
-
+head(survey_answers)
 ```
 
-
-## creation table de correspondance des questions
+## les questions
 
 ```{r}
-les_questions <- read_excel(path = "../data-raw/Tableau correspondence.xlsx") %>% 
-  setNames(c("code","question")) %>% 
-  drop_na(question)
-les_questions %>% 
-  filter(is.na(question))
+survey_questions
 ```
 
-
-
-
-## creation table de correspondance de la Signalétique
+## table de correspondance
 
 ```{r}
-list_de_correspondance <- correspondances[,1:2] %>% 
-  setNames(c("code","valeur")) %>% 
-  mutate(valeur = coalesce(valeur,code), cut = code == valeur,
-         
-         crit = cumsum(cut)) %>% 
-  group_split(crit) %>%
-  map( ~  slice(.x,-1)) %>% 
-  map( ~  .x[1:2]) %>% 
-  setNames(c("SEXE","AGE","CSP","UDA5"))
-list_de_correspondance <- list_de_correspondance[c("SEXE","AGE","CSP","UDA5")]
+survey_crossref
 ```
 
-
-
-# Explotation
+# Exploration
 
 ```{r}
 View(dataset)
 ```
 
-## Calcul indicateur
-
-
-
-```{txt}
-BE =~ BE3PS + BE4SP+ BE10PH + BE15PH + BE17PH + BE18PS + BE19RS + BE20RS + BE26PSR + BE7ENV + BE8ENV + BE22ENV + BE1PH + BE2PH + BE14PH + BE28G + BE11ENV + BE12ENV + BE13ENV + BE9PH
-Dim1  =~  BE3PS + BE4SP+ BE10PH + BE15PH + BE17PH + BE18PS + BE19RS + BE20RS + BE26PSR
-Dim2=~ BE7ENV + BE8ENV + BE22ENV
-Dim3 =~ BE1PH + BE2PH + BE14PH + BE28G
-Dim4 =~ BE11ENV + BE12ENV + BE13ENV + BE9PH
-
-Nature
-Campagne =~  CN1 + CN2 +CN4 +CN11 +CN12 +CN15 +CN17
-Ville =~ NA*CN3 + 1*CN5 +CN6 +CN7 +CN9 +CN10 +CN13
-Jardin =~ CN14 + CN8
-
-```
-
-
-```{txt}
-
-BE : bien-etre
-Nature = Campagne + ville + jardin
-
-```
-
-
+## Calcul indicateurs
 
 ```{r}
+indicators <- calculate_indicators(survey_answers)
 
-dataset_avec_score <- dataset %>% 
-  rowwise() %>% 
-  mutate(
-BE = mean(BE3PS , BE4SP, BE10PH , BE15PH , BE17PH , BE18PS , BE19RS , BE20RS , BE26PSR , BE7ENV , BE8ENV , BE22ENV , BE1PH , BE2PH , BE14PH , BE28G , BE11ENV , BE12ENV , BE13ENV , BE9PH),
-Dim1  = mean( BE3PS , BE4SP, BE10PH , BE15PH , BE17PH , BE18PS , BE19RS , BE20RS , BE26PSR),
-Dim2= mean( BE7ENV , BE8ENV , BE22ENV),
-Dim3 = mean( BE1PH , BE2PH , BE14PH , BE28G),
-Dim4 = mean(  BE11ENV , BE12ENV , BE13ENV , BE9PH),
-Campagne = mean(  CN1 , CN2 ,CN4 ,CN11 ,CN12 ,CN15 ,CN17),
-Ville = mean( CN3 , CN5 ,CN6 ,CN7 ,CN9 ,CN10 ,CN13),
-Jardin = mean( CN14 , CN8),
-Extérieure = mean(   EXP1 ,EXP2 , EXP3 , EXP5),
-Intérieure = mean(  EXP4 ,EXP6),
-Active = mean(   ACT1 ,ACT2 , ACT3),
-Passive = mean(  ACT4 ,ACT5 , ACT6)
-    
-    )
-
-
-
+indicators
 ```
-
-

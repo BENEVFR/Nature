@@ -9,11 +9,11 @@ Description: POC package for analyze data from survey.
 License: file LICENSE
 Depends: 
     R (>= 2.10)
+Imports: 
+    dplyr
 Suggests: 
     knitr,
-    readxl,
-    rmarkdown,
-    tidyverse
+    rmarkdown
 VignetteBuilder: 
     knitr
 Encoding: UTF-8
