@@ -2,3 +2,6 @@
 ^\.Rproj\.user$
 ^data-raw$
 ^dev$
+^\.gitlab-ci\.yml$
+^ci/lib$
+^README\.Rmd$
