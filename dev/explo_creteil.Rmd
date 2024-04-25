@@ -1,0 +1,219 @@
+---
+title: "exploration_carto"
+output: html_document
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE
+)
+
+# install.packages("archive")
+library(sf)
+library(dplyr)
+library(leaflet)
+library(ggplot2)
+```
+
+## Lecture des données de communes
+
+- Récupérer les données de communes sur le site de l'IGN : https://geoservices.ign.fr/adminexpress
+
+C'est un gros jeu de données, cela peut prendre du temps
+
+```{r}
+# if (!file.exists(here::here("dev", "ADMIN-EXPRESS_3-2__SHP_LAMB93_FXX_2024-03-25"))) {
+#   curl::curl_download(url = "https://data.geopf.fr/telechargement/download/ADMIN-EXPRESS/ADMIN-EXPRESS_3-2__SHP_LAMB93_FXX_2024-03-25/ADMIN-EXPRESS_3-2__SHP_LAMB93_FXX_2024-03-25.7z", destfile = here::here("dev/adminexpress.7z"))
+#   archive::archive_extract(here::here("dev/adminexpress.7z"), dir = here::here("dev"))
+# }
+```
+
+## Choix Creteil
+
+```{r}
+# communes_l93 <- st_read(
+#   here::here(
+#     "dev",
+#     "ADMIN-EXPRESS_3-2__SHP_LAMB93_FXX_2024-03-25/ADMIN-EXPRESS/1_DONNEES_LIVRAISON_2024-03-00237/ADE_3-2_SHP_LAMB93_FXX-ED2024-03-25/COMMUNE.shp"
+#   )
+# )
+# 
+# # Trouver le nom de votre commune
+# communes_l93 |> 
+#   st_drop_geometry() |> 
+#   filter(grepl("Créteil", NOM))
+# 
+# # Récupérer le polygone de votre commune
+# creteil_l93 <- communes_l93 |> 
+#   filter(NOM == "Créteil")
+```
+
+## Stocker le shapefile de la commune
+
+```{r}
+# st_write(creteil_l93, dsn = here::here("dev/creteil_l93.gpkg"))
+```
+
+## Lecture du shapefile Creteil
+
+```{r}
+# On peut imaginer commencer le script ici
+creteil_l93 <- st_read(here::here("dev/creteil_l93.gpkg"))
+```
+
+## Afficher avec leaflet
+
+```{r}
+# La carte doit être en coordonnées non projetées
+creteil_wgs84 <- creteil_l93 |> st_transform(crs = 4326) # EPSG: 4326
+
+leaflet(creteil_wgs84) |> 
+  addTiles() |> 
+  addPolygons()
+```
+
+## Découper la commune en zones régulières
+
+### En 4 (ou 6)
+
+```{r}
+creteil_bigsquare_l93 <- creteil_l93 %>% 
+  st_make_grid(
+    what = "polygons", 
+    square = TRUE,
+    n = c(2, 2) # n columns and n rows
+  ) %>% 
+  st_sf() %>% 
+  mutate(id = 1:n()) %>% 
+  dplyr::select(id, geometry)
+```
+
+### En cube de 200m
+
+```{r}
+creteil_square_l93 <- creteil_l93 %>% 
+  st_make_grid(
+    what = "polygons", 
+    square = FALSE, # TRUE = rectangle, FALSE = hexagones
+    cellsize = c(400, 400) # Dimension en mètre, car shapefile en mètre (lambert 93)
+  ) %>% 
+  st_sf() %>% 
+  mutate(id = 1:n()) %>% 
+  dplyr::select(id, geometry)
+```
+
+## Afficher avec leaflet
+
+### En big square pour typeform....
+
+```{r}
+creteil_bigsquare_wgs84 <- creteil_bigsquare_l93 |> st_transform(crs = 4326)
+creteil_bigsquare_centroid_wgs84 <- creteil_bigsquare_wgs84 |> st_centroid()
+
+leaflet() |> 
+  addTiles() |> 
+  addPolygons(
+    data = creteil_bigsquare_wgs84,
+    color = "#ff0000", 
+    fillColor = "transparent",
+    weight = 3
+  ) |> 
+  addPolygons(
+    data = creteil_wgs84
+  ) |> 
+  addLabelOnlyMarkers(
+    data = creteil_bigsquare_centroid_wgs84, 
+    label = ~as.character(id),
+    labelOptions = labelOptions(
+      noHide = TRUE, 
+      direction = 'auto',
+      textOnly = TRUE, 
+      textsize = "30px"
+    )
+  )
+```
+
+
+### En square pour l'analyse
+
+```{r}
+creteil_square_wgs84 <- creteil_square_l93 |> st_transform(crs = 4326)
+creteil_square_centroid_wgs84 <- creteil_square_wgs84 |> st_centroid()
+
+leaflet() |> 
+  addTiles() |> 
+  addPolygons(
+    data = creteil_square_wgs84,
+    color = "#ff0000", 
+    fillColor = "transparent",
+    weight = 1.5
+  ) |> 
+  addPolygons(
+    data = creteil_wgs84
+  ) |> 
+  addLabelOnlyMarkers(
+    data = creteil_square_centroid_wgs84, 
+    label = ~as.character(id),
+    labelOptions = labelOptions(
+      noHide = TRUE, 
+      direction = 'auto',
+      textOnly = TRUE, 
+      textsize = "10px"
+    )
+  )
+```
+
+
+
+### Exemple d'ajout de stats
+
+```{r}
+dataset <- data.frame(
+  id = 1:nrow(creteil_square_l93),
+  critere_moyenne = round(runif(nrow(creteil_square_l93), min = 0, max = 5), digits = 2)
+)
+
+creteil_square_data_wgs84 <- creteil_square_wgs84 |> 
+  left_join(dataset, by = "id")
+
+# leaflet
+bins <- seq(0, 5, by = 1)
+pal <- colorBin(
+  "Greens",
+  domain = creteil_square_data_wgs84$critere_moyenne, 
+  bins = bins,
+  na.color  = "transparent"
+)
+
+leaflet() |> 
+  # addTiles() |> 
+  addProviderTiles(providers$Stadia.StamenToner) |> 
+  addLabelOnlyMarkers(
+    data = creteil_square_centroid_wgs84,
+    label = ~as.character(id),
+    labelOptions = labelOptions(
+      noHide = TRUE,
+      direction = 'auto',
+      textOnly = TRUE,
+      textsize = "10px"
+    )
+  ) |>
+  addPolygons(
+    data = creteil_square_data_wgs84,
+    color = "#000000", 
+    fillColor = ~pal(critere_moyenne),
+    weight = 1, 
+    opacity = 0.2, 
+    fillOpacity = 0.4,
+    label = ~critere_moyenne
+  ) %>%
+  addLegend(
+    pal = pal,
+    values = creteil_square_data_wgs84$critere_moyenne,
+    title = "Note moyenne",
+    labFormat = labelFormat(prefix = "de ", between = " à "),
+    opacity = 1
+  )
+```
+
+
