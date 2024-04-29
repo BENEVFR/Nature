@@ -9,53 +9,55 @@
 calculate_indicators <- function(data) {
   res_data <- data |>
     rename(
-      identifiant_repondant = 'Identifiant R\u00e9pondant'
+      identifiant_repondant = "Identifiant R\u00e9pondant"
     ) |>
     group_by(identifiant_repondant) |>
     summarise(
-      critere_bien_etre = mean(
+      critere_bien_etre_global = mean(
         BE3PS, BE4SP, BE10PH, BE15PH,
         BE17PH, BE18PS, BE19RS, BE20RS,
         BE26PSR, BE7ENV, BE8ENV, BE22ENV,
         BE1PH, BE2PH, BE14PH, BE28G, BE11ENV,
         BE12ENV, BE13ENV, BE9PH
       ),
-      critere_satisfaction = mean(
+      critere_bien_etre_psy = mean(
         BE3PS, BE4SP, BE10PH,
         BE15PH, BE17PH, BE18PS,
         BE19RS, BE20RS, BE26PSR
       ),
-      critere_habitat = mean(
+      critere_bien_etre_environnement = mean(
         BE7ENV, BE8ENV, BE22ENV
       ),
-      critere_sante = mean(
+      critere_bien_etre_physique = mean(
         BE1PH, BE2PH, BE14PH, BE28G
       ),
-      critere_vie_quotidienne = mean(
+      critere_bien_etre_ressources = mean(
         BE11ENV, BE12ENV, BE13ENV, BE9PH
       ),
-      critere_campagne = mean(
-        CN1, CN2, CN4, CN11, CN12, CN15, CN17
+      critere_nature_nondomest = mean(
+        CN1, CN2, CN11, CN15
       ),
-      critere_ville = mean(
-        CN3, CN5, CN6, CN7, CN9, CN10, CN13
+      critere_nature_domestique = mean(
+        CN5, CN6, CN7
       ),
-      critere_jardin = mean(
-        CN14, CN8
+      critere_nature_proximite = mean(
+        CN8, CN14, CN16, CN18, CN19
       ),
-      critere_exterieur = mean(
-        EXP1, EXP2, EXP3, EXP5
+      critere_exposition_nature = mean(
+        EXP1, EXP2, EXP3, EXP4, EXP5
       ),
-      critere_interieur = mean(
-        EXP4, EXP6
+      critere_activ_social_calme = mean(
+        ACT1, ACT2, ACT3, ACT4, ACT5, ACT8, ACT9
       ),
-      critere_active = mean(
-        ACT1, ACT2, ACT3
+      critere_activ_sport = mean(
+        ACT6, ACT7
       ),
-      critere_passive = mean(
-        ACT4, ACT5, ACT6
-      )
+      critere_caract_percues = mean(
+        CP1, CP2, CP3, CP4, CP5, CP6, CP7, CP8, CP9, CP10
+      )#,
+      # critere_biodiv = mean(
+      #   BIO1, BIO2, BIO3, BIO4, BIO5, BIO6, BIO7
+      # )
     )
-
   return(res_data)
 }
