@@ -1,0 +1,104 @@
+---
+title: "UPEC: Bien-être et végétalisation"
+format:
+  html:
+    self-contained: true
+    toc: true
+    toc-expand: 2
+    toc-title: Naviguer dans le rapport
+    theme: simplex
+    include-in-header:
+      text: |
+        <script type="text/javascript" src="geodata.js"></script>
+        <script type="text/javascript" src="script.js"></script>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+        <script src="https://unpkg.com/leaflet-providers@latest/leaflet-providers.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+execute:
+  echo: false
+params:
+  city: Créteil
+---
+
+```{r}
+#| message: false
+library(dplyr)
+library(shiny)
+```
+
+\ 
+
+## Présentation et analyse : `r params$city`
+
+### Introduction
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris fermentum egestas sapien, eget commodo leo finibus vel. Curabitur nibh turpis, suscipit quis vestibulum vitae, suscipit vel ex. Proin consectetur finibus felis id semper. Curabitur rhoncus maximus magna in dictum. Donec in erat nec tellus varius tristique eget eu augue. Etiam commodo, est eu porta ornare, justo urna luctus massa, a ornare nunc enim in augue. Nulla id sollicitudin ante, in malesuada ex. Nulla tortor urna, sagittis quis pellentesque et, cursus non tellus.
+
+### Analyse du profil des répondants
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris fermentum egestas sapien, eget commodo leo finibus vel. Curabitur nibh turpis, suscipit quis vestibulum vitae, suscipit vel ex. Proin consectetur finibus felis id semper. Curabitur rhoncus maximus magna in dictum. Donec in erat nec tellus varius tristique eget eu augue. Etiam commodo, est eu porta ornare, justo urna luctus massa, a ornare nunc enim in augue. Nulla id sollicitudin ante, in malesuada ex. Nulla tortor urna, sagittis quis pellentesque et, cursus non tellus.
+
+
+```{r}
+tags$canvas(
+  id = "gender-chart",
+  height="150"
+)
+```
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris fermentum egestas sapien, eget commodo leo finibus vel. Curabitur nibh turpis, suscipit quis vestibulum vitae, suscipit vel ex. Proin consectetur finibus felis id semper. Curabitur rhoncus maximus magna in dictum. Donec in erat nec tellus varius tristique eget eu augue. Etiam commodo, est eu porta ornare, justo urna luctus massa, a ornare nunc enim in augue. Nulla id sollicitudin ante, in malesuada ex. Nulla tortor urna, sagittis quis pellentesque et, cursus non tellus.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris fermentum egestas sapien, eget commodo leo finibus vel. Curabitur nibh turpis, suscipit quis vestibulum vitae, suscipit vel ex. Proin consectetur finibus felis id semper. Curabitur rhoncus maximus magna in dictum. Donec in erat nec tellus varius tristique eget eu augue. Etiam commodo, est eu porta ornare, justo urna luctus massa, a ornare nunc enim in augue. Nulla id sollicitudin ante, in malesuada ex. Nulla tortor urna, sagittis quis pellentesque et, cursus non tellus.
+
+```{r}
+tags$canvas(
+  id = "age-chart",
+  height="150"
+)
+```
+
+## Données cartographiques
+
+Ceci est un rapport d'analyse concernant le bien-être.
+
+Choisir l'indicateur à visualiser dans la carte :
+
+```{r}
+tagList(
+  div(
+    class = "box",
+    shiny::tags$select(
+      class = "form-select",
+      onchange = "select_change()",
+      id = "my_select",
+      shiny::tags$option(
+        value = "critere_bien_etre",
+        "Moyenne du bien-être"
+      ),
+      shiny::tags$option(
+        value = "critere_satisfaction",
+        "Moyenne de la satisfaction"
+      )
+    )
+  )
+)
+```
+
+```{r}
+#| column: screen-inset
+
+tagList(
+  div(
+    id = "map",
+    style = "
+      height: 80vh;
+      margin-top: 3rem;
+    "
+  )
+)
+```
+
+## Conclusion
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris fermentum egestas sapien, eget commodo leo finibus vel. Curabitur nibh turpis, suscipit quis vestibulum vitae, suscipit vel ex. Proin consectetur finibus felis id semper. Curabitur rhoncus maximus magna in dictum. Donec in erat nec tellus varius tristique eget eu augue. Etiam commodo, est eu porta ornare, justo urna luctus massa, a ornare nunc enim in augue. Nulla id sollicitudin ante, in malesuada ex. Nulla tortor urna, sagittis quis pellentesque et, cursus non tellus.
