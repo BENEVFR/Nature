@@ -51,20 +51,21 @@ C'est un gros jeu de données, cela peut prendre du temps
 ## Stocker le shapefile de la commune
 
 ```{r}
-# st_write(creteil_l93, dsn = here::here("dev/creteil_l93.gpkg"))
+# st_write(creteil_l93, dsn = here::here("dev/creteil/creteil_l93.gpkg"))
 ```
 
 ## Lecture du shapefile Creteil
 
 ```{r}
 # On peut imaginer commencer le script ici
-creteil_l93 <- st_read(here::here("dev/creteil_l93.gpkg"))
+creteil_l93 <- st_read(here::here("dev/creteil/creteil_l93.gpkg"))
 ```
 
 ## Afficher avec leaflet
 
 ```{r}
 # La carte doit être en coordonnées non projetées
+creteil_l93 <- st_read(here::here("dev/creteil/creteil_l93.gpkg"))
 creteil_wgs84 <- creteil_l93 |> st_transform(crs = 4326) # EPSG: 4326
 
 leaflet(creteil_wgs84) |> 
@@ -170,50 +171,70 @@ leaflet() |>
 ```{r}
 dataset <- data.frame(
   id = 1:nrow(creteil_square_l93),
-  critere_moyenne = round(runif(nrow(creteil_square_l93), min = 0, max = 5), digits = 2)
+  critere_bien_etre = round(runif(nrow(creteil_square_l93), min = 0, max = 5), digits = 2),
+  critere_satisfaction = round(runif(nrow(creteil_square_l93), min = 0, max = 5), digits = 2)
+)
+
+bins <- seq(0, 5, by = 1)
+my_palette <- colorBin(
+  palette = "Greens", 
+  domain = bins, 
+  bins = length(bins) - 1, 
+  na.color = "transparent"
 )
 
 creteil_square_data_wgs84 <- creteil_square_wgs84 |> 
-  left_join(dataset, by = "id")
+  left_join(dataset, by = "id") |> 
+  mutate(
+    across(
+      starts_with("critere"),
+      ~ my_palette(.x),
+      .names = "{.col}_color"
+    )
+  )
 
 # leaflet
-bins <- seq(0, 5, by = 1)
 pal <- colorBin(
   "Greens",
-  domain = creteil_square_data_wgs84$critere_moyenne, 
+  domain = creteil_square_data_wgs84$critere_bien_etre, 
   bins = bins,
   na.color  = "transparent"
 )
 
 leaflet() |> 
-  # addTiles() |> 
   addProviderTiles(providers$Stadia.StamenToner) |> 
-  addLabelOnlyMarkers(
-    data = creteil_square_centroid_wgs84,
-    label = ~as.character(id),
-    labelOptions = labelOptions(
-      noHide = TRUE,
-      direction = 'auto',
-      textOnly = TRUE,
-      textsize = "10px"
-    )
-  ) |>
   addPolygons(
     data = creteil_square_data_wgs84,
     color = "#000000", 
-    fillColor = ~pal(critere_moyenne),
+    fillColor = ~pal(critere_bien_etre),
     weight = 1, 
     opacity = 0.2, 
     fillOpacity = 0.4,
-    label = ~critere_moyenne
+    label = ~critere_bien_etre
   ) %>%
   addLegend(
     pal = pal,
-    values = creteil_square_data_wgs84$critere_moyenne,
+    values = creteil_square_data_wgs84$critere_bien_etre,
     title = "Note moyenne",
     labFormat = labelFormat(prefix = "de ", between = " à "),
     opacity = 1
   )
 ```
+
+### Exporter les données pour générer le rapport
+
+```{r}
+geojson <- geojsonsf::sf_geojson(
+  sf = creteil_square_data_wgs84
+)
+
+data_js = paste0("var geodata = ", geojson)
+
+writeLines(
+  data_js,
+  here::here("dev/creteil/geodata.js")
+)
+```
+
 
 
