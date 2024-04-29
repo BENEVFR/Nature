@@ -1,4 +1,8 @@
-# nature 0.0.0.9001
+# nature 0.0.0.9003
+
+* Update and rename indicators
+
+# nature 0.0.0.9002
 
 * Create fake report for Creteil with lorem ipsum
 
