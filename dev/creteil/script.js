@@ -44,9 +44,10 @@ function redraw_map(property) {
       return {
         fillColor: color,
         weight: 1,
-        opacity: 0.2,
+        opacity: 0.5,
         color: 'white',
-        fillOpacity: 0.7
+        fillOpacity: 0.3,
+        transition: 'fill-opacity 0.3s' // Ajout de transition
       };
     },
 
@@ -57,6 +58,11 @@ function redraw_map(property) {
         layer.bindPopup(popupContent);
         layer.on('mouseover', function() {
           this.openPopup();
+          this.setStyle({ fillOpacity: 0.8 });
+        });
+        layer.on('mouseout', function() {
+          this.closePopup();
+          this.setStyle({ fillOpacity: 0.3 });
         });
       }
     }

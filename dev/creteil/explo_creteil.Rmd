@@ -201,10 +201,18 @@ pal <- colorBin(
   na.color  = "transparent"
 )
 
+creteil_square_data_wgs84_inter <- st_intersection(
+  creteil_square_data_wgs84,
+  creteil_wgs84
+)
+
 leaflet() |> 
   addProviderTiles(providers$Stadia.StamenToner) |> 
   addPolygons(
-    data = creteil_square_data_wgs84,
+    data = creteil_wgs84, fill = "transparent"
+  ) |> 
+  addPolygons(
+    data = creteil_square_data_wgs84_inter,
     color = "#000000", 
     fillColor = ~pal(critere_bien_etre),
     weight = 1, 
@@ -214,7 +222,7 @@ leaflet() |>
   ) %>%
   addLegend(
     pal = pal,
-    values = creteil_square_data_wgs84$critere_bien_etre,
+    values = creteil_square_data_wgs84_inter$critere_bien_etre,
     title = "Note moyenne",
     labFormat = labelFormat(prefix = "de ", between = " à "),
     opacity = 1
@@ -225,7 +233,7 @@ leaflet() |>
 
 ```{r}
 geojson <- geojsonsf::sf_geojson(
-  sf = creteil_square_data_wgs84
+  sf = creteil_square_data_wgs84_inter
 )
 
 data_js = paste0("var geodata = ", geojson)
