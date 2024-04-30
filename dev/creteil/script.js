@@ -34,7 +34,19 @@ function redraw_map(property) {
     }
   ).addTo(map);
 
-  var geojsonLayer = L.geoJson(geodata, {
+  L.geoJson(geodata_creteil, {
+
+    style: function(feature) {
+      return {
+
+        color: '#000000',
+
+      };
+    },
+
+  }).addTo(map);
+
+  var geojsonLayer = L.geoJson(geodata_hex, {
 
     style: function(feature) {
 
