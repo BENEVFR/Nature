@@ -1,3 +1,9 @@
+# nature 0.0.0.9004
+
+* Keep polygons inside the city
+* Add more interactivy on hover
+* Change tile provider
+
 # nature 0.0.0.9003
 
 * Update and rename indicators
