@@ -250,7 +250,7 @@ writeLines(
 # Les HEX
 data_hex <- geojsonsf::sf_geojson(
   sf = creteil_square_data_wgs84_inter |> 
-    select(ID, starts_with("critere"), geometry)
+    select(id, starts_with("critere"), geometry)
 )
 
 geodata_hex = paste0("var geodata_hex = ", data_hex)
