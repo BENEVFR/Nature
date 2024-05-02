@@ -1,4 +1,5 @@
 var map;
+var geojsonLayerCreteil;
 
 var gender_data = {
   labels: ["Homme", "Femme"],
@@ -29,18 +30,18 @@ function redraw_map(property) {
   map = L.map('map').setView([48.791100, 2.462800], 13); // Initialisation de la carte
 
   L.tileLayer(
-    'https://tiles.stadiamaps.com/tiles/stamen_toner/{z}/{x}/{y}{r}.png', {
+    'https://tiles.stadiamaps.com/tiles/stamen_toner_lite/{z}/{x}/{y}{r}.png', {
       attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }
   ).addTo(map);
 
-  L.geoJson(geodata_creteil, {
+  geojsonLayerCreteil = L.geoJson(geodata_creteil, {
 
     style: function(feature) {
       return {
-
         color: '#000000',
-
+        fillColor: "#ffffff",
+        fillOpacity: 0.5
       };
     },
 
@@ -120,3 +121,9 @@ function select_change() {
   console.log(x);
   redraw_map(x);
 };
+
+function changeOpacity() {
+  var switchState = document.getElementById("hidemapinfos").checked;
+  var opacityValue = switchState ? 1 : 0.5;
+  geojsonLayerCreteil.setStyle({ fillOpacity: opacityValue });
+}
