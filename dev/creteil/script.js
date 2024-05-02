@@ -120,6 +120,7 @@ function select_change() {
   var x = document.getElementById("my_select").value;
   console.log(x);
   redraw_map(x);
+  document.getElementById("hidemapinfos").checked = false;
 };
 
 function changeOpacity() {
