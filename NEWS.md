@@ -1,3 +1,7 @@
+# nature 0.0.0.9005
+
+* Decrease JS files with geojson data
+
 # nature 0.0.0.9004
 
 * Keep polygons inside the city
