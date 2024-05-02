@@ -1,0 +1,66 @@
+---
+title: ""
+format:
+  html:
+    self-contained: true
+    toc: true
+    toc-expand: 2
+    toc-title: Naviguer dans le rapport
+    theme: none
+execute:
+  echo: false
+---
+
+```{r}
+#| message: false
+#| 
+library(sf)
+library(dplyr)
+library(leaflet)
+library(ggplot2)
+```
+
+```{r}
+#| message: false
+#| 
+lille_l93 <- st_read(
+  here::here("dev/lille/lille_l93.gpkg"),
+  quiet = TRUE
+)
+
+# La carte doit être en coordonnées non projetées
+lille_wgs84 <- lille_l93 |> st_transform(crs = 4326) # EPSG: 4326
+
+lille_square_l93 <- lille_l93 %>% 
+  st_make_grid(
+    what = "polygons", 
+    square = FALSE, # TRUE = rectangle, FALSE = hexagones
+    cellsize = c(400, 400) # Dimension en mètre, car shapefile en mètre (lambert 93)
+  ) %>% 
+  st_sf() %>% 
+  mutate(id = 1:n()) %>% 
+  dplyr::select(id, geometry)
+```
+
+```{r}
+#| message: false
+#| warning: false
+#| 
+# La carte doit être en coordonnées non projetées
+lille_square_wgs84 <- lille_square_l93 |> st_transform(crs = 4326)
+lille_square_centroid_wgs84 <- lille_square_wgs84 |> st_centroid()
+
+leaflet(
+  height= "100vh",
+  width = "100vw"
+) |> 
+  addTiles() |> 
+  addPolygons(data = lille_square_wgs84,
+              color = "#ff0000", fillColor = "transparent",
+              weight = 1) |> 
+  addPolygons(data = lille_wgs84) |> 
+  addLabelOnlyMarkers(data = lille_square_centroid_wgs84, 
+                      label = ~as.character(id), # texte de la colonne "id"
+                      labelOptions = labelOptions(noHide = TRUE, direction = 'auto',
+                                                  textOnly = TRUE, textsize = "10px"))
+```

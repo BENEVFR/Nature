@@ -201,10 +201,20 @@ pal <- colorBin(
   na.color  = "transparent"
 )
 
+creteil_square_data_wgs84_inter <- st_intersection(
+  creteil_square_data_wgs84,
+  creteil_wgs84
+)
+
 leaflet() |> 
   addProviderTiles(providers$Stadia.StamenToner) |> 
   addPolygons(
-    data = creteil_square_data_wgs84,
+    data = creteil_wgs84, 
+    fill = "transparent",
+    color = "#000000"
+  ) |> 
+  addPolygons(
+    data = creteil_square_data_wgs84_inter,
     color = "#000000", 
     fillColor = ~pal(critere_bien_etre),
     weight = 1, 
@@ -214,7 +224,7 @@ leaflet() |>
   ) %>%
   addLegend(
     pal = pal,
-    values = creteil_square_data_wgs84$critere_bien_etre,
+    values = creteil_square_data_wgs84_inter$critere_bien_etre,
     title = "Note moyenne",
     labFormat = labelFormat(prefix = "de ", between = " à "),
     opacity = 1
@@ -224,16 +234,31 @@ leaflet() |>
 ### Exporter les données pour générer le rapport
 
 ```{r}
-geojson <- geojsonsf::sf_geojson(
-  sf = creteil_square_data_wgs84
+# Les contours
+data_creteil <- geojsonsf::sf_geojson(
+  sf = creteil_wgs84
 )
 
-data_js = paste0("var geodata = ", geojson)
+geodata_creteil = paste0("var geodata_creteil = ", data_creteil)
 
 writeLines(
-  data_js,
-  here::here("dev/creteil/geodata.js")
+  geodata_creteil,
+  here::here("dev/creteil/geodata_creteil.js")
 )
+
+# Les HEX
+data_hex <- geojsonsf::sf_geojson(
+  sf = creteil_square_data_wgs84_inter
+)
+
+geodata_hex = paste0("var geodata_hex = ", data_hex)
+
+writeLines(
+  geodata_hex,
+  here::here("dev/creteil/geodata_hex.js")
+)
+
+
 ```
 
 
