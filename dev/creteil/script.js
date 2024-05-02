@@ -29,7 +29,7 @@ function redraw_map(property) {
   map = L.map('map').setView([48.791100, 2.462800], 13); // Initialisation de la carte
 
   L.tileLayer(
-    'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    'https://tiles.stadiamaps.com/tiles/stamen_toner/{z}/{x}/{y}{r}.png', {
       attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }
   ).addTo(map);
