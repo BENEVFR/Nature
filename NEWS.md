@@ -1,3 +1,8 @@
+# nature 0.0.0.9006
+
+* Update map to find the position in survey
+* Create a popup redirection
+
 # nature 0.0.0.9005
 
 * Decrease JS files with geojson data
