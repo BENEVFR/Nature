@@ -8,8 +8,12 @@ function redraw_map(property) {
     map.remove();
   }
 
-  map = L.map('map').setView([48.791100, 2.462800], 13);
-  map2 = L.map('map2').setView([48.791100, 2.462800], 13);
+  if (map2) {
+    map2.remove();
+  }
+
+  map = L.map('map').setView([48.791100, 2.462800], 13); // Initialisation de la carte
+  map2 = L.map('map2').setView([48.791100, 2.462800], 13); // Initialisation de la carte
 
   L.tileLayer(
     'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
@@ -18,7 +22,7 @@ function redraw_map(property) {
     }
   ).addTo(map);
 
-   L.tileLayer(
+  L.tileLayer(
     'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
       subdomains: 'abcd',
@@ -70,12 +74,19 @@ function redraw_map(property) {
       }
     }
   }).addTo(map);
+
 }
 
 document.addEventListener("DOMContentLoaded", function(event) {
   console.log("DOM is Ready!");
 
   redraw_map('critere_bien_etre');
+
+    var elt = document.getElementsByClassName("nav-link")
+
+for (let index = 0; index < elt.length; index++) {
+    elt[index].addEventListener("click", function() {window.dispatchEvent(new Event('resize'));})
+}
 });
 
 function select_critere_change() {
@@ -84,6 +95,9 @@ function select_critere_change() {
 
   redraw_map(x);
   document.getElementById("hidemapinfos").checked = false;
+
+
+
 };
 
 function changeOpacity() {
@@ -91,3 +105,4 @@ function changeOpacity() {
   var opacityValue = switchState ? 1 : 0.5;
   geojsonLayerCreteil.setStyle({ fillOpacity: opacityValue });
 }
+
