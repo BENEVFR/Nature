@@ -8,6 +8,7 @@ format:
     include-in-header:
       text: |
         <script src="//embed.typeform.com/next/embed.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script type="text/javascript" src="script.js"></script>
 execute:
   echo: false
@@ -58,8 +59,9 @@ lille_square_data_wgs84_inter <- st_intersection(
 ```{r}
 shiny::tags$div(
   id = "map",
+  style = "height: 98vh",
   leaflet(
-    height = "100vh",
+    height = "100%",
     width = "100%"
   ) |>
     addProviderTiles(
