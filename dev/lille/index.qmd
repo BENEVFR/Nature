@@ -60,7 +60,7 @@ leaflet(
   width = "100%"
 ) |> 
   addProviderTiles(
-    providers$Stadia.StamenTonerLite
+    providers$CartoDB.Positron
   ) |> 
 addPolygons(
     data = lille_wgs84,
