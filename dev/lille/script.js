@@ -16,9 +16,14 @@ document.addEventListener("DOMContentLoaded", function(event) {
       Swal.fire({
         title: "Vous avez refusé le traitement de vos données",
         html: `
-          La page est maintenant inactive
+          La page est maintenant inactive. <br><br>
+          Rafraîchissez la page si vous souhaitez changer d'avis
         `,
-        icon: "error"
+        icon: "error",
+        showConfirmButton: false,
+        allowOutsideClick: false,
+        showCloseButton: false,
+        allowEscapeKey: false
       });
 
       map = document.getElementById("map");
