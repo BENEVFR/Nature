@@ -8,6 +8,7 @@ format:
     include-in-header:
       text: |
         <script src="//embed.typeform.com/next/embed.js"></script>
+        <script type="text/javascript" src="script.js"></script>
 execute:
   echo: false
 ---
@@ -55,31 +56,34 @@ lille_square_data_wgs84_inter <- st_intersection(
 ```
 
 ```{r}
-leaflet(
-  height= "100vh",
-  width = "100%"
-) |> 
-  addProviderTiles(
-    providers$CartoDB.Positron
-  ) |> 
-addPolygons(
-    data = lille_wgs84,
-    color = "#000",
-    fillColor = "transparent",
-    weight = 2.3
-  )  |> 
-  addPolygons(
-    data = lille_square_data_wgs84_inter,
-    color = "#000", 
-    fillColor = "transparent",
-    weight = 2.3, 
-    popup = ~glue::glue(
-      "Vous avez cliqué sur la zone: <b>{id}</b> <br> Passer à la question suivante: 
+shiny::tags$div(
+  id = "map",
+  leaflet(
+    height = "100vh",
+    width = "100%"
+  ) |>
+    addProviderTiles(
+      providers$CartoDB.Positron
+    ) |>
+    addPolygons(
+      data = lille_wgs84,
+      color = "#000",
+      fillColor = "transparent",
+      weight = 2.3
+    ) |>
+    addPolygons(
+      data = lille_square_data_wgs84_inter,
+      color = "#000",
+      fillColor = "transparent",
+      weight = 2.3,
+      popup = ~ glue::glue(
+        "Vous avez cliqué sur la zone: <b>{id}</b> <br> Passer à la question suivante: 
       <a href='https://justine15.typeform.com/to/BypfUOK4#position={id}'>Débuter le questionnaire</a>"
-    ),
-    popupOptions = popupOptions(
-      closeButton = FALSE,
-      closeOnClick = TRUE
+      ),
+      popupOptions = popupOptions(
+        closeButton = FALSE,
+        closeOnClick = TRUE
+      )
     )
-  )
+)
 ```
