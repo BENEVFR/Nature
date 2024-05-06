@@ -1,3 +1,7 @@
+# nature 0.0.0.9007
+
+* Add nav pills to create zoom map on population
+
 # nature 0.0.0.9006
 
 * Update map to find the position in survey
