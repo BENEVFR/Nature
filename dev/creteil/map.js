@@ -14,6 +14,7 @@ function redraw_map(property) {
 
   map = L.map('map').setView([48.791100, 2.462800], 13); // Initialisation de la carte
   map2 = L.map('map2').setView([48.791100, 2.462800], 13); // Initialisation de la carte
+  map3 = L.map('map3').setView([48.791100, 2.462800], 13); // Initialisation de la carte
 
   L.tileLayer(
     'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
@@ -28,6 +29,13 @@ function redraw_map(property) {
       subdomains: 'abcd',
     }
   ).addTo(map2);
+
+  L.tileLayer(
+    'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+      subdomains: 'abcd',
+    }
+  ).addTo(map3);
 
   geojsonLayerCreteil = L.geoJson(geodata_creteil, {
 
