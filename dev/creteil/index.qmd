@@ -103,9 +103,9 @@ div(
 
 <!-- Tous les titres de niveau 2 deviennent un nouvel onglet dans ce layout  -->
 
-## Cartographie générale (1)
+## Cartographie générale
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris fermentum egestas sapien, eget commodo leo finibus vel. Curabitur nibh turpis, suscipit quis vestibulum vitae, suscipit vel ex. Proin consectetur finibus felis id semper. Curabitur rhoncus maximus magna in dictum. Donec in erat nec tellus varius tristique eget eu augue. Etiam commodo, est eu porta ornare, justo urna luctus massa, a ornare nunc enim in augue. Nulla id sollicitudin ante, in malesuada ex. Nulla tortor urna, sagittis quis pellentesque et, cursus non tellus.
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris fermentum egestas sapien, eget commodo leo finibus vel. Curabitur nibh turpis, suscipit quis vestibulum vitae, suscipit vel ex. Proin consectetur finibus felis id semper.
 
 ```{r}
 #| column: screen-inset
@@ -119,7 +119,7 @@ div(
 
 ## Analysis
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris fermentum egestas sapien, eget commodo leo finibus vel. Curabitur nibh turpis, suscipit quis vestibulum vitae, suscipit vel ex. Proin consectetur finibus felis id semper. Curabitur rhoncus maximus magna in dictum. Donec in erat nec tellus varius tristique eget eu augue. Etiam commodo, est eu porta ornare, justo urna luctus massa, a ornare nunc enim in augue. Nulla id sollicitudin ante, in malesuada ex. Nulla tortor urna, sagittis quis pellentesque et, cursus non tellus.
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris fermentum egestas sapien, eget commodo leo finibus vel. Curabitur nibh turpis, suscipit quis vestibulum vitae, suscipit vel ex. Proin consectetur finibus felis id semper.
 
 ```{r}
 #| column: screen-inset
@@ -133,7 +133,7 @@ div(
 
 ## Nouvel onglet
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris fermentum egestas sapien, eget commodo leo finibus vel. Curabitur nibh turpis, suscipit quis vestibulum vitae, suscipit vel ex. Proin consectetur finibus felis id semper. Curabitur rhoncus maximus magna in dictum. Donec in erat nec tellus varius tristique eget eu augue. Etiam commodo, est eu porta ornare, justo urna luctus massa, a ornare nunc enim in augue. Nulla id sollicitudin ante, in malesuada ex. Nulla tortor urna, sagittis quis pellentesque et, cursus non tellus.
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris fermentum egestas sapien, eget commodo leo finibus vel. Curabitur nibh turpis, suscipit quis vestibulum vitae, suscipit vel ex. Proin consectetur finibus felis id semper.
 
 ```{r}
 #| column: screen-inset
@@ -145,8 +145,8 @@ div(
 )
 ```
 
-:::
+::::
 
 ## Conclusion
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris fermentum egestas sapien, eget commodo leo finibus vel. Curabitur nibh turpis, suscipit quis vestibulum vitae, suscipit vel ex. Proin consectetur finibus felis id semper. Curabitur rhoncus maximus magna in dictum. Donec in erat nec tellus varius tristique eget eu augue. Etiam commodo, est eu porta ornare, justo urna luctus massa, a ornare nunc enim in augue. Nulla id sollicitudin ante, in malesuada ex. Nulla tortor urna, sagittis quis pellentesque et, cursus non tellus.
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris fermentum egestas sapien, eget commodo leo finibus vel. Curabitur nibh turpis, suscipit quis vestibulum vitae, suscipit vel ex. Proin consectetur finibus felis id semper.
