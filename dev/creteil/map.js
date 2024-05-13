@@ -1,9 +1,6 @@
-var carte1;
-var carte2;
-var carte3;
+var cartes = [];
 
 function createMap(idElement, geodata_city, geodata_hex, property, zoom = 13) {
-
   var map = L.map(idElement).setView([48.791100, 2.462800], zoom);
 
   L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
@@ -23,16 +20,15 @@ function createMap(idElement, geodata_city, geodata_hex, property, zoom = 13) {
 
   geojsonHexLayer = drawHex(geodata_hex, property).addTo(map);
 
-  return {
+  cartes.push({
     map: map,
     geojsonCityLayer: geojsonCityLayer,
     geojsonHexLayer: geojsonHexLayer
-  };
+  });
 }
 
 function drawHex(geodata_hex, property) {
-
-   geojsonHexLayer = L.geoJson(geodata_hex, {
+  geojsonHexLayer = L.geoJson(geodata_hex, {
     style: function(feature) {
       var color_property = property + '_color';
       var color = feature.properties[color_property];
@@ -66,14 +62,12 @@ function drawHex(geodata_hex, property) {
   return geojsonHexLayer;
 }
 
-
-
 document.addEventListener("DOMContentLoaded", function(event) {
   console.log("DOM is Ready!");
 
-  carte1 = createMap("map", geodata_creteil, geodata_hex, "critere_bien_etre");
-  carte2 = createMap("map2", geodata_creteil, geodata_hex, "critere_bien_etre");
-  carte3 = createMap("map3", geodata_creteil, geodata_hex, "critere_bien_etre");
+  createMap("map", geodata_creteil, geodata_hex, "critere_bien_etre");
+  createMap("map2", geodata_creteil, geodata_hex, "critere_bien_etre");
+  createMap("map3", geodata_creteil, geodata_hex, "critere_bien_etre");
 
   var elt = document.getElementsByClassName("nav-link")
   for (let index = 0; index < elt.length; index++) {
@@ -84,28 +78,24 @@ document.addEventListener("DOMContentLoaded", function(event) {
 });
 
 function select_critere_change() {
-  var x = document.getElementById("my_select").value;
-  console.log(x);
+  var property = document.getElementById("my_select").value;
+  console.log(property);
 
-  updateProperty(x);
-};
+  updateProperty(property);
+}
 
 function updateProperty(property) {
-  carte1.geojsonHexLayer.removeFrom(carte1.map);
-  carte2.geojsonHexLayer.removeFrom(carte2.map);
-  carte3.geojsonHexLayer.removeFrom(carte3.map);
-
-  carte1.geojsonHexLayer = drawHex(geodata_hex, property).addTo(carte1.map);
-  carte2.geojsonHexLayer = drawHex(geodata_hex, property).addTo(carte2.map);
-  carte3.geojsonHexLayer = drawHex(geodata_hex, property).addTo(carte3.map);
+  cartes.forEach(function(carte) {
+    carte.geojsonHexLayer.removeFrom(carte.map);
+    carte.geojsonHexLayer = drawHex(geodata_hex, property).addTo(carte.map);
+  });
 }
 
 function changeOpacity() {
   var switchState = document.getElementById("hidemapinfos").checked;
   var opacityValue = switchState ? 1 : 0.5;
 
-  carte1.geojsonCityLayer.setStyle({ fillOpacity: opacityValue });
-  carte2.geojsonCityLayer.setStyle({ fillOpacity: opacityValue });
-  carte3.geojsonCityLayer.setStyle({ fillOpacity: opacityValue });
+  cartes.forEach(function(carte) {
+    carte.geojsonCityLayer.setStyle({ fillOpacity: opacityValue });
+  });
 }
-
