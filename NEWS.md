@@ -1,3 +1,8 @@
+# nature 0.0.0.9008
+
+* Create tree select input
+* Refacto code to add tabs for multiple maps
+
 # nature 0.0.0.9007
 
 * Add nav pills to create zoom map on population
