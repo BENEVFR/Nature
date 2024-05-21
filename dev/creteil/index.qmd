@@ -6,7 +6,7 @@ format:
     toc: true
     toc-expand: 2
     toc-title: Naviguer dans le rapport
-    theme: simplex
+    theme: minty
     include-in-header:
       text: |
         <script src="https://cdn.jsdelivr.net/npm/treeselectjs@0.10.0/dist/treeselectjs.umd.js"></script>
@@ -16,6 +16,7 @@ format:
         <script src="https://unpkg.com/leaflet-providers@latest/leaflet-providers.js"></script>
         <script type="text/javascript" src="geodata_hex.js"></script>
         <script type="text/javascript" src="geodata_creteil.js"></script>
+        <script type="text/javascript" src="utils.js"></script>
         <script type="text/javascript" src="map.js"></script>
         <script type="text/javascript" src="treeSelect.js"></script>
 execute:

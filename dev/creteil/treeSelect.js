@@ -82,5 +82,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
   treeSelect.srcElement.addEventListener('input', (e) => {
     console.log('Selected value:', e.detail)
+    select_critere_change(e.detail)
   })
 });
