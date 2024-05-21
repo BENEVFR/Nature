@@ -171,8 +171,12 @@ leaflet() |>
 ```{r}
 dataset <- data.frame(
   id = 1:nrow(creteil_square_l93),
-  critere_bien_etre = round(runif(nrow(creteil_square_l93), min = 0, max = 5), digits = 2),
-  critere_satisfaction = round(runif(nrow(creteil_square_l93), min = 0, max = 5), digits = 2)
+  critere_bien_etre_global = round(runif(nrow(creteil_square_l93), min = 0, max = 5), digits = 2),
+  critere_type_nature_global = round(runif(nrow(creteil_square_l93), min = 0, max = 5), digits = 2),
+  critere_biodiv = round(runif(nrow(creteil_square_l93), min = 0, max = 5), digits = 2),
+  critere_exposition_nature = round(runif(nrow(creteil_square_l93), min = 0, max = 5), digits = 2),
+  critere_activ_global = round(runif(nrow(creteil_square_l93), min = 0, max = 5), digits = 2),
+  critere_caract_percues = round(runif(nrow(creteil_square_l93), min = 0, max = 5), digits = 2)
 )
 
 bins <- seq(0, 5, by = 1)
@@ -196,7 +200,7 @@ creteil_square_data_wgs84 <- creteil_square_wgs84 |>
 # leaflet
 pal <- colorBin(
   "Greens",
-  domain = creteil_square_data_wgs84$critere_bien_etre, 
+  domain = creteil_square_data_wgs84$critere_bien_etre_global, 
   bins = bins,
   na.color  = "transparent"
 )
@@ -216,15 +220,15 @@ leaflet() |>
   addPolygons(
     data = creteil_square_data_wgs84_inter,
     color = "#000000", 
-    fillColor = ~pal(critere_bien_etre),
+    fillColor = ~pal(critere_bien_etre_global),
     weight = 1, 
     opacity = 0.2, 
     fillOpacity = 0.4,
-    label = ~critere_bien_etre
+    label = ~critere_bien_etre_global
   ) %>%
   addLegend(
     pal = pal,
-    values = creteil_square_data_wgs84_inter$critere_bien_etre,
+    values = creteil_square_data_wgs84_inter$critere_bien_etre_global,
     title = "Note moyenne",
     labFormat = labelFormat(prefix = "de ", between = " à "),
     opacity = 1
