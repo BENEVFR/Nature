@@ -125,6 +125,7 @@ Le fichier `index.qmd` du dossier `survey` est le fichier qui va générer le fi
 
 Ouvrir le fichier et `render` le fichier :
 
+**/!\ Modifier l'url du typeform si besoin**
 
 ![](../man/figures/render_quarto.png){fig-alt="Render a quarto file." width=100%}
 
@@ -146,6 +147,8 @@ Nous allons maintenant mettre en ligne la carte.
 #### Création du repo Github
 
 Suivre les étapes de la vignette `Créer et versionner un dossier avec Github` jusqu'à la fin de la deuxième étape.
+
+### Copie des fichiers
 
 Dans le nouveau projet Rstudio, copier / coller le contenu du dossier `survey` :
 
