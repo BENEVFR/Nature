@@ -1,0 +1,126 @@
+---
+title: "Créer une enquête pour une nouvelle ville"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Créer une enquête pour une nouvelle ville}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+# library(nature)
+```
+
+Plusieurs étapes sont nécessaires pour **créer une nouvelle enquête**: 
+
+1) Préparation des données cartographique,
+
+2) Création du questionnaire
+
+3) Création du rapport
+
+## Préparation des données cartographiques
+
+Afin de créer une nouvelle enquête, pour une nouvelle ville, il faut suivre les instructions suivantes : 
+
+#### Création d'un nouveau dossier (ville) dans ce package
+
+Nous allons créer un nouveau dossier qui contiendra l'ensemble des fichiers et données pour l'enquête.
+
+```{r}
+le_nom_de_la_ville <- "Rennes"
+
+dir.create(
+  path = file.path(
+    "..", "dev", tolower(le_nom_de_la_ville)
+  )
+)
+```
+
+#### Récupération des fichiers templates
+
+Il existe deux fichiers qui contiennent l'ensemble des instructions R pour créer les cartes. 
+
+Copions ces fichiers dans le nouveau dossier : 
+
+```{r}
+templates <- list.files(
+  system.file(
+    "templates", "data_preparation",
+    package = "nature"
+  ),
+  full.names = TRUE
+)
+
+file.copy(
+  from = templates,
+  to = file.path(
+    "..", "dev", tolower(le_nom_de_la_ville)
+  )
+)
+```
+
+#### Sélection des données carto
+
+Cette étape consiste à suivre les instructions R contenues dans les fichiers copiés. 
+
+Le premier fichier à suivre est le fichier `city_preparation.qmd`. 
+
+Il contient les instructions pour sélectionner les contours de la ville à enquêter. 
+
+**/!\ Attention à bien modifier ce fichier avec le nom de la ville enquêtée. **
+
+```{r}
+rstudioapi::navigateToFile(
+  file = file.path(
+    "..", "dev", tolower(le_nom_de_la_ville), "city_preparation.qmd"
+  ),
+  line = 1
+)
+```
+
+## Création du questionnaire
+
+L'étape suivante consiste à créer le fichier HTML qui contiendra la carte pour le questionnaire. 
+
+Créons un dossier qui contiendra ce document : 
+
+```{r}
+dir.create(
+  path = file.path(
+    "..", "dev", tolower(le_nom_de_la_ville), "survey"
+  )
+)
+```
+
+Copions dans notre nouveau dossier le document :
+
+```{r}
+templates <- list.files(
+  system.file(
+    "templates", "html_survey",
+    package = "nature"
+  ),
+  full.names = TRUE
+)
+
+file.copy(
+  from = templates,
+  to = file.path(
+    "..", "dev", tolower(le_nom_de_la_ville), "survey"
+  )
+)
+```
+
+Ensuite ... 
+
+- le compiler pour obtenir un fichier html
+- copier coller le contenu du dossier survey dans un nouveau dossier versionné avec git 
+- envoyer sur github + github pages
