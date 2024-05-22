@@ -19,13 +19,13 @@ destination des maires des futures villes enquétées.
 
 ## pkgdown :
 
-<https://thinkr.pages.thinkr.fr/-/missions/presta_upec_nature_typeform/-/jobs/61270/artifacts/public/reference/index.html>
+<https://presta-upec-nature-typeform-thinkr-missions-c6ab7ae0d946c313971.pages.thinkr.fr>
 
 ## coverage :
 
-<https://thinkr.pages.thinkr.fr/-/missions/presta_upec_nature_typeform/-/jobs/61270/artifacts/public/coverage.html#>
+<https://presta-upec-nature-typeform-thinkr-missions-c6ab7ae0d946c313971.pages.thinkr.fr/coverage.html>
 
-# installtion
+# installation
 
 depuis les sources
 
