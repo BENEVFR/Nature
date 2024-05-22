@@ -42,3 +42,33 @@ Il faut ensuite ajouter une variable cachée (_hidden fields_) :
 Il est possible d'ajouter à ce moment l'information de la position dans l'url : 
 
 ![](../man/figures/typeform_3.png){width=100%}
+
+## Comment modifier le thème du rapport ? 
+
+Quarto permet de modifier le thème utilisé dans le rapport. 
+
+Dans l'en-tête suivante : 
+
+```
+title: "Bien-être et végétalisation"
+format:
+  html:
+    self-contained: true
+    toc: true
+    toc-expand: 2
+    toc-title: Naviguer dans le rapport
+    theme: minty
+execute:
+  echo: false
+params:
+  city: Créteil
+---
+```
+
+Le paramètre `toc: true` permet l'affichage d'une table des matières jusqu'à une profondeur de niveau 2 `toc-expand: 2`. C'est à dire jusqu'aux titres de niveau 2 (ex : ## Titre niveau 2).
+
+Le thème du rapport peut également être modifié à partir de `theme` et en sélectionnant le thème depuis Bootswatch : [https://bootswatch.com/](https://bootswatch.com/).
+
+Plus d'informations sont dispo ici :
+
+https://quarto.org/docs/output-formats/html-themes.html
