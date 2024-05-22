@@ -51,7 +51,7 @@ lille_l93 <- communes_l93 |>
 ### Stocker le shapefile de la commune
 
 ```{r}
-st_write(lille_l93, dsn = here::here("dev/lille/lille_l93.gpkg"))
+st_write(lille_l93, dsn = here::here("dev/lille/lille_l93.gpkg"),append = F)
 
 # On peut imaginer commencer le script ici
 lille_l93 <- st_read(here::here("dev/lille/lille_l93.gpkg"))
@@ -142,12 +142,4 @@ leaflet() |>
 ```
 
 
-### Afficher avec ggplot2
-
-```{r}
-ggplot() +
-  geom_sf(data = troyes_square_l93, color = "red", fill = NA) +
-  geom_sf(data = troyes_l93, color = "blue", fill = NA) +
-  geom_sf_text(data = troyes_square_l93, aes(label = id), size = 0.8)
-```
 

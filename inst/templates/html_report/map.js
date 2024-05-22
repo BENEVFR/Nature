@@ -3,10 +3,13 @@ var cartes = [];
 document.addEventListener("DOMContentLoaded", function(event) {
   console.log("Maps are Ready!");
 
-  const latitude = 48.783329;
-  const longitude = 2.46667;
+  const latitude = 48.783329; /*Remplacez ici la latitude de la ville*/
+  const longitude = 2.46667;  /*Remplacez ici la longitude de la ville*/
 
-   createMap(
+  /* */
+  /*Ajoutez des cartes dans le rapport*/
+  /* */
+  createMap(
     idElement = "map",
     geodata_city = geodata_creteil,
     geodata_hex = geodata_hex,
