@@ -152,7 +152,7 @@ Suivre les étapes de la vignette `Créer et versionner un dossier avec Github` 
 
 Dans le nouveau projet Rstudio, copier / coller le contenu du dossier `survey` :
 
-```{r}
+```{r, eval=FALSE}
 list.files(
   file.path(
     "..", "dev", tolower(le_nom_de_la_ville), "survey"
