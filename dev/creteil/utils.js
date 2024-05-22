@@ -1,5 +1,5 @@
-function createMap(idElement, geodata_city, geodata_hex, property, zoom = 13) {
-  var map = L.map(idElement).setView([48.791100, 2.462800], zoom);
+function createMap(idElement, geodata_city, geodata_hex, property, lat, long, zoom = 13) {
+  var map = L.map(idElement).setView([lat, long], zoom);
 
   L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
