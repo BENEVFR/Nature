@@ -35,7 +35,7 @@ Afin de créer une nouvelle enquête, pour une nouvelle ville, il faut suivre le
 Nous allons créer un nouveau dossier qui contiendra l'ensemble des fichiers et données pour l'enquête.
 
 ```{r, eval=FALSE}
-le_nom_de_la_ville <- "Rennes"
+le_nom_de_la_ville <- "Noisiel"
 
 dir.create(
   path = file.path(
@@ -123,9 +123,13 @@ file.copy(
 
 Le fichier `index.qmd` du dossier `survey` est le fichier qui va générer le fichier HTML avec la carte. 
 
-Ouvrir le fichier et `render` le fichier :
+Ouvrir le fichier `index.qmd` 
 
-**/!\ Modifier l'url du typeform si besoin**
+**/!\ Modifier l'url du typeform si besoin dans le fichier `index.qmd`**
+
+L'url est à la ligne n°76. Attention, à la fin de l'url, il y a l'identifiant de la zone cliquée. Il faut conserver le `#position={id}`.
+
+`Render` le document pour avoir le fichier HTML.
 
 ![](../man/figures/render_quarto.png){fig-alt="Render a quarto file." width=100%}
 
@@ -138,7 +142,7 @@ rstudioapi::navigateToFile(
 )
 ```
 
-Cette opération doit générer un fichier `index.html`.
+**Cette opération doit générer un fichier `index.html`.**
 
 ### Déployer la carte
 
@@ -146,19 +150,13 @@ Nous allons maintenant mettre en ligne la carte.
 
 #### Création du repo Github
 
-Suivre les étapes de la vignette `Créer et versionner un dossier avec Github` jusqu'à la fin de la deuxième étape.
+Suivre les étapes de la vignette `Créer et versionner un dossier avec Github` **jusqu'à la fin de la deuxième étape**.
+
+Revenir sur ce fichier à la fin de la deuxième étape.
 
 ### Copie des fichiers
 
 Dans le nouveau projet Rstudio, copier / coller le contenu du dossier `survey` :
-
-```{r, eval=FALSE}
-list.files(
-  file.path(
-    "..", "dev", tolower(le_nom_de_la_ville), "survey"
-  )
-)
-```
 
 Le nouveau projet doit contenir, au minimum, le fichier `index.html` et le fichier `script.js`.
 
@@ -166,7 +164,10 @@ Le nouveau projet doit contenir, au minimum, le fichier `index.html` et le fichi
 
 Suivre ensuite la troisième étape de la vignette `Créer et versionner un dossier avec Github` pour envoyer sur Github les fichiers.
 
+Revenir sur ce fichier à la fin de la troisième étape.
+
 #### Créer et mettre en ligne la carte
 
 Suivre ensuite la quatrième étape de la vignette `Créer et versionner un dossier avec Github` mettre en ligne la carte.
 
+Le questionnaire est maintenant finalisé !
