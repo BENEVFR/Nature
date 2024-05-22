@@ -16,7 +16,8 @@ execute:
 
 ```{r}
 #| message: false
-#| 
+#| warning: false
+
 library(sf)
 library(dplyr)
 library(leaflet)
@@ -24,9 +25,18 @@ library(ggplot2)
 ```
 
 ```{r}
+typeform_id <- "BypfUOK4"     # TODO: Modifier l'idenfifiant du typeform
+
+# Pour info: 
+# La forme finale de l'url :
+# https://form.typeform.com/to/{typeform_id}#position={id}
+# https://form.typeform.com/to/BypfUOK4#position=xxxxx
+```
+
+
+```{r}
 #| message: false
 #| warning: false
-#| 
 
 city_l93 <- st_read(
   "../city_l93.gpkg",
@@ -73,7 +83,7 @@ shiny::tags$div(
       weight = 2.3,
       popup = ~ glue::glue(
         "Vous avez cliqué sur la zone: <b>{id}</b> <br> Passer à la question suivante: 
-      <a href='https://justine15.typeform.com/to/BypfUOK4#position={id}'>Débuter le questionnaire</a>"
+      <a href='https://form.typeform.com/to/{typeform_id}#position={id}'>Débuter le questionnaire</a>"
       ),
       popupOptions = popupOptions(
         closeButton = FALSE,

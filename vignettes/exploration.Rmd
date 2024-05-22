@@ -1,5 +1,5 @@
 ---
-title: "exploration"
+title: "Data exploration"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{exploration}
