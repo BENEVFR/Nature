@@ -1,0 +1,94 @@
+---
+title: ""
+format:
+  html:
+    self-contained: true
+    toc: false
+    theme: none
+    include-in-header:
+      text: |
+        <script src="//embed.typeform.com/next/embed.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script type="text/javascript" src="script.js"></script>
+execute:
+  echo: false
+---
+
+```{r}
+#| message: false
+#| warning: false
+
+library(sf)
+library(dplyr)
+library(leaflet)
+library(ggplot2)
+```
+
+```{r}
+typeform_id <- "BypfUOK4"     # TODO: Modifier l'idenfifiant du typeform
+
+# Pour info: 
+# La forme finale de l'url :
+# https://form.typeform.com/to/{typeform_id}#position={id}
+# https://form.typeform.com/to/BypfUOK4#position=xxxxx
+```
+
+
+```{r}
+#| message: false
+#| warning: false
+
+city_l93 <- st_read(
+  "../city_l93.gpkg",
+  quiet = TRUE
+)
+
+city_wgs84 <- st_read(
+  "../city_wgs84.gpkg",
+  quiet = TRUE
+)
+
+city_hex_wgs84 <- st_read(
+  "../city_hex_wgs84.gpkg",
+  quiet = TRUE
+)
+
+city_hex_l93_intersection <- st_intersection(
+  city_hex_wgs84,
+  city_wgs84
+)
+```
+
+```{r}
+shiny::tags$div(
+  id = "map",
+  style = "height: 98vh",
+  leaflet(
+    height = "100%",
+    width = "100%"
+  ) |>
+    addProviderTiles(
+      providers$CartoDB.Positron
+    ) |>
+    addPolygons(
+      data = city_wgs84,
+      color = "#000",
+      fillColor = "transparent",
+      weight = 2.3
+    ) |>
+    addPolygons(
+      data = city_hex_l93_intersection,
+      color = "#000",
+      fillColor = "transparent",
+      weight = 2.3,
+      popup = ~ glue::glue(
+        "Vous avez cliqué sur la zone: <b>{id}</b> <br> Passer à la question suivante: 
+      <a href='https://form.typeform.com/to/{typeform_id}#position={id}'>Débuter le questionnaire</a>"
+      ),
+      popupOptions = popupOptions(
+        closeButton = FALSE,
+        closeOnClick = TRUE
+      )
+    )
+)
+```
