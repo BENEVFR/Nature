@@ -1,3 +1,7 @@
+# nature 0.0.2
+
+* Create doc with excalidraw
+
 # nature 0.0.1
 
 * Recreate Creteil folder from doc 
