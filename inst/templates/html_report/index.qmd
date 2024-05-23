@@ -25,6 +25,7 @@ execute:
 
 ```{r}
 #| message: false
+#| warning: false
 
 library(dplyr)
 library(shiny)

@@ -30,13 +30,17 @@ Ce package contient les données brutes d'une enquête déjà réalisée auprès
 
 <https://presta-upec-nature-typeform-thinkr-missions-c6ab7ae0d946c313971.pages.thinkr.fr/coverage.html>
 
+## Fonctionnement général du projet
 
+> Pour agrandir l'image, clique droit puis "Ouvrir l'image dans un nouvel onglet"
+
+![](man/figures/excalidraw.png){width=100%}
 
 # installation
 
 depuis les sources
 
-```{r}
+```{r, eval=FALSE}
 remotes::install_local()
 ```
 
