@@ -1,0 +1,271 @@
+---
+title: "Etape : Préparation des données"
+format: html
+---
+
+```{r}
+library(sf)
+library(dplyr)
+library(purrr)
+```
+
+Dans ce fichier, nous allons préparer les données à afficher sur les cartes du rapport.
+
+```{r}
+stopifnot(
+  file.exists("../city_l93.gpkg")
+)
+
+stopifnot(
+  file.exists("../city_wgs84.gpkg")
+)
+
+stopifnot(
+  file.exists("../city_hex_wgs84.gpkg")
+)
+```
+
+## Préparation des "zones" 
+
+Dans cette partie, nous allons créer les zones d'habitation. 
+
+Cela servira pour collecter les réponses des habitants pendant le questionnaire + visualiser les données
+
+```{r}
+city_l93 <- st_read(
+  "../city_l93.gpkg",
+  quiet = TRUE
+)
+
+city_wgs84 <- st_read(
+  "../city_wgs84.gpkg",
+  quiet = TRUE
+)
+
+city_hex_wgs84 <- st_read(
+  "../city_hex_wgs84.gpkg",
+  quiet = TRUE
+)
+```
+
+On dessine les zones :
+
+```{r}
+#| message: false
+#| warning: false
+
+city_hex_l93_intersection <- st_intersection(
+  city_hex_wgs84,
+  city_wgs84
+)
+```
+
+### Création du jeu de données pour colorier la carte 
+
+**/!\ En l'absence des "vraies" données du formulaire, on reproduit un jeu de données.**
+
+Sinon, à partir des "vraies" données, la fonction `calculate_indicators()` de ce package permet de calculer ces dimensions. 
+
+Le tableau `dataset` est le tableau - global - représentatif des données de l'étude.
+
+Les tableaux `dataset_souspop` et `dataset_souspop2` sont des tableaux représentatifs d'une sous-population de l'étude. 
+
+```{r}
+dataset <- data.frame(
+  id = 1:nrow(city_hex_wgs84),
+  critere_bien_etre_global = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
+  critere_bien_etre_psy = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
+  critere_bien_etre_environnement = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
+  critere_bien_etre_physique = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
+  critere_bien_etre_ressources = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
+  critere_type_nature_global = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
+  critere_activ_global = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
+  critere_nature_nondomest = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
+  critere_nature_domestique = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
+  critere_nature_proximite = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
+  critere_exposition_nature_global = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
+  critere_activ_social_calme = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
+  critere_activ_sport = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
+  critere_caract_percues_global = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
+  critere_biodiv_global = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2)
+)
+
+dataset_souspop <- data.frame(
+  id = 1:nrow(city_hex_wgs84),
+  critere_bien_etre_global = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
+  critere_bien_etre_psy = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
+  critere_bien_etre_environnement = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
+  critere_bien_etre_physique = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
+  critere_bien_etre_ressources = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
+  critere_type_nature_global = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
+  critere_activ_global = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
+  critere_nature_nondomest = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
+  critere_nature_domestique = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
+  critere_nature_proximite = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
+  critere_exposition_nature_global = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
+  critere_activ_social_calme = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
+  critere_activ_sport = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
+  critere_caract_percues_global = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
+  critere_biodiv_global = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2)
+)
+
+dataset_souspop2 <- data.frame(
+  id = 1:nrow(city_hex_wgs84),
+  critere_bien_etre_global = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
+  critere_bien_etre_psy = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
+  critere_bien_etre_environnement = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
+  critere_bien_etre_physique = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
+  critere_bien_etre_ressources = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
+  critere_type_nature_global = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
+  critere_activ_global = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
+  critere_nature_nondomest = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
+  critere_nature_domestique = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
+  critere_nature_proximite = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
+  critere_exposition_nature_global = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
+  critere_activ_social_calme = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
+  critere_activ_sport = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
+  critere_caract_percues_global = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
+  critere_biodiv_global = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2)
+)
+```
+
+### Création des couleurs dans les zones
+
+Exécutez le code suivant : 
+
+```{r}
+bins <- seq(0, 5, by = 1)
+
+my_palette <- colorBin(
+  palette = "Greens", 
+  domain = bins, 
+  bins = length(bins) - 1, 
+  na.color = "transparent"
+)
+```
+
+Nous allons maintenant joindre les coordonées des zones (les hex) avec les données de l'étude. Nous réalisons ici cette opération avec une jointure :
+
+```{r}
+city_hex_l93_intersection_dataset <- city_hex_l93_intersection |> 
+  left_join(dataset, by = "id") |> 
+  mutate(
+    across(
+      starts_with("critere"),
+      ~ my_palette(.x),
+      .names = "{.col}_color"
+    )
+  )
+
+city_hex_l93_intersection_dataset_souspop <- city_hex_l93_intersection |> 
+  left_join(dataset_souspop, by = "id") |> 
+  mutate(
+    across(
+      starts_with("critere"),
+      ~ my_palette(.x),
+      .names = "{.col}_color"
+    )
+  )
+
+city_hex_l93_intersection_dataset_souspop2 <- city_hex_l93_intersection |> 
+  left_join(dataset_souspop2, by = "id") |> 
+  mutate(
+    across(
+      starts_with("critere"),
+      ~ my_palette(.x),
+      .names = "{.col}_color"
+    )
+  )
+```
+
+### Création des fichiers JS pour le rapport
+
+Afin que le rapport possède tous les éléments dont il a besoin pour s'afficher et être réactif, nous allons créer les fichiers qui contiendront les données carto. Il s'agit d'un format dont le rapport a besoin pour être "auto-portant".
+
+Création du fichier pour les contours de la ville. 
+
+Exécutez le code :
+
+```{r}
+if (file.exists("geodata_city.js")) {
+  unlink("geodata_city.js")
+}
+
+city_geojson <- geojsonsf::sf_geojson(
+  sf = city_wgs84 |> 
+    select(geom)
+)
+
+writeLines(
+  paste0("var geodata_city = ", city_geojson),
+  "geodata_city.js"
+)
+```
+
+Ce morceau de code vient de créer un fichier `geodata_city.js` à l'intérieur du dossier `report`.
+
+A l'intérieur de ce fichier, il existe une variable qui se nomme `geodata_city` qui contient la forme des contours de la ville. Cette variable est utilisée dans la fonction `createMap` pour dessiner la carte : 
+
+``` js
+createMap(
+  idElement = "map",
+  geodata_city = geodata_city,
+  geodata_hex = geodata_hex,
+  property = "critere_bien_etre_global",
+  lat = latitude,
+  long = longitude
+);
+```
+
+Nous allons maintenant créer le même fichier qui contiendra les données pour les hex.
+
+Il faudra créer une ou plusieurs variables en fonction des sous-populations utilisées. Ainsi chaque carte possèdera ses propres données. 
+
+Pour automatiser la suite des instructions, nous allons créer une liste avec nos tableaux. 
+
+**/!\ Utiliser le bon nom associé à votre tableau pour le retrouver lors de la création de la carte ensuite**
+
+```{r}
+# Par exemple:
+# list(
+#   nom_que_je_vais_utiliser_ensuite = nom_du_tableau,
+#   nom_que_je_vais_utiliser_ensuite_sous_pop = nom_du_tableau_sous_population
+# )
+
+list_of_dataset <- list(
+  geodata_dataset = city_hex_l93_intersection_dataset,
+  geodata_dataset_souspop = city_hex_l93_intersection_dataset_souspop,
+  geodata_dataset_souspop2 = city_hex_l93_intersection_dataset_souspop2
+) 
+```
+
+Exécutez le code :
+
+```{r}
+if (file.exists("geodata_hex.js")) {
+  unlink("geodata_hex.js")
+}
+
+list_of_dataset |> 
+  purrr::map(
+    .f = ~ dplyr::select(
+      .x, 
+      -starts_with("INSEE"), -NOM_M , -STATUT, -POPULATION, -SIREN_EPCI
+    )
+  ) |> 
+  purrr::map(
+    .f = geojsonsf::sf_geojson
+  ) |> 
+  purrr::map2(
+    .y = names(list_of_dataset),
+    .f = ~ glue::glue("var {.y} = {.x}")
+  ) |> 
+  glue::glue_collapse(sep = ";\n\n\n") |> 
+  writeLines(
+    con = "geodata_hex.js"
+  )
+```
+
+La préparation du rapport est terminée. 
+
+Vous pouvez maintenant mettre à jour le fichier `map.js` avec les cartes souhaitées.
