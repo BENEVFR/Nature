@@ -25,12 +25,17 @@ destination des maires des futures villes enquétées.
 
 <https://presta-upec-nature-typeform-thinkr-missions-c6ab7ae0d946c313971.pages.thinkr.fr/coverage.html>
 
+## Fonctionnement général du projet
+
+> Pour agrandir l’image, clique droit puis “Ouvrir l’image dans un
+> nouvel onglet”
+
+<img src="man/figures/excalidraw.png" style="width:100.0%" />
+
 # installation
 
 depuis les sources
 
 ``` r
 remotes::install_local()
-#> Skipping install of 'nature' from a local remote, the SHA1 (0.0.0.90) has not changed since last install.
-#>   Use `force = TRUE` to force installation
 ```

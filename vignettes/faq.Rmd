@@ -72,3 +72,13 @@ Le thème du rapport peut également être modifié à partir de `theme` et en s
 Plus d'informations sont dispo ici :
 
 https://quarto.org/docs/output-formats/html-themes.html
+
+## Comment intégrer les données issues du questionnaire d'une ville ? 
+
+Afin d'analyser et d'utiliser les données issues d'un questionnaire, pour une ville, nous recommandons de : 
+
+- Dans le dossier de la ville, placez le jeu de données (Excel ou csv) dans `Report`,
+
+- Lire les données avec la fonction adéquate, 
+
+- Modifier le script de `data_for_map_preparation.qmd` afin d'utiliser ces données
