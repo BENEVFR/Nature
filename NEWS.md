@@ -1,3 +1,9 @@
+# nature 0.0.1
+
+* Recreate Creteil folder from doc 
+* Create FAQ vignette
+* Fix bug in JS utils
+
 # nature 0.0.0.9009
 
 * Create documentation about how to create new report

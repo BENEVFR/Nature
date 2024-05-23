@@ -8,5 +8,7 @@ globalVariables(unique(c(
   "CN10", "CN11", "CN12", "CN13", "CN14", "CN15", "CN17",
   "CN2", "CN3", "CN4", "CN5", "CN6", "CN7", "CN8", "CN9",
   "EXP1", "EXP2", "EXP3", "EXP4", "EXP5", "EXP6",
-  "Identifiant R\u00e9pondant", "identifiant_repondant"
+  "Identifiant R\u00e9pondant", "identifiant_repondant",
+  "ACT7", "ACT8", "ACT9", "CN16", "CN18", "CN19", "CP1",
+  "CP10", "CP2", "CP3", "CP4", "CP5", "CP6", "CP7", "CP8", "CP9"
 )))

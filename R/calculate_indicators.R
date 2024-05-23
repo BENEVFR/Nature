@@ -34,6 +34,14 @@ calculate_indicators <- function(data) {
       critere_bien_etre_ressources = mean(
         BE11ENV, BE12ENV, BE13ENV, BE9PH
       ),
+      critere_type_nature_global = mean(
+        CN1, CN2, CN11, CN15, CN5, CN6, CN7,
+        CN8, CN14, CN16, CN18, CN19
+      ),
+      critere_activ_global = mean(
+        ACT1, ACT2, ACT3, ACT4, ACT5, ACT8,
+        ACT9, ACT6, ACT7
+      ),
       critere_nature_nondomest = mean(
         CN1, CN2, CN11, CN15
       ),
@@ -43,7 +51,7 @@ calculate_indicators <- function(data) {
       critere_nature_proximite = mean(
         CN8, CN14, CN16, CN18, CN19
       ),
-      critere_exposition_nature = mean(
+      critere_exposition_nature_global = mean(
         EXP1, EXP2, EXP3, EXP4, EXP5
       ),
       critere_activ_social_calme = mean(
@@ -52,10 +60,10 @@ calculate_indicators <- function(data) {
       critere_activ_sport = mean(
         ACT6, ACT7
       ),
-      critere_caract_percues = mean(
+      critere_caract_percues_global = mean(
         CP1, CP2, CP3, CP4, CP5, CP6, CP7, CP8, CP9, CP10
       )#,
-      # critere_biodiv = mean(
+      # critere_biodiv_global = mean(
       #   BIO1, BIO2, BIO3, BIO4, BIO5, BIO6, BIO7
       # )
     )

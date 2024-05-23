@@ -21,7 +21,8 @@ function createMap(idElement, geodata_city, geodata_hex, property, lat, long, zo
   cartes.push({
     map: map,
     geojsonCityLayer: geojsonCityLayer,
-    geojsonHexLayer: geojsonHexLayer
+    geojsonHexLayer: geojsonHexLayer,
+    geodata_hex: geodata_hex
   });
 }
 
@@ -70,7 +71,7 @@ function select_critere_change(property) {
 function updateProperty(property) {
   cartes.forEach(function(carte) {
     carte.geojsonHexLayer.removeFrom(carte.map);
-    carte.geojsonHexLayer = drawHex(geodata_hex, property).addTo(carte.map);
+    carte.geojsonHexLayer = drawHex(carte.geodata_hex, property).addTo(carte.map);
   });
 }
 

@@ -14,10 +14,6 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
-# library(nature)
-```
-
 Plusieurs étapes sont nécessaires pour **créer une nouvelle enquête**: 
 
 1) Préparation des données cartographique,
@@ -35,7 +31,7 @@ Afin de créer une nouvelle enquête, pour une nouvelle ville, il faut suivre le
 Nous allons créer un nouveau dossier qui contiendra l'ensemble des fichiers et données pour l'enquête.
 
 ```{r, eval=FALSE}
-le_nom_de_la_ville <- "Rennes"
+le_nom_de_la_ville <- "creteil"
 
 dir.create(
   path = file.path(
@@ -102,7 +98,7 @@ dir.create(
 )
 ```
 
-Copions dans notre nouveau dossier le document :
+Copions dans notre nouveau dossier les fichiers templates :
 
 ```{r, eval=FALSE}
 templates <- list.files(
@@ -123,9 +119,13 @@ file.copy(
 
 Le fichier `index.qmd` du dossier `survey` est le fichier qui va générer le fichier HTML avec la carte. 
 
-Ouvrir le fichier et `render` le fichier :
+Ouvrir le fichier `index.qmd` 
 
-**/!\ Modifier l'url du typeform si besoin**
+**/!\ Modifier l'url du typeform si besoin dans le fichier `index.qmd`**
+
+L'url est à la ligne n°76. Attention, à la fin de l'url, il y a l'identifiant de la zone cliquée. Il faut conserver le `#position={id}`.
+
+`Render` le document pour avoir le fichier HTML.
 
 ![](../man/figures/render_quarto.png){fig-alt="Render a quarto file." width=100%}
 
@@ -138,7 +138,7 @@ rstudioapi::navigateToFile(
 )
 ```
 
-Cette opération doit générer un fichier `index.html`.
+**Cette opération doit générer un fichier `index.html`.**
 
 ### Déployer la carte
 
@@ -146,19 +146,13 @@ Nous allons maintenant mettre en ligne la carte.
 
 #### Création du repo Github
 
-Suivre les étapes de la vignette `Créer et versionner un dossier avec Github` jusqu'à la fin de la deuxième étape.
+Suivre les étapes de la vignette `Créer et versionner un dossier avec Github` **jusqu'à la fin de la deuxième étape**.
+
+Revenir sur ce fichier à la fin de la deuxième étape.
 
 ### Copie des fichiers
 
 Dans le nouveau projet Rstudio, copier / coller le contenu du dossier `survey` :
-
-```{r, eval=FALSE}
-list.files(
-  file.path(
-    "..", "dev", tolower(le_nom_de_la_ville), "survey"
-  )
-)
-```
 
 Le nouveau projet doit contenir, au minimum, le fichier `index.html` et le fichier `script.js`.
 
@@ -166,7 +160,140 @@ Le nouveau projet doit contenir, au minimum, le fichier `index.html` et le fichi
 
 Suivre ensuite la troisième étape de la vignette `Créer et versionner un dossier avec Github` pour envoyer sur Github les fichiers.
 
+Revenir sur ce fichier à la fin de la troisième étape.
+
 #### Créer et mettre en ligne la carte
 
 Suivre ensuite la quatrième étape de la vignette `Créer et versionner un dossier avec Github` mettre en ligne la carte.
+
+Le questionnaire est maintenant finalisé !
+
+## Création du rapport
+
+Dans cette partie, nous allons créer le rapport pour présenter les données !
+
+### Création du fichier HTML
+
+Créons un dossier qui contiendra ce document : 
+
+```{r, eval=FALSE}
+dir.create(
+  path = file.path(
+    "..", "dev", tolower(le_nom_de_la_ville), "report"
+  )
+)
+```
+
+Copions dans notre nouveau dossier les fichiers templates :
+
+```{r, eval=FALSE}
+templates <- list.files(
+  system.file(
+    "templates", "html_report",
+    package = "nature"
+  ),
+  full.names = TRUE
+)
+
+file.copy(
+  from = templates,
+  to = file.path(
+    "..", "dev", tolower(le_nom_de_la_ville), "report"
+  )
+)
+```
+
+Le dossier `report` contient : 
+
+- Le fichier `index.qmd` : c'est le rapport. Une fois `Render`, un fichier HTML sera produit. Ce sera le fichier déployé sur Github.
+
+- Le fichier `treeSelect.js` contient l'arborescence des dimensions. Il permet de générer le bouton de sélection des dimensions dans la page du rapport. 
+
+- Le fichier `utils.js` est le fichier qui permet la réactivité du rapport.
+
+- Enfin, le fichier `map.js` permet d'ajouter des cartes dans le rapport.
+
+Dans ce fichier, la fonction `createMap` permet de créer une nouvelle carte :
+
+``` js
+createMap(
+  idElement = "map",
+  geodata_city = geodata_city,
+  geodata_hex = geodata_dataset,
+  property = "critere_bien_etre_global",
+  lat = latitude,
+  long = longitude
+);
+```
+
+`idElement` est l'identifiant qui permet d'associer la carte avec celle dans le rapport `index.qmd` :
+
+```{r, eval=FALSE}
+div(
+  id = "map",
+  class = "mt-3",
+  style = "height: 85vh;"
+)
+```
+
+Dans le fichier `map.js`, il faudra également préciser la longitude et la latitude pour centrer les cartes sur la zone souhaitée :
+
+```js
+const latitude = 48.783329; /*Remplacez ici la latitude de la ville*/
+const longitude = 2.46667;  /*Remplacez ici la longitude de la ville*/
+```
+
+Il y a deux nouveaux fichiers à générer pour le rapport : 
+
+- le fichier `geodata_city.js` qui contiendra les contours de la ville,
+
+- le fichier `geodata_hex.js` qui contiendra les couleurs dex hex selon les données et les sous-populations étudiées. 
+
+Les instructions se trouvent dans le fichier `data_for_map_preparation.qmd` :
+
+```{r, eval=FALSE}
+rstudioapi::navigateToFile(
+  file = file.path(
+    "..", "dev", tolower(le_nom_de_la_ville), "report", "data_for_map_preparation.qmd"
+  ),
+  line = 1
+)
+```
+
+Une fois les données préparées, il faut modifier le fichier `map.js` avec les associations entre : 
+
+L'idenfiant de la carte <> la variable qui contient les données de la population.
+
+La dernière étape consiste à `Render` le fichier `index.qmd` afin d'obtenir un fichier `index.html`.
+
+### Déployer le rapport
+
+Nous allons maintenant mettre en ligne le rapport.
+
+#### Création du repo Github
+
+Suivre les étapes de la vignette `Créer et versionner un dossier avec Github` **jusqu'à la fin de la deuxième étape**.
+
+Revenir sur ce fichier à la fin de la deuxième étape.
+
+### Copie des fichiers
+
+Dans le nouveau projet Rstudio, copier / coller le contenu du dossier `report` :
+
+Le nouveau projet doit contenir, au minimum, les fichiers qui terminent par `*.js` et le fichier `index.html`.
+
+#### Envoyer sur Github les fichiers
+
+Suivre ensuite la troisième étape de la vignette `Créer et versionner un dossier avec Github` pour envoyer sur Github les fichiers.
+
+Revenir sur ce fichier à la fin de la troisième étape.
+
+#### Créer et mettre en ligne le rapport
+
+Suivre ensuite la quatrième étape de la vignette `Créer et versionner un dossier avec Github` mettre en ligne la carte.
+
+Le rapport est maintenant finalisé !
+
+
+
 

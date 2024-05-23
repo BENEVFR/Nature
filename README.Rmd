@@ -24,7 +24,7 @@ Ce package contient les données brutes d'une enquête déjà réalisée auprès
 
 ## pkgdown :
 
-<https://presta-upec-nature-typeform-thinkr-missions-c6ab7ae0d946c313971.pages.thinkr.fr/>
+[https://presta-upec-nature-typeform-thinkr-missions-c6ab7ae0d946c313971.pages.thinkr.fr](https://presta-upec-nature-typeform-thinkr-missions-c6ab7ae0d946c313971.pages.thinkr.fr)
 
 ## coverage : 
 
@@ -32,7 +32,7 @@ Ce package contient les données brutes d'une enquête déjà réalisée auprès
 
 
 
-# installtion
+# installation
 
 depuis les sources
 

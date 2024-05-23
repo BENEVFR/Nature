@@ -41,11 +41,11 @@ const selectOptions = [
   },
   {
     name: 'Niveau de biodiversité perçue',
-    value: 'critere_biodiv'
+    value: 'critere_biodiv_global'
   },
   {
     name: "Fréquence d'exposition à la nature",
-    value: 'critere_exposition_nature'
+    value: 'critere_exposition_nature_global'
   },
   {
     name: "Fréquence d'activité dans la nature",
@@ -63,7 +63,7 @@ const selectOptions = [
   },
   {
     name: "Caractéristiques de l'environnement",
-    value: 'critere_caract_percues'
+    value: 'critere_caract_percues_global'
   }
 ]
 

@@ -27,11 +27,11 @@ Sur cette nouvelle page, nous allons renseigner les informations concernant le r
 
 Pour celà, il faudra : 
 
-- **Donner un nom au repo** : Pour faire la distinction entre le repo qui contient la carte pour le questionnaire, de celui qui contient le raport, nous recommandons la convention suivante: 
+- **Donner un nom au repo** : Pour faire la distinction entre le repo qui contient la carte pour le questionnaire, de celui qui contient le rapport, nous recommandons la convention suivante: 
 
-  * [city]_survey_map (lille_survey_map) : nom du repo qui contient la carte pour le questionnaire 
+  * [city]_survey_map (ex : lille_survey_map) : nom du repo qui contient la carte pour le questionnaire 
 
-  * [city]_report_map (lille_report_map) : nom du repo qui contient le rapport
+  * [city]_report_map (ex: lille_report_map) : nom du repo qui contient le rapport
 
 - Une description peut, éventuellement, être ajoutée. 
 
