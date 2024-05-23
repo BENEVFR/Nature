@@ -31,7 +31,7 @@ Afin de créer une nouvelle enquête, pour une nouvelle ville, il faut suivre le
 Nous allons créer un nouveau dossier qui contiendra l'ensemble des fichiers et données pour l'enquête.
 
 ```{r, eval=FALSE}
-le_nom_de_la_ville <- "Noisiel"
+le_nom_de_la_ville <- "creteil"
 
 dir.create(
   path = file.path(
@@ -251,7 +251,7 @@ Il y a deux nouveaux fichiers à générer pour le rapport :
 
 Les instructions se trouvent dans le fichier `data_for_map_preparation.qmd` :
 
-```{r}
+```{r, eval=FALSE}
 rstudioapi::navigateToFile(
   file = file.path(
     "..", "dev", tolower(le_nom_de_la_ville), "report", "data_for_map_preparation.qmd"
