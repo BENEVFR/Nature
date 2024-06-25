@@ -121,7 +121,7 @@ Le fichier `index.qmd` du dossier `survey` est le fichier qui va générer le fi
 
 Ouvrir le fichier `index.qmd` 
 
-**/!\ Modifier l'url du typeform si besoin dans le fichier `index.qmd`**
+**/!\ Modifier l'url du LimeSurvey si besoin dans le fichier `index.qmd`**
 
 L'url est à la ligne n°76. Attention, à la fin de l'url, il y a l'identifiant de la zone cliquée. Il faut conserver le `#position={id}`.
 

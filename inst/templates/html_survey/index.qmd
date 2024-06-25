@@ -7,7 +7,6 @@ format:
     theme: none
     include-in-header:
       text: |
-        <script src="//embed.typeform.com/next/embed.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script type="text/javascript" src="script.js"></script>
 execute:
@@ -25,12 +24,12 @@ library(ggplot2)
 ```
 
 ```{r}
-typeform_id <- "BypfUOK4"     # TODO: Modifier l'idenfifiant du typeform
+limesurvey_id <- "889678"     # TODO: Modifier l'idenfifiant du limesurvey
 
 # Pour info: 
 # La forme finale de l'url :
-# https://form.typeform.com/to/{typeform_id}#position={id}
-# https://form.typeform.com/to/BypfUOK4#position=xxxxx
+# https://benev-upec.limesurvey.net/{limesurvey_id}?lang=fr&position={id}
+# Par ex: https://benev-upec.limesurvey.net/889678?lang=fr&position=130
 ```
 
 
@@ -83,7 +82,7 @@ shiny::tags$div(
       weight = 2.3,
       popup = ~ glue::glue(
         "Vous avez cliqué sur la zone: <b>{id}</b> <br> Passer à la question suivante: 
-      <a href='https://form.typeform.com/to/{typeform_id}#position={id}'>Débuter le questionnaire</a>"
+      <a href='https://benev-upec.limesurvey.net/{limesurvey_id}?newtest=Y&lang=fr&position={id}'>Débuter le questionnaire</a>"
       ),
       popupOptions = popupOptions(
         closeButton = FALSE,
