@@ -27,7 +27,83 @@ Il existe deux façons de le modifier :
 - Il est également possible de modifier le texte directement dans le dossier d'une ville. Par exemple, lors de la création d'une enquête pour Lille, un dossier `lille` sera ajouté dans `dev`. Lors de la création du questionnaire, un dossier `survey` est ajouté avec une copie du fichier `script.js`. Il est possible de modifier ce fichier dans le dossier `dev/lille/survey`. Le texte sera alors modifié pour Lille uniquement.
 
 
-## Comment ajouter la position dans une URL typeform ? 
+## Comment gérer la redirection vers une infographie à l'issue de mon questionnaire Limesurvey ?
+
+Dans LimeSurvey, pour ajouter à la fin du questionnaire, une redirection vers une infographie, il faut se rendre sur l'onglet `Éléments de texte` dans la barre de menu latérale.
+
+![](../man/figures/lime_survey_elements_text.png){width=100%}
+
+Il faut ensuite modifier le `message de fin`. 
+
+Par défaut, la page de fin dans LimeSurvey est très "discrete". 
+
+Afin de produire une - belle page - avec un bouton de redirection, il est recommandé de modifier le message de fin en cliquant sur l'icône `Source`, puis d'ajouter :
+
+```
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title></title>
+<style type="text/css">.container {
+            text-align: center;
+            margin-top: 50px;
+        }
+        .thank-you-message {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .redirect-link {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border: none;
+            border-radius: 4px;
+        }
+        .redirect-link:hover {
+            background-color: #45a049;
+          	color: white;
+        }
+</style>
+<div class="container">
+<div class="thank-you-message">Merci pour votre participation !</div>
+<a class="redirect-link" href="https://arthurdata.github.io/info-lille">Voir l'infographie</a></div>
+
+```
+
+![](../man/figures/limesuvey_edit_end_message.png){width=100%}
+**Attention**: La dernière ligne du code précédent contient l'url de redirection. 
+
+Il faudra modifier `href="https://arthurdata.github.io/info-lille"` par la nouvelle url : 
+
+```
+<a class="redirect-link" href="nouvelleurl">Voir l'infographie</a></div>
+```
+
+Cela permet de générer une belle page de fin : 
+
+![](../man/figures/limesurvey_end_message.png){width=100%}
+
+## Comment ajouter la position dans une URL ? 
+
+### Dans LimeSurvey
+
+Par défaut, l'information de la position n'existe pas dans une url LimeSurvey. 
+
+Pour celà, il faut modifier le fonctionnement du formulaire. 
+
+Dans l'onglet `Paramètre d'URL` sur LimeSurvey, cliquer sur `Ajouter un paramlètre d'URL`.
+
+![](../man/figures/limesurvey_add_params_urls.png){width=100%}
+
+Il faut ensuite créer le paramètre `position` :
+
+![](../man/figures/limesurvey_create_position.png){width=100%}
+
+### Dans Typeform
 
 Par défaut, l'information de la position n'existe pas dans une url Typeform. Pour celà, il faut modifier le fonctionnement du formulaire. 
 
