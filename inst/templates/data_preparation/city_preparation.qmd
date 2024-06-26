@@ -70,15 +70,24 @@ communes_l93 <- st_read(
 
 communes_l93 |>
   st_drop_geometry() |>
-  filter(grepl("XXXXXX", NOM))
+  filter(
+    grepl(
+      tolower("XXXXXX"), 
+      tolower(NOM)
+    )
+  )
 
 # Récupérer le polygone de votre commune
 #
 # city_l93 <- communes_l93 |>
 #   filter(NOM == "Lille")
+# ou aussi
+# city_l93 <- communes_l93 |>
+#   filter(ID == "COMMUNE_0000000009727244")
 
 city_l93 <- communes_l93 |>
   filter(NOM == "XXXXXX")
+# filter(ID == "XXXXXX")
 ```
 
 ### Stocker les shapefiles de la commune pour le réutiliser plus tard
