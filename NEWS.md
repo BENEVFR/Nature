@@ -1,3 +1,7 @@
+# nature 0.0.4
+
+* Add output asis in report template
+
 # nature 0.0.3
 
 * Create doc for Limesurvey

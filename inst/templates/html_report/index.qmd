@@ -101,6 +101,7 @@ Choisir l'indicateur à visualiser dans la carte :
 
 ```{r}
 #| layout-nrow: 1
+#| output: asis
 
 shiny::tags$div(
   id = "treeselect-container"
