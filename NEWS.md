@@ -1,3 +1,7 @@
+# nature 0.0.5
+
+* Use flatly as default theme in report
+
 # nature 0.0.4
 
 * Add output asis in report template
