@@ -6,7 +6,9 @@ format:
     toc: true
     toc-expand: 2
     toc-title: Naviguer dans le rapport
-    theme: minty
+    theme: 
+      - flatly
+      - custom.scss
     include-in-header:
       text: |
         <script src="https://cdn.jsdelivr.net/npm/treeselectjs@0.10.0/dist/treeselectjs.umd.js"></script>
@@ -123,7 +125,7 @@ div(
 )
 ```
 
-::: {.panel-tabset .nav-pills}
+::: {.panel-tabset .nav-tabs}
 
 <!-- Tous les titres de niveau 2 deviennent un nouvel onglet dans ce layout  -->
 
