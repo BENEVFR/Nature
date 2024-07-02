@@ -119,6 +119,33 @@ Il est possible d'ajouter à ce moment l'information de la position dans l'url :
 
 ![](../man/figures/typeform_3.png){width=100%}
 
+## Comment déployer une infographie à la fin du questionnaire
+
+Une fois le questionnaire répondu, le participant est invité à consulter une page d'infographie qui doit présenter des données globales.
+
+Un fichier "template" est disponible ici : `inst/templates/infographies`.
+
+Téléchargez le contenu du dossier : 
+
+```{r, eval=FALSE}
+browseURL(
+  system.file(
+    "templates", "infographie",
+    package = "nature"
+  )
+)
+```
+
+Une fois téléchargé, il faut modifier le contenu du fichier `index.qmd` avec le contenu souhaité. 
+
+Enfin, pour rendre disponible et consultable cette infographie : 
+
+1) `Render` le fichier `index.qmd` afin d'obtenir un fichier `index.html`
+
+2) Suivre les étapes de la vignette `Créer et versionner un dossier avec Github` jusqu'à la partie "Déployer avec Github"
+
+3) Utiliser l'url de Github comme redirection vers une infographie à l'issue de mon questionnaire Limesurvey (voir plus haut dans cette faq)
+
 ## Comment modifier le thème du rapport ? 
 
 Quarto permet de modifier le thème utilisé dans le rapport. 
@@ -133,7 +160,9 @@ format:
     toc: true
     toc-expand: 2
     toc-title: Naviguer dans le rapport
-    theme: minty
+    theme: 
+      - flatly
+      - custom.scss
 execute:
   echo: false
 params:
@@ -148,6 +177,8 @@ Le thème du rapport peut également être modifié à partir de `theme` et en s
 Plus d'informations sont dispo ici :
 
 https://quarto.org/docs/output-formats/html-themes.html
+
+Le thème par défaut Flatly est modifié par le fichier `custom.scss` qui permet de modifier la couleur du thème, etc...
 
 ## Comment intégrer les données issues du questionnaire d'une ville ? 
 

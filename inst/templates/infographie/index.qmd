@@ -1,0 +1,98 @@
+---
+title: ""
+format:
+  html:
+    self-contained: true
+    toc: false
+    theme: 
+      - flatly
+      - custom.scss
+execute:
+  echo: false
+---
+
+```{r}
+#| message: false
+#| warning: false
+library(dplyr)
+library(ggplot2)
+```
+
+
+# Merci de votre participation
+
+Lorem ipsum dolor sit amet. Eum enim corrupti et pariatur enim et commodi repellat ut beatae ducimus et exercitationem esse non alias sint est unde corrupti! Aut quas unde est vitae obcaecati ut porro quidem. Ea earum dolor in Quis laborum ut molestiae magni aut excepturi quod.
+
+## Découvrez les résultats en France
+
+Lorem ipsum dolor sit amet. Eum enim corrupti et pariatur enim et commodi repellat ut beatae ducimus et exercitationem esse non alias sint est unde corrupti! Aut quas unde est vitae obcaecati ut porro quidem. Ea earum dolor in Quis laborum ut molestiae magni aut excepturi quod.
+
+:::: {.columns}
+
+::: {.column width="70%"}
+```{r}
+#| message: false
+#| 
+starwars |> 
+  group_by(gender, height) |> 
+  count() |> 
+  tidyr::drop_na() |> 
+  ggplot() +
+    aes(x = height, y = n) +
+    geom_col() +
+    facet_grid(rows = vars(gender))
+```
+:::
+
+::: {.column width="10%"}
+
+:::
+
+::: {.column width="20%"}
+\ 
+
+\ 
+
+# 56% 
+
+Lorem ipsum dolor sit amet
+:::
+::::
+
+
+
+Lorem ipsum dolor sit amet. Eum enim corrupti et pariatur enim et commodi repellat ut beatae ducimus et exercitationem esse non alias sint est unde corrupti! Aut quas unde est vitae obcaecati ut porro quidem. Ea earum dolor in Quis laborum ut molestiae magni aut excepturi quod.
+
+:::: {.columns}
+
+::: {.column width="70%"}
+```{r}
+#| message: false
+#| 
+starwars |> 
+  group_by(gender, height) |> 
+  count() |> 
+  tidyr::drop_na() |> 
+  ggplot() +
+    aes(x = height, y = n) +
+    geom_col() +
+    facet_grid(rows = vars(gender))
+```
+:::
+
+::: {.column width="10%"}
+
+:::
+
+::: {.column width="20%"}
+\ 
+
+\ 
+
+# 48% 
+
+Lorem ipsum dolor sit amet
+:::
+::::
+
+

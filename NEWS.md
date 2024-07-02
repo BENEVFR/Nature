@@ -1,3 +1,7 @@
+# nature 0.0.7
+
+* Create a template file for after the survey
+
 # nature 0.0.6
 
 * Group hex to build zone 
