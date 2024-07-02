@@ -140,6 +140,10 @@ dataset_souspop2 <- data.frame(
 
 #### Calcul des indicateurs pour une zone
 
+Modifier le code en fonction des quartiers utilisés. 
+
+Les identifiants des zones permettent de réaliser plus tard une jointure pour récupérer les données.
+
 ```{r}
 dataset_grouped <- dataset |> 
   mutate(
@@ -152,9 +156,16 @@ dataset_grouped <- dataset |>
   ) |> 
   group_by(zone) |> 
   summarise(
-    critere_bien_etre_global = mean(critere_bien_etre_global)
+    # sur une colonne
+    # critere_bien_etre_global = mean(critere_bien_etre_global)
+    # Sur toutes les colonnes qui commencent par "critere"
+    across(
+      starts_with("critere"),
+      ~ round(mean(.x , na.rm = TRUE), 2)
+    )
   )
 ```
+
 ### Création des couleurs dans les zones
 
 Exécutez le code suivant : 
