@@ -1,3 +1,7 @@
+# nature 0.0.6
+
+* Group hex to build zone 
+
 # nature 0.0.5
 
 * Use flatly as default theme in report
