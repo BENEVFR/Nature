@@ -1,0 +1,191 @@
+---
+title: "Etape 3 : Préparation des données"
+format: html
+---
+
+```{r}
+library(sf)
+library(dplyr)
+library(leaflet)
+```
+
+Il s'agit de la deuxième partie de la deuxieme étape dans la préparation des données. 
+
+Vérifiez d'avoir bien exécuter les consignes de la première étape. 
+
+Les fichiers de l'étape 2 doivent exister. 
+
+```{r}
+stopifnot(
+  file.exists("city_hex_l93.gpkg")
+)
+
+stopifnot(
+  file.exists("city_hex_wgs84.gpkg")
+)
+```
+
+## Préparation des "zones" / "quartiers" 
+
+Dans cette partie, nous allons créer des zones regroupées. 
+
+```{r}
+city_wgs84 <- st_read(
+  "city_wgs84.gpkg",
+  quiet = TRUE
+)
+
+city_hex_l93 <- st_read(
+  "city_hex_l93.gpkg",
+  quiet = TRUE
+)
+
+city_hex_wgs84 <- st_read(
+  "city_hex_wgs84.gpkg",
+  quiet = TRUE
+)
+```
+
+Préparons les données pour la suite :
+
+```{r}
+#| message: false
+#| warning: false
+
+city_hex_l93_intersection <- st_intersection(
+  city_hex_wgs84,
+  city_wgs84
+)
+```
+
+A partir de cette carte simplifiée, repérez les identifiants des zones à regrouper :
+
+```{r}
+city_hex_centroid_wgs84 <- city_hex_wgs84 |> 
+  st_centroid()
+
+leaflet() |>
+  addProviderTiles(
+    providers$CartoDB.Positron
+  ) |>
+  addPolygons(
+    data = city_wgs84,
+    color = "red",
+    fillColor = "red",
+    weight = 3
+  ) |>
+  addPolygons(
+    data = city_hex_wgs84,
+    color = "#000",
+    fillColor = "transparent",
+    weight = 2.3
+  ) |> 
+  addLabelOnlyMarkers(
+    data = city_hex_centroid_wgs84, 
+    label = ~as.character(id),
+    labelOptions = labelOptions(
+      noHide = TRUE, 
+      direction = 'auto',
+      textOnly = TRUE, 
+      textsize = "12px"
+    )
+  )
+```
+
+### Découper la commune en zones régulières
+
+Nous allons construire les zones à regrouper: 
+
+```{r}
+quartier1_ids <- c(70, 79, 95, 102, 110, 94, 78, 86, 63)
+quartier2_ids <- c(74, 90, 97, 106:107, 122, 113:114, 98, 82, 91, 66, 75)
+quartier3_ids <- c(138:140, 146:147, 154:155)
+
+quartier_ids <- list(quartier1_ids, quartier2_ids, quartier3_ids)
+
+saveRDS(
+  quartier_ids,
+  file = "quartiers.rds"
+)
+```
+
+```{r}
+merge_hex <- function(ids, data) {
+  selected_hex <- data  |> 
+    filter(id %in% ids)
+  
+  merged_hex <- st_union(selected_hex)
+  
+  return(st_sf(id = min(ids), geom = merged_hex))
+}
+```
+
+
+```{r}
+merged_hex <- purrr::map_df(
+  quartier_ids, 
+  ~ merge_hex(
+    ids = .x,
+    data = city_hex_l93_intersection
+  )
+)
+```
+
+
+```{r}
+city_grouped_hex_with_quartiers <- city_hex_l93_intersection  |> 
+  filter(
+    !id %in% unlist(quartier_ids)
+  ) |> 
+  bind_rows(merged_hex)
+```
+
+### Sauvegardons les données regroupées
+
+```{r}
+st_write(
+  city_grouped_hex_with_quartiers |> 
+    select(-ID, -NOM, -NOM_M, -STATUT, -POPULATION, -starts_with("INSEE"), -SIREN_EPCI), 
+  dsn = "city_grouped_hex_wgs84.gpkg", 
+  append = FALSE
+)
+```
+
+### Afficher avec leaflet
+
+```{r}
+leaflet() |>
+  addProviderTiles(
+    providers$CartoDB.Positron
+  ) |>
+  addPolygons(
+    data = city_wgs84,
+    color = "#000",
+    fillColor = "transparent",
+    weight = 2.3
+  ) |>
+  addPolygons(
+    data = city_grouped_hex_with_quartiers,
+    color = "#000",
+    fillColor = "transparent",
+    weight = 2.3,
+    popup = ~ glue::glue(
+      "Vous avez cliqué sur la zone: <b>{id}</b>"
+    ),
+    popupOptions = popupOptions(
+      closeButton = FALSE,
+      closeOnClick = TRUE
+    )
+  )
+```
+
+La suite: 
+
+Retourner sur la vignette pour la suite des préparations.
+
+```{r}
+rstudioapi::navigateToFile(
+  file = here::here("vignettes", "create_new_report.Rmd"),
+  line = 88
+)
+```
