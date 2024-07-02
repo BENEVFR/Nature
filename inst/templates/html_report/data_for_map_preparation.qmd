@@ -46,6 +46,15 @@ city_hex_wgs84 <- st_read(
   "../city_hex_wgs84.gpkg",
   quiet = TRUE
 )
+
+city_grouped_l93 <- st_read(
+  "../city_grouped_hex_wgs84.gpkg",
+  quiet = TRUE
+)
+
+if (file.exists("../quartiers.rds")) {
+  quartier_ids <- readRDS("../quartiers.rds")
+}
 ```
 
 On dessine les zones :
@@ -129,6 +138,34 @@ dataset_souspop2 <- data.frame(
 )
 ```
 
+##### Calcul des indicateurs pour une zone
+
+Modifier le code en fonction des quartiers utilisés précédemment. 
+
+Les identifiants des zones permettent de réaliser plus tard une jointure pour récupérer les données.
+
+```{r}
+dataset_grouped <- dataset |> 
+  mutate(
+    zone = case_when(
+      id %in% quartier_ids[[1]] ~ min(quartier_ids[[1]]),
+      id %in% quartier_ids[[2]] ~ min(quartier_ids[[2]]),
+      id %in% quartier_ids[[3]] ~ min(quartier_ids[[3]]),
+      TRUE ~ id
+    )
+  ) |> 
+  group_by(zone) |> 
+  summarise(
+    # sur une colonne
+    # critere_bien_etre_global = mean(critere_bien_etre_global)
+    # Sur toutes les colonnes qui commencent par "critere"
+    across(
+      starts_with("critere"),
+      ~ round(mean(.x , na.rm = TRUE), 2)
+    )
+  )
+```
+
 ### Création des couleurs dans les zones
 
 Exécutez le code suivant : 
@@ -174,6 +211,51 @@ city_hex_l93_intersection_dataset_souspop2 <- city_hex_l93_intersection |>
       starts_with("critere"),
       ~ my_palette(.x),
       .names = "{.col}_color"
+    )
+  )
+```
+
+Nous réalisons la même opération pour les zones groupées :
+
+```{r}
+city_hex_l93_intersection_dataset_souspop2 <- city_grouped_hex_with_quartiers |> 
+  left_join(
+    dataset_grouped, 
+    by = c("id" = "zone")
+  ) |> 
+  mutate(
+    across(
+      starts_with("critere"),
+      ~ my_palette(.x),
+      .names = "{.col}_color"
+    )
+  )
+```
+
+##### Vérification à l'aide d'une carte
+
+```{r}
+leaflet() |>
+  addProviderTiles(
+    providers$CartoDB.Positron
+  ) |>
+  addPolygons(
+    data = city_wgs84,
+    color = "#000",
+    fillColor = "transparent",
+    weight = 2.3
+  ) |>
+  addPolygons(
+    data = city_hex_l93_intersection_dataset_souspop2, # modifiez avec les données à utiliser
+    color = "#000",
+    fillColor = ~ critere_bien_etre_global_color,
+    weight = 2.3,
+    popup = ~ glue::glue(
+      "Vous avez cliqué sur la zone: <b>{id}</b>: {critere_bien_etre_global}"
+    ),
+    popupOptions = popupOptions(
+      closeButton = FALSE,
+      closeOnClick = TRUE
     )
   )
 ```
@@ -236,6 +318,7 @@ list_of_dataset <- list(
   geodata_dataset = city_hex_l93_intersection_dataset,
   geodata_dataset_souspop = city_hex_l93_intersection_dataset_souspop,
   geodata_dataset_souspop2 = city_hex_l93_intersection_dataset_souspop2
+  # utiliser les données groupées si nécessaire
 ) 
 ```
 

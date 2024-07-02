@@ -125,7 +125,16 @@ leaflet() |>
 
 Vous venez de terminer les différentes étapes de préparation des données.
 
-Vous pouvez retourner sur la vignette pour la suite des préparations. 
+Vous pouvez regrouper des hex :
+
+```{r}
+rstudioapi::navigateToFile(
+  file = "city_hex_group_preparation.qmd",
+  line = 1
+)
+```
+
+ou vous pouvez également retourner sur la vignette pour la suite des préparations. 
 
 ```{r}
 rstudioapi::navigateToFile(
