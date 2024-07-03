@@ -7,6 +7,7 @@ format: html
 library(sf)
 library(dplyr)
 library(purrr)
+library(leaflet)
 ```
 
 Dans ce fichier, nous allons préparer les données à afficher sur les cartes du rapport.
@@ -138,27 +139,32 @@ dataset_souspop2 <- data.frame(
 )
 ```
 
-#### Calcul des indicateurs pour une zone
+#### Calcul des indicateurs pour une zone regroupée
 
-Modifier le code en fonction des quartiers utilisés. 
+Les zones regroupées ne possèdent pas de données agrégées. Il faut alors les calculer. 
 
-Les identifiants des zones permettent de réaliser plus tard une jointure pour récupérer les données.
+Le code suivant agrège les données selon les zones regroupées :
 
 ```{r}
-dataset_grouped <- dataset |> 
-  mutate(
-    zone = case_when(
-      id %in% quartier_ids[[1]] ~ min(quartier_ids[[1]]),
-      id %in% quartier_ids[[2]] ~ min(quartier_ids[[2]]),
-      id %in% quartier_ids[[3]] ~ min(quartier_ids[[3]]),
-      TRUE ~ id
+quartier_df <- quartier_ids %>%
+  map(
+    .f = ~ data.frame(
+      id = .x, 
+      zone = min(.x)
     )
+  ) %>%
+  bind_rows()
+
+dataset_grouped <- dataset |> 
+  left_join(
+    quartier_df,
+    by = "id"
+  ) |> 
+  mutate(
+    zone = coalesce(zone, id)
   ) |> 
   group_by(zone) |> 
   summarise(
-    # sur une colonne
-    # critere_bien_etre_global = mean(critere_bien_etre_global)
-    # Sur toutes les colonnes qui commencent par "critere"
     across(
       starts_with("critere"),
       ~ round(mean(.x , na.rm = TRUE), 2)

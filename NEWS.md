@@ -1,3 +1,7 @@
+# nature 0.0.8
+
+* Use typograhie in report + info
+
 # nature 0.0.7
 
 * Create a template file for after the survey
