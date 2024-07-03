@@ -1,4 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
 /*-- scss:defaults --*/
+
+$mulish: "Mulish", sans-serif;
+$montserrat: "Montserrat", sans-serif;
 
 //
 // Color system
@@ -45,10 +52,13 @@ $link-color:                $success !default;
 // Fonts
 
 // stylelint-disable-next-line value-keyword-case
-$font-family-sans-serif:      Lato, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol" !default;
-$h1-font-size:                3rem !default;
-$h2-font-size:                2.5rem !default;
-$h3-font-size:                2rem !default;
+$font-family-sans-serif:      $montserrat !default;
+$h1-font-size:                40px !default;
+$h2-font-size:                32px !default;
+$h3-font-size:                28px !default;
+$h4-font-size:                24px !default;
+$h5-font-size:                20px !default;
+$h6-font-size:                20px !default;
 
 // Tables
 
@@ -119,4 +129,5 @@ $btn-close-hover-opacity:    1 !default;
 /*-- scss:rules --*/
 h1, h2, h3, h4, h5, h6 {
   color: $success;
+  font-family: $mulish;
 }
