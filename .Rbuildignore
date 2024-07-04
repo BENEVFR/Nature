@@ -5,3 +5,8 @@
 ^\.gitlab-ci\.yml$
 ^ci/lib$
 ^README\.Rmd$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^\.github$
+^codecov\.yml$
