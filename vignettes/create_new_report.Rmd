@@ -245,7 +245,7 @@ const longitude = 2.46667;  /*Remplacez ici la longitude de la ville*/
 
 Avant d'importer et de calculer les données pour les hexagones, il est possible de regrouper des "quartiers". Pour cela, il faut suivre les étapes de ce fichier :
 
-```{r}
+```{r, eval=FALSE}
 rstudioapi::navigateToFile(
   file = file.path(
     "..", "dev", tolower(le_nom_de_la_ville), "city_hex_group_preparation.qmd"
