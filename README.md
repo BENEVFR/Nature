@@ -3,6 +3,8 @@
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/BENEVFR/nature/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/BENEVFR/nature/actions/workflows/R-CMD-check.yaml)
+[![Codecov test
+coverage](https://codecov.io/gh/BENEVFR/nature/branch/main/graph/badge.svg)](https://app.codecov.io/gh/BENEVFR/nature?branch=main)
 <!-- badges: end -->
 
 # nature
@@ -23,11 +25,7 @@ destination des maires des futures villes enquétées.
 
 ## pkgdown :
 
-<https://presta-upec-nature-typeform-thinkr-missions-c6ab7ae0d946c313971.pages.thinkr.fr>
-
-## coverage :
-
-<https://presta-upec-nature-typeform-thinkr-missions-c6ab7ae0d946c313971.pages.thinkr.fr/coverage.html>
+TODO
 
 ## Fonctionnement général du projet
 
