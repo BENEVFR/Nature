@@ -243,6 +243,17 @@ const latitude = 48.783329; /*Remplacez ici la latitude de la ville*/
 const longitude = 2.46667;  /*Remplacez ici la longitude de la ville*/
 ```
 
+Avant d'importer et de calculer les données pour les hexagones, il est possible de regrouper des "quartiers". Pour cela, il faut suivre les étapes de ce fichier :
+
+```{r}
+rstudioapi::navigateToFile(
+  file = file.path(
+    "..", "dev", tolower(le_nom_de_la_ville), "city_hex_group_preparation.qmd"
+  ),
+  line = 1
+)
+```
+
 Il y a deux nouveaux fichiers à générer pour le rapport : 
 
 - le fichier `geodata_city.js` qui contiendra les contours de la ville,

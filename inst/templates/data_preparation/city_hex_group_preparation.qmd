@@ -186,6 +186,6 @@ Retourner sur la vignette pour la suite des préparations.
 ```{r}
 rstudioapi::navigateToFile(
   file = here::here("vignettes", "create_new_report.Rmd"),
-  line = 88
+  line = 266
 )
 ```
