@@ -7,6 +7,7 @@ Authors@R: c(
   )
 Description: POC package for analyze data from survey.
 License: file LICENSE
+URL: https://benevfr.github.io/nature/
 Depends: 
     R (>= 2.10)
 Imports: 
@@ -20,4 +21,3 @@ Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.1
-URL: https://benevfr.github.io/nature/
