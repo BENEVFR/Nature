@@ -1,3 +1,7 @@
+# nature 0.0.9
+
+* Group hex after the collect
+
 # nature 0.0.8
 
 * Use typograhie in report + info

@@ -97,11 +97,15 @@ leaflet() |>
 Nous allons construire les zones à regrouper: 
 
 ```{r}
-quartier1_ids <- c(70, 79, 95, 102, 110, 94, 78, 86, 63)
-quartier2_ids <- c(74, 90, 97, 106:107, 122, 113:114, 98, 82, 91, 66, 75)
-quartier3_ids <- c(138:140, 146:147, 154:155)
+quartier1_ids <- c(7, 18, 29, 23, 17, 6, 1, 12)
+quartier2_ids <- c(30, 41, 36, 35)
+quartier3_ids <- c(75, 86, 80, 69)
 
-quartier_ids <- list(quartier1_ids, quartier2_ids, quartier3_ids)
+quartier_ids <- list(
+  quartier1_ids, 
+  quartier2_ids, 
+  quartier3_ids
+)
 
 saveRDS(
   quartier_ids,
@@ -120,7 +124,6 @@ merge_hex <- function(ids, data) {
 }
 ```
 
-
 ```{r}
 merged_hex <- purrr::map_df(
   quartier_ids, 
@@ -130,7 +133,6 @@ merged_hex <- purrr::map_df(
   )
 )
 ```
-
 
 ```{r}
 city_grouped_hex_with_quartiers <- city_hex_l93_intersection  |> 

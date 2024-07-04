@@ -1,6 +1,6 @@
 Package: nature
 Title: Exploratory Package For Analyse Data
-Version: 0.0.8
+Version: 0.0.9
 Authors@R: c(
     person("Vincent", "Guyader", , "vincent@thinkr.fr", role = c("aut", "cre")),
     person("Arthur", "Bréant", , "arthur@thinkr.fr", role = "aut")
