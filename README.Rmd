@@ -13,6 +13,10 @@ knitr::opts_chunk$set(
 )
 ```
 
+<!-- badges: start -->
+  [![R-CMD-check](https://github.com/BENEVFR/nature/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/BENEVFR/nature/actions/workflows/R-CMD-check.yaml)
+  <!-- badges: end -->
+
 # nature
 
 
