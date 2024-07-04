@@ -20,7 +20,6 @@ knitr::opts_chunk$set(
 
 # nature
 
-
 L’université de Paris-Est Créteil (UPEC) a mené une enquête sur la perception du bien-être des citoyens dans leur ville, notamment en ce qui concerne la végétalisation. Elle souhaite reproduire cette enquête à une échelle plus large afin que les agglomérations puissent prendre des décisions en conséquence. Le questionnaire existe et a déjà été approuvé. Il est prêt à être déployé.
 
 Ce package contient les données brutes d'une enquête déjà réalisée auprès de 2000 personnes, ainsi que les premieres explorations en termes de recherche sur les visualisations qui pourront etre mis en place à destination des maires des futures villes enquétées.
@@ -29,7 +28,7 @@ Ce package contient les données brutes d'une enquête déjà réalisée auprès
 
 ## pkgdown :
 
-TODO
+[https://benevfr.github.io/nature/](https://benevfr.github.io/nature/)
 
 ## Fonctionnement général du projet
 

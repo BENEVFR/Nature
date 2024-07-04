@@ -25,7 +25,7 @@ destination des maires des futures villes enquétées.
 
 ## pkgdown :
 
-TODO
+<https://benevfr.github.io/nature/>
 
 ## Fonctionnement général du projet
 
