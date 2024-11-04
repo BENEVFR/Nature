@@ -2,8 +2,11 @@ document.addEventListener("DOMContentLoaded", function(event) {
   Swal.fire({
     title: "Bienvenue sur l'enquête Bien-Être",
     html: `
-      En répondant à ce questionnaire, vos <b>données sont collectées et conservées anonymement</b> à des fins de recherche et de consultation. <br><br>
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris fermentum egestas sapien, eget commodo leo finibus vel. Curabitur nibh turpis, suscipit quis vestibulum vitae, suscipit vel ex. Proin consectetur finibus felis id semper. Curabitur rhoncus maximus magna in dictum. Donec in erat nec tellus varius tristique eget eu augue. Etiam commodo, est eu porta ornare, justo urna luctus massa, a ornare nunc enim in augue. Nulla id sollicitudin ante, in malesuada ex. Nulla tortor urna, sagittis quis pellentesque et, cursus non tellus.
+Mesdames, Messieurs, <br>La végétalisation et la préservation de la nature sont un axe prioritaire du développement de la ville. Afin d’évaluer les résultats des actions menées et prioriser les actions futures, nous vous remercions de bien vouloir répondre à cette enquête portant sur votre bien-être et votre perception de la nature à proximité de votre domicile. Cette enquête est réalisée avec l’aide de deux chercheuses et est entièrement anonyme.
+
+Vous remerciant pour votre contribution,<br>
+Bien cordialement,<br>
+Votre maire
     `,
     showDenyButton: true,
     confirmButtonText: "J'ai compris",
