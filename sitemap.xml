@@ -1,48 +1,22 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://benevfr.github.io/nature/404.html</loc>
-  </url>
-  <url>
-    <loc>https://benevfr.github.io/nature/LICENSE-text.html</loc>
-  </url>
-  <url>
-    <loc>https://benevfr.github.io/nature/articles/create_new_report.html</loc>
-  </url>
-  <url>
-    <loc>https://benevfr.github.io/nature/articles/create_new_versioning_folder.html</loc>
-  </url>
-  <url>
-    <loc>https://benevfr.github.io/nature/articles/exploration.html</loc>
-  </url>
-  <url>
-    <loc>https://benevfr.github.io/nature/articles/faq.html</loc>
-  </url>
-  <url>
-    <loc>https://benevfr.github.io/nature/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>https://benevfr.github.io/nature/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://benevfr.github.io/nature/index.html</loc>
-  </url>
-  <url>
-    <loc>https://benevfr.github.io/nature/news/index.html</loc>
-  </url>
-  <url>
-    <loc>https://benevfr.github.io/nature/reference/calculate_indicators.html</loc>
-  </url>
-  <url>
-    <loc>https://benevfr.github.io/nature/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://benevfr.github.io/nature/reference/survey_answers.html</loc>
-  </url>
-  <url>
-    <loc>https://benevfr.github.io/nature/reference/survey_crossref.html</loc>
-  </url>
-  <url>
-    <loc>https://benevfr.github.io/nature/reference/survey_questions.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://benevfr.github.io/nature/404.html</loc></url>
+<url><loc>https://benevfr.github.io/nature/LICENSE-text.html</loc></url>
+<url><loc>https://benevfr.github.io/nature/articles/create_new_report.html</loc></url>
+<url><loc>https://benevfr.github.io/nature/articles/create_new_versioning_folder.html</loc></url>
+<url><loc>https://benevfr.github.io/nature/articles/exploration.html</loc></url>
+<url><loc>https://benevfr.github.io/nature/articles/faq.html</loc></url>
+<url><loc>https://benevfr.github.io/nature/articles/index.html</loc></url>
+<url><loc>https://benevfr.github.io/nature/authors.html</loc></url>
+<url><loc>https://benevfr.github.io/nature/index.html</loc></url>
+<url><loc>https://benevfr.github.io/nature/news/index.html</loc></url>
+<url><loc>https://benevfr.github.io/nature/reference/calculate_indicators.html</loc></url>
+<url><loc>https://benevfr.github.io/nature/reference/create_palette_benev.html</loc></url>
+<url><loc>https://benevfr.github.io/nature/reference/index.html</loc></url>
+<url><loc>https://benevfr.github.io/nature/reference/scale_color_benev.html</loc></url>
+<url><loc>https://benevfr.github.io/nature/reference/scale_fill_benev.html</loc></url>
+<url><loc>https://benevfr.github.io/nature/reference/survey_answers.html</loc></url>
+<url><loc>https://benevfr.github.io/nature/reference/survey_crossref.html</loc></url>
+<url><loc>https://benevfr.github.io/nature/reference/survey_questions.html</loc></url>
+<url><loc>https://benevfr.github.io/nature/reference/theme_benev.html</loc></url>
 </urlset>
+
