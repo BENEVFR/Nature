@@ -1,12 +1,10 @@
 #' survey_answers
 #'
-#' All answers from the survey
+#' Description.
 #'
-#' @format A data frame with 2532 rows and 101 variables:
+#' @format A data frame with 4000 rows and 110 variables:
 #' \describe{
-#'   \item{ Identifiant Répondant }{  numeric }
-#'   \item{ Type échantillon }{  character }
-#'   \item{ Q1 }{  numeric }
+#'   \item{ Localisation }{  numeric }
 #'   \item{ BE1PH }{  numeric }
 #'   \item{ BE2PH }{  numeric }
 #'   \item{ BE3PS }{  numeric }
@@ -55,13 +53,18 @@
 #'   \item{ CN18 }{  numeric }
 #'   \item{ CN19 }{  numeric }
 #'   \item{ CNDIST }{  numeric }
+#'   \item{ BIO1 }{  numeric }
+#'   \item{ BIO2 }{  numeric }
+#'   \item{ BIO3 }{  numeric }
+#'   \item{ BIO4 }{  numeric }
+#'   \item{ BIO5 }{  numeric }
+#'   \item{ BIO6 }{  numeric }
+#'   \item{ BIO7 }{  numeric }
 #'   \item{ EXP1 }{  numeric }
 #'   \item{ EXP2 }{  numeric }
 #'   \item{ EXP3 }{  numeric }
 #'   \item{ EXP4 }{  numeric }
 #'   \item{ EXP5 }{  numeric }
-#'   \item{ EXP6 }{  numeric }
-#'   \item{ EXP7 }{  numeric }
 #'   \item{ ACT1 }{  numeric }
 #'   \item{ ACT2 }{  numeric }
 #'   \item{ ACT3 }{  numeric }
@@ -81,30 +84,36 @@
 #'   \item{ CP8 }{  numeric }
 #'   \item{ CP9 }{  numeric }
 #'   \item{ CP10 }{  numeric }
-#'   \item{ CSP }{  numeric }
-#'   \item{ TPS-TVAIL }{  numeric }
-#'   \item{ TPS-TJT }{  numeric }
-#'   \item{ NIV-ET }{  numeric }
-#'   \item{ REVENU }{  numeric }
-#'   \item{ Sit-FAM }{  numeric }
-#'   \item{ ENFANTS }{  numeric }
-#'   \item{ FOYER }{  numeric }
-#'   \item{ SURFACE }{  numeric }
-#'   \item{ TYP-HAB }{  numeric }
-#'   \item{ TYP-HAB-Autre }{  character }
-#'   \item{ PBLM-SANT }{  character }
-#'   \item{ PBLM-SANT-Autre }{  character }
-#'   \item{ TABAC }{  numeric }
-#'   \item{ ALCOOL }{  numeric }
-#'   \item{ DROGUES }{  numeric }
-#'   \item{ SEDENT }{  numeric }
-#'   \item{ Q31_CSP }{  numeric }
-#'   \item{ Q32 }{  character }
-#'   \item{ Sexe }{  numeric }
-#'   \item{ Année de Naissance }{  numeric }
-#'   \item{ Age }{  numeric }
-#'   \item{ Code Postal }{  numeric }
-#'   \item{ UDA5 - Segmentation géographique }{  numeric }
+#'   \item{ SEXE }{  character }
+#'   \item{ AGE }{  character }
+#'   \item{ SITPRO }{  character }
+#'   \item{ NIVETUDE }{  character }
+#'   \item{ REVENUFOYER }{  character }
+#'   \item{ SITCIVILE }{  character }
+#'   \item{ NBENFANT }{  character }
+#'   \item{ NBPERSFOYER }{  character }
+#'   \item{ TYPEHABITAT }{  character }
+#'   \item{ CARDIA }{  character }
+#'   \item{ HYPERT }{  character }
+#'   \item{ ARTHR }{  character }
+#'   \item{ CANC }{  character }
+#'   \item{ BRONC }{  character }
+#'   \item{ DIAB }{  character }
+#'   \item{ CATAR }{  character }
+#'   \item{ AVC }{  character }
+#'   \item{ FRACT }{  character }
+#'   \item{ NERV }{  character }
+#'   \item{ PIED }{  character }
+#'   \item{ HEMO }{  character }
+#'   \item{ PARK }{  character }
+#'   \item{ DEP }{  character }
+#'   \item{ AUCUN }{  character }
+#'   \item{ other }{  character }
+#'   \item{ TABA }{  character }
+#'   \item{ ALCOO }{  character }
+#'   \item{ SUBST }{  character }
+#'   \item{ SEDENT }{  character }
+#'   \item{ COMMENTAIRE }{  logical }
 #' }
 #' @source Source
 "survey_answers"
