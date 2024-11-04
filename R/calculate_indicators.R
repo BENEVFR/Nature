@@ -2,14 +2,14 @@
 #'
 #' @param data answers from survey
 #'
-#' @importFrom dplyr group_by summarise rename
+#' @importFrom dplyr group_by summarise mutate row_number
 #'
 #' @return a tibble
 #' @export
 calculate_indicators <- function(data) {
   res_data <- data |>
-    rename(
-      identifiant_repondant = "Identifiant R\u00e9pondant"
+    mutate(
+      identifiant_repondant = row_number()
     ) |>
     group_by(identifiant_repondant) |>
     summarise(
@@ -62,10 +62,10 @@ calculate_indicators <- function(data) {
       ),
       critere_caract_percues_global = mean(
         CP1, CP2, CP3, CP4, CP5, CP6, CP7, CP8, CP9, CP10
-      )#,
-      # critere_biodiv_global = mean(
-      #   BIO1, BIO2, BIO3, BIO4, BIO5, BIO6, BIO7
-      # )
+      ),
+       critere_biodiv_global = mean(
+         BIO1, BIO2, BIO3, BIO4, BIO5, BIO6, BIO7
+       )
     )
   return(res_data)
 }
