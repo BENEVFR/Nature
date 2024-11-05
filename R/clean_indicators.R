@@ -13,7 +13,10 @@ clean_indicators <- function(data) {
     SITCIVILE = factor(SITCIVILE, levels = c("CELIB","DIVO","VEUF","SEPA","MARI"),
                        labels = c("Célibataire","Divorcé.e","Veuf.ve","Séparé.e","Marié.e")),
     TYPEHABITAT = factor(TYPEHABITAT, levels= c("APPAR", "APBAL", "MAISO","MAIJA"),
-                         labels= c("Appartement sans jardin ni balcon", "Appartement avec balcon ou jardin", "Maison de ville","Maison individuelle avec jardin"))
+                         labels= c("Appartement sans jardin ni balcon", "Appartement avec balcon ou jardin", "Maison de ville","Maison individuelle avec jardin")),
+    NBPERSFOYER = factor(NBPERSFOYER, levels= c("1","2", "3", "4","5 et plus" )),
+    NBENFANT = factor(NBENFANT, levels = c("0", "1", "2", "3","4 et plus" ))
     )
  }
+
 
