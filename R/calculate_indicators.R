@@ -2,7 +2,7 @@
 #'
 #' @param data answers from survey
 #'
-#' @importFrom dplyr group_by ungroup mutate row_number
+#' @importFrom dplyr group_by ungroup mutate row_number rowwise select
 #'
 #' @return a tibble
 #' @export
@@ -11,7 +11,7 @@ calculate_indicators <- function(data) {
     mutate(
       identifiant_repondant = row_number()
     ) |>
-    group_by(identifiant_repondant) |>
+    rowwise() |>
     mutate(
       critere_bien_etre_global = mean(
         BE3PS, BE4SP, BE10PH, BE15PH,
@@ -67,6 +67,21 @@ calculate_indicators <- function(data) {
          BIO1, BIO2, BIO3, BIO4, BIO5, BIO6, BIO7
        )
     ) |>
-    ungroup()
+    ungroup() |>
+    select(
+      identifiant_repondant,
+      Localisation,
+      AGE,
+      SEXE,
+      TYPEHABITAT,
+      REVENUFOYER,
+      SITPRO,
+      NIVETUDE,
+      SITCIVILE,
+      NBPERSFOYER,
+      NBENFANT,
+      AUCUN,
+      starts_with("critere")
+    )
   return(res_data)
 }
