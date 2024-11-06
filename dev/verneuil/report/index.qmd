@@ -25,7 +25,7 @@ execute:
   echo: false
 ---
 
-![](https://www.heraldry-wiki.com/heraldrywiki/images/thumb/2/21/Verneuilseine.jpg/350px-Verneuilseine.jpg){width=100 fig-align="center"}
+![](https://www.heraldry-wiki.com/heraldrywiki/images/thumb/2/21/Verneuilseine.jpg/350px-Verneuilseine.jpg){width="100" fig-align="center"}
 
 # Bien-être et végétalisation
 
@@ -37,28 +37,126 @@ library(dplyr)
 library(shiny)
 library(ggplot2)
 library(DT)
+library(ggtext)
+library(showtext)
+library(psych)
+library(papaja)
+library(gtsummary)
+library(NCA)
 pkgload::load_all()
+font_add_google("Mulish")
+font_add_google("Montserrat")
+showtext_auto()
 ```
 
 ```{r}
 dataset <- readxl::read_excel("verneuil_data.xlsx") |>
-  # clean_indicators() |>
+  calculate_indicators() |> 
+  clean_indicators() 
+ 
+## Recuperer fichier national pour comparaison
+datanat <- donnees_nat |>
  calculate_indicators()
+
+# datanat <- datanat %>%
+#   mutate(across(where(is.character), as.factor))
 ```
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris fermentum egestas sapien, eget commodo leo finibus vel. Curabitur nibh turpis, suscipit quis vestibulum vitae, suscipit vel ex. Proin consectetur finibus felis id semper. Curabitur rhoncus maximus magna in dictum. Donec in erat nec tellus varius tristique eget eu augue. Etiam commodo, est eu porta ornare, justo urna luctus massa, a ornare nunc enim in augue. Nulla id sollicitudin ante, in malesuada ex. Nulla tortor urna, sagittis quis pellentesque et, cursus non tellus.
+**/!\ CECI EST UN _EXEMPLE_ UTILISANT DES DONNEES FICTIVES**
 
 ## Présentation et analyse
 
 ### Introduction
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris fermentum egestas sapien, eget commodo leo finibus vel. Curabitur nibh turpis, suscipit quis vestibulum vitae, suscipit vel ex. Proin consectetur finibus felis id semper. Curabitur rhoncus maximus magna in dictum. Donec in erat nec tellus varius tristique eget eu augue. Etiam commodo, est eu porta ornare, justo urna luctus massa, a ornare nunc enim in augue. Nulla id sollicitudin ante, in malesuada ex. Nulla tortor urna, sagittis quis pellentesque et, cursus non tellus.
+Le projet BENEV vise à identifier les zones prioritaires de revégétalisation dans la ville de Verneuil-sur-Seine. Pour se faire, nous étudions la perception de nature et son incidence sur le bien-être des résidents en ville. Ce rapport présente les analyses effectuées à partir des données collectées auprès des habitants de Verneuil-sur-Seine.
 
 ### Analyse du profil des répondants
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris fermentum egestas sapien, eget commodo leo finibus vel. Curabitur nibh turpis, suscipit quis vestibulum vitae, suscipit vel ex. Proin consectetur finibus felis id semper. Curabitur rhoncus maximus magna in dictum. Donec in erat nec tellus varius tristique eget eu augue. Etiam commodo, est eu porta ornare, justo urna luctus massa, a ornare nunc enim in augue. Nulla id sollicitudin ante, in malesuada ex. Nulla tortor urna, sagittis quis pellentesque et, cursus non tellus.
+`r nrow(dataset)` citoyens résidant en ville ont complétés le questionnaire entre le 1er octobre et le 20 décembre 2024. Voici leurs statistiques descriptives.
 
 ```{r}
+# purrr::map(
+#   .x = list("## Age des répondants", "Sexe des répondants", "Socio"),
+#   .f = ~ cat(.x)
+# )
+```
+
+
+#### Sexe des répondants 
+
+```{r}
+dataset |> 
+  group_by(SEXE) |> 
+  summarise(
+    `Fréquence` = n(),
+    `Pourcentage` = round((n() / nrow(dataset))*100, 2)
+  ) |> 
+  DT::datatable()
+```
+
+###### Age des répondants 
+
+```{r}
+dataset |> 
+  group_by(AGE) |> 
+  summarise(
+    `Fréquence` = n(),
+    `Pourcentage` = round((n() / nrow(dataset))*100, 2)
+  ) |> 
+  DT::datatable()
+```
+
+
+
+```{r}
+# Fonction pour calculer fréquences et pourcentages pour une variable. A DEPLACER DANS FICHIER.R
+summarize_factor <- function(data, var) {
+  data %>%
+    count(!!sym(var)) %>%
+    mutate(
+      Frequency = n,
+      Percentage = round((n / sum(n)) * 100, 2),
+      Variable = var
+    ) %>%
+    rename(Category = !!sym(var)) %>%
+    select(Variable, Category, Frequency, Percentage)
+}
+
+# Liste des variables à analyser
+factor_vars <- c("AGE","SEXE","NIVETUDE","SITCIVILE","NBPERSFOYER","NBENFANT","TYPEHABITAT","REVENUFOYER","SITPRO",
+                 "AUCUN") 
+
+# Appliquer la fonction à chaque variable facteur et combiner les résultats
+summary_table <- lapply(factor_vars, function(var) summarize_factor(dataset, var)) %>%
+  bind_rows() %>%
+  group_by(Variable) %>%
+  mutate(Variable = ifelse(row_number() == 1, Variable, "")) %>%
+  ungroup()
+
+
+# Afficher le tableau avec DT
+datatable(summary_table, 
+          options = list(pageLength = 10, autoWidth = TRUE),
+          rownames = FALSE,
+          caption = 'Tableau récapitulatif des fréquences et pourcentages pour chaque catégorie')
+
+
+# Définir les nouveaux noms pour les variables ### ARTHUR: JE N4ARRIVE PAS A CHANGER LE NOM DES VARIABLES SANS PERDRE LES LABELS DES FACTEURS
+variable_names <- c("AGE" = "Catégorie d'âges", 
+                    "SEXE" = "Sexe", 
+                    "TYPEHABITAT" = "Type d'habitation",
+                    "REVENUFOYER" = "Revenu net annuel du foyer",
+                    "SITPRO" = "Situation professionnelle",
+                    "NIVETUDE" = "Niveau d'étude",
+                    "SITCIVILE" = "Situation civile",
+                    "NBPERSFOYER" = "Nombre de personnes dans le foyer",
+                    "NBENFANT" = "Nombre d'enfant",
+                    "AUCUN" = "Absence de maladie") 
+
+
+
+
+
 dataset %>%
   group_by(SEXE) %>%
   summarise(
@@ -69,7 +167,14 @@ dataset %>%
       dom = "tip"
     )
   )
+
+
+
 ```
+
+### Niveau de bien-être et perception de nature en fonction des caractéristiques de la population
+
+Le tableau ci-dessous présente les niveaux de bien-etre et de perception de nature en fonction des caractéristiques des résidents. Nous étudions également l'existence de différences significatives en fonction de ces caractéristiques ainsi que les différences avec notre échantillon nationale.
 
 ```{r, dev.args=list(bg="transparent")}
 #| fig-align: center
@@ -90,9 +195,29 @@ dataset %>%
 #     y = "Note moyenne de bien-être"
 #   ) +
 #   theme(legend.position = "none")
+
+# A basic scatterplot with color depending on SEXE
+ggplot(dataset, aes(x=critere_type_nature_global, y=critere_bien_etre_global, color=SEXE)) + 
+    geom_point() +
+    theme_benev() + 
+  scale_color_benev("primaire",3)
 ```
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris fermentum egestas sapien, eget commodo leo finibus vel. Curabitur nibh turpis, suscipit quis vestibulum vitae, suscipit vel ex. Proin consectetur finibus felis id semper. Curabitur rhoncus maximus magna in dictum. Donec in erat nec tellus varius tristique eget eu augue. Etiam commodo, est eu porta ornare, justo urna luctus massa, a ornare nunc enim in augue. Nulla id sollicitudin ante, in malesuada ex. Nulla tortor urna, sagittis quis pellentesque et, cursus non tellus.
+### Analyses de la nature comme condition nécessaire au bien-être
+
+Dans les analyses suivantes, nous étudions dans quelle mesure la perception de nature est nécessaire pour atteindre des niveaux moyens ou élevés de bien-être. Nous vous présentons ici les résultats les plus intéressants pour les résidents de votre ville.
+
+```{r}
+#Remplacer par du texte? 
+# nca_analysis(dataset, 
+#              c("critere_type_nature_global","critere_exposition_nature_global"),
+#              "critere_bien_etre_global", 
+#              test.rep=1000, test.p_confidence=0.9, test.p_threshold=0.05)
+# nca_output(nca_analysis(dataset, 
+#              c("critere_type_nature_global","critere_exposition_nature_global"),
+#              "critere_bien_etre_global", 
+#              test.rep=1000, test.p_confidence=0.9, test.p_threshold=0.05), summaries=TRUE, test=FALSE)
+```
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris fermentum egestas sapien, eget commodo leo finibus vel. Curabitur nibh turpis, suscipit quis vestibulum vitae, suscipit vel ex. Proin consectetur finibus felis id semper. Curabitur rhoncus maximus magna in dictum. Donec in erat nec tellus varius tristique eget eu augue. Etiam commodo, est eu porta ornare, justo urna luctus massa, a ornare nunc enim in augue. Nulla id sollicitudin ante, in malesuada ex. Nulla tortor urna, sagittis quis pellentesque et, cursus non tellus.
 
@@ -149,7 +274,6 @@ div(
 ```
 
 ::: {.panel-tabset .nav-tabs}
-
 <!-- Tous les titres de niveau 2 deviennent un nouvel onglet dans ce layout  -->
 
 ## Cartographie générale
@@ -193,8 +317,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris fermentum egesta
 #   style = "height: 85vh;"
 # )
 ```
-
-::::
+:::
 
 ## Conclusion
 

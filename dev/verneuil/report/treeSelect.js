@@ -64,6 +64,10 @@ const selectOptions = [
   {
     name: "Caractéristiques de l'environnement",
     value: 'critere_caract_percues_global'
+  },
+  {
+    name: "Ratio bien-être <> nature",
+    value: 'critere_ratio_bien_etre_nature'
   }
 ]
 
