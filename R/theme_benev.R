@@ -44,7 +44,10 @@ theme_benev <- function(plot_title_family = "Mulish",
     axis.title = element_text(family = axis_title_family,
                               color = axis_title_color,
                               size = axis_title_size),
+    panel.background = element_rect(fill = "#e8eef8", color = NA),   # Fond blanc sans bordure
+    panel.grid.major = element_blank(),                            # Enlève la grille principale                           # Enlève la grille secondaire
     ...
   )
 
 }
+
