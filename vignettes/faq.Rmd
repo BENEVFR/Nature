@@ -189,3 +189,23 @@ Afin d'analyser et d'utiliser les données issues d'un questionnaire, pour une v
 - Lire les données avec la fonction adéquate, 
 
 - Modifier le script de `data_for_map_preparation.qmd` afin d'utiliser ces données
+
+
+## Comment mettre à jour le fichier national (ou mettre des données dans le package) ?
+
+Tout se passe dans le dossier `data-raw`.
+
+Ce dossier contient :
+
+- les données brutes (non transformées en format `rda`),
+
+- le script R pour - justement - les transformer au format `rda`. Dans l'idée, toutes les données brutes possède un fichier R pour les transformer au format `rda`.
+
+Le code `usethis::use_data` permet de générer le fichier `rda`.
+
+Une fois générées les données au format `rda` doivent être documentées.
+
+Finalement, pour modifier les données : il faut changer le fichier brut qui contient les données + relancer le script. 
+
+
+
