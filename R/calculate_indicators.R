@@ -7,7 +7,9 @@
 #' @return a tibble
 #' @export
 calculate_indicators <- function(data) {
-  res_data <- data |>
+
+
+  result <- data |>
     mutate(
       identifiant_repondant = row_number()
     ) |>
@@ -80,10 +82,20 @@ calculate_indicators <- function(data) {
        critere_biodiv_global = mean(
          c(BIO1, BIO2, BIO3, BIO4, BIO5, BIO6, BIO7),
          na.rm = TRUE
-       ),
+       )
+    ) |>
+    ungroup()
+
+  Sc_max_B_E <- 5 # max(result$critere_bien_etre_global)
+  Sc_max_Nature <- 5 # max(result$critere_type_nature_global)
+
+  result <- result |>
+    rowwise() |>
+    mutate(
+      critere_ratio_bien_etre_nature = ((Sc_max_B_E - critere_bien_etre_global) * (Sc_max_Nature - critere_type_nature_global)) / 16,
       across(
         starts_with("critere"),
-        ~ round(.x, digits = 2)
+        ~ round(.x, digits = 3)
       )
     ) |>
     ungroup() |>
@@ -102,5 +114,6 @@ calculate_indicators <- function(data) {
       AUCUN,
       starts_with("critere")
     )
-  return(res_data)
+
+  return(result)
 }
