@@ -26,6 +26,10 @@ execute:
 ---
 
 ```{r}
+city <- "Paris"
+```
+
+```{r}
 #| out.width: "100%"
 #| fig.align: "center"
 knitr::include_graphics(system.file("templates", "infographie", "logo_bleu.svg", package = "nature"))
@@ -39,10 +43,10 @@ knitr::include_graphics(system.file("templates", "infographie", "logo_bleu.svg",
 ```{r}
 #| out.width: "40%"
 #| fig.align: "center"
-knitr::include_graphics("images/verneuilseine.jpg")
+#knitr::include_graphics("images/logoville.jpg")
 ```
 
-Rapport sur l'étude de la ville de Verneuil-sur-Seine
+Rapport sur l'étude de la ville de `r city`
 ::::
 
 # Bien-être et végétalisation
@@ -63,7 +67,6 @@ library(gtsummary)
 library(NCA)
 library(nature)
 
-city <- "Paris"
 
 font_add_google("Mulish")
 font_add_google("Montserrat")
