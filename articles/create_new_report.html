@@ -92,7 +92,7 @@ nouvelle branche au nom de la ville à enquêter.</strong></p>
 <p>Nous allons créer un nouveau dossier qui contiendra l’ensemble des
 fichiers et données pour l’enquête.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">le_nom_de_la_ville</span> <span class="op">&lt;-</span> <span class="st">"creteil"</span></span>
+<code class="sourceCode R"><span><span class="va">le_nom_de_la_ville</span> <span class="op">&lt;-</span> <span class="st">"deauville"</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.create</a></span><span class="op">(</span></span>
 <span>  path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span></span>
@@ -260,7 +260,8 @@ données !</p>
 <span>  from <span class="op">=</span> <span class="va">templates</span>,</span>
 <span>  to <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span></span>
 <span>    <span class="st">".."</span>, <span class="st">"dev"</span>, <span class="fu"><a href="https://rdrr.io/r/base/chartr.html" class="external-link">tolower</a></span><span class="op">(</span><span class="va">le_nom_de_la_ville</span><span class="op">)</span>, <span class="st">"report"</span></span>
-<span>  <span class="op">)</span></span>
+<span>  <span class="op">)</span>, </span>
+<span>  recursive <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>Le dossier <code>report</code> contient :</p>
 <ul>
