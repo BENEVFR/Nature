@@ -25,9 +25,30 @@ execute:
   echo: false
 ---
 
-![](https://www.heraldry-wiki.com/heraldrywiki/images/thumb/2/21/Verneuilseine.jpg/350px-Verneuilseine.jpg){width="100" fig-align="center"}
+```{r}
+#| out.width: "100%"
+#| fig.align: "center"
+knitr::include_graphics(system.file("templates", "infographie", "logo_bleu.svg", package = "nature"))
+```
+
+:::: {#logo layout="[25, 65]"}
+
+<!--Si tu souhaites ajouter plus d'espace pour ton logo, tu peux modifier les valeurs du paramètre `layout` dans le chunk ci-dessus.-->
+<!--+ d'infos ici : https://quarto.org/docs/computations/execution-options.html-->
+
+```{r}
+#| out.width: "40%"
+#| fig.align: "center"
+knitr::include_graphics("images/verneuilseine.jpg")
+```
+
+Rapport sur l'étude de la ville de Verneuil-sur-Seine
+::::
+
 
 # Bien-être et végétalisation
+
+🚧 CECI EST UN _EXEMPLE_ UTILISANT DES DONNEES FICTIVES 🚧
 
 ```{r}
 #| message: false
@@ -43,26 +64,28 @@ library(psych)
 library(papaja)
 library(gtsummary)
 library(NCA)
-pkgload::load_all()
+
+library(nature)
+
+
 font_add_google("Mulish")
 font_add_google("Montserrat")
 showtext_auto()
+
+# Ne pas supprimer car permet de charger les dépendances à DT
+DT::datatable(data.frame())
 ```
 
 ```{r}
-dataset <- readxl::read_excel("verneuil_data.xlsx") |>
+# Calculer les données pour la ville
+dataset <- readxl::read_excel("data/verneuil_data.xlsx") |>
   calculate_indicators() |> 
   clean_indicators() 
  
-## Recuperer fichier national pour comparaison
+## Calculer les données nationales en comparaison
 datanat <- donnees_nat |>
  calculate_indicators()
-
-# datanat <- datanat %>%
-#   mutate(across(where(is.character), as.factor))
 ```
-
-**/!\ CECI EST UN _EXEMPLE_ UTILISANT DES DONNEES FICTIVES**
 
 ## Présentation et analyse
 
@@ -72,104 +95,91 @@ Le projet BENEV vise à identifier les zones prioritaires de revégétalisation 
 
 ### Analyse du profil des répondants
 
-`r nrow(dataset)` citoyens résidant en ville ont complétés le questionnaire entre le 1er octobre et le 20 décembre 2024. Voici leurs statistiques descriptives.
+**`r nrow(dataset)` citoyens** résidant en ville ont complétés le questionnaire entre le 1er octobre et le 20 décembre 2024. Voici leurs statistiques descriptives.
 
 ```{r}
-# purrr::map(
-#   .x = list("## Age des répondants", "Sexe des répondants", "Socio"),
-#   .f = ~ cat(.x)
-# )
+#| output: asis
+titres <- c("#### Sexe des répondants", "#### Age des répondants", "#### Niveau d'études des répondants")
+variables <- c("SEXE", "AGE", "NIVETUDE")
+
+purrr::walk2(
+  .x = titres,
+  .y = variables,
+  .f = ~ {
+    
+    cat(glue::glue("{.x}\n\n")) # Affiche le titre
+    
+    # Affiche la table
+    table <- dataset |>
+      group_by(.data[[.y]]) |>
+      summarise(
+        `Fréquence` = n(),
+        `Pourcentage` = round((n() / nrow(dataset))*100, 2)
+      ) |>
+      DT::datatable(
+        rownames = FALSE,
+        options = list(
+          paging = FALSE,
+          searching = FALSE,
+          lengthChange = FALSE, 
+          pageLength = -1 ,
+          info = FALSE
+        )
+     )
+    
+    cat(knitr::knit_print(table))
+ 
+  }
+)
 ```
 
 
-#### Sexe des répondants 
-
-```{r}
-dataset |> 
-  group_by(SEXE) |> 
-  summarise(
-    `Fréquence` = n(),
-    `Pourcentage` = round((n() / nrow(dataset))*100, 2)
-  ) |> 
-  DT::datatable()
-```
-
-###### Age des répondants 
-
-```{r}
-dataset |> 
-  group_by(AGE) |> 
-  summarise(
-    `Fréquence` = n(),
-    `Pourcentage` = round((n() / nrow(dataset))*100, 2)
-  ) |> 
-  DT::datatable()
-```
-
 
 
 ```{r}
-# Fonction pour calculer fréquences et pourcentages pour une variable. A DEPLACER DANS FICHIER.R
-summarize_factor <- function(data, var) {
-  data %>%
-    count(!!sym(var)) %>%
-    mutate(
-      Frequency = n,
-      Percentage = round((n / sum(n)) * 100, 2),
-      Variable = var
-    ) %>%
-    rename(Category = !!sym(var)) %>%
-    select(Variable, Category, Frequency, Percentage)
-}
-
-# Liste des variables à analyser
-factor_vars <- c("AGE","SEXE","NIVETUDE","SITCIVILE","NBPERSFOYER","NBENFANT","TYPEHABITAT","REVENUFOYER","SITPRO",
-                 "AUCUN") 
-
-# Appliquer la fonction à chaque variable facteur et combiner les résultats
-summary_table <- lapply(factor_vars, function(var) summarize_factor(dataset, var)) %>%
-  bind_rows() %>%
-  group_by(Variable) %>%
-  mutate(Variable = ifelse(row_number() == 1, Variable, "")) %>%
-  ungroup()
-
-
-# Afficher le tableau avec DT
-datatable(summary_table, 
-          options = list(pageLength = 10, autoWidth = TRUE),
-          rownames = FALSE,
-          caption = 'Tableau récapitulatif des fréquences et pourcentages pour chaque catégorie')
-
-
-# Définir les nouveaux noms pour les variables ### ARTHUR: JE N4ARRIVE PAS A CHANGER LE NOM DES VARIABLES SANS PERDRE LES LABELS DES FACTEURS
-variable_names <- c("AGE" = "Catégorie d'âges", 
-                    "SEXE" = "Sexe", 
-                    "TYPEHABITAT" = "Type d'habitation",
-                    "REVENUFOYER" = "Revenu net annuel du foyer",
-                    "SITPRO" = "Situation professionnelle",
-                    "NIVETUDE" = "Niveau d'étude",
-                    "SITCIVILE" = "Situation civile",
-                    "NBPERSFOYER" = "Nombre de personnes dans le foyer",
-                    "NBENFANT" = "Nombre d'enfant",
-                    "AUCUN" = "Absence de maladie") 
-
-
-
-
-
-dataset %>%
-  group_by(SEXE) %>%
-  summarise(
-    `Note critère bien-être` = round(mean(critere_bien_etre_global), 2)
-  ) %>% 
-  datatable(
-    options = list(
-      dom = "tip"
-    )
-  )
-
-
-
+# # Fonction pour calculer fréquences et pourcentages pour une variable. A DEPLACER DANS FICHIER.R
+# summarize_factor <- function(data, var) {
+#   data %>%
+#     count(!!sym(var)) %>%
+#     mutate(
+#       Frequency = n,
+#       Percentage = round((n / sum(n)) * 100, 2),
+#       Variable = var
+#     ) %>%
+#     rename(Category = !!sym(var)) %>%
+#     select(Variable, Category, Frequency, Percentage)
+# }
+# 
+# # Liste des variables à analyser
+# factor_vars <- c("AGE","SEXE","NIVETUDE","SITCIVILE","NBPERSFOYER","NBENFANT","TYPEHABITAT","REVENUFOYER","SITPRO",
+#                  "AUCUN") 
+# 
+# # Appliquer la fonction à chaque variable facteur et combiner les résultats
+# summary_table <- lapply(factor_vars, function(var) summarize_factor(dataset, var)) %>%
+#   bind_rows() %>%
+#   group_by(Variable) %>%
+#   mutate(Variable = ifelse(row_number() == 1, Variable, "")) %>%
+#   ungroup()
+# 
+# 
+# # Afficher le tableau avec DT
+# datatable(summary_table, 
+#           options = list(pageLength = 10, autoWidth = TRUE),
+#           rownames = FALSE,
+#           caption = 'Tableau récapitulatif des fréquences et pourcentages pour chaque catégorie')
+# 
+# 
+# # Définir les nouveaux noms pour les variables ### ARTHUR: JE N4ARRIVE PAS A CHANGER LE NOM DES VARIABLES SANS PERDRE LES LABELS DES FACTEURS
+# variable_names <- c("AGE" = "Catégorie d'âges", 
+#                     "SEXE" = "Sexe", 
+#                     "TYPEHABITAT" = "Type d'habitation",
+#                     "REVENUFOYER" = "Revenu net annuel du foyer",
+#                     "SITPRO" = "Situation professionnelle",
+#                     "NIVETUDE" = "Niveau d'étude",
+#                     "SITCIVILE" = "Situation civile",
+#                     "NBPERSFOYER" = "Nombre de personnes dans le foyer",
+#                     "NBENFANT" = "Nombre d'enfant",
+#                     "AUCUN" = "Absence de maladie") 
 ```
 
 ### Niveau de bien-être et perception de nature en fonction des caractéristiques de la population
