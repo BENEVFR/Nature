@@ -1,0 +1,139 @@
+---
+title: "Etape 1 : Préparation des données"
+format: html
+---
+
+```{r}
+# install.packages("archive")
+
+library(sf)
+library(dplyr)
+library(leaflet)
+```
+
+Il existe 2 grandes étapes dans cette "préparation". 
+
+La préparation des données pour la ville sélectionnée puis la création de la grille hexagonale.
+
+Les deux étapes de préparation des données se terminent sur une étape de validation via la visualisation d'une carte.
+
+## Préparation des données
+
+Dans un premier temps, nous allons préparer les données pour afficher la ville. 
+
+L'objectif ici est de retrouver la ville dans le fichier qui contient les coordonnées géo.
+
+Ces coordonnnées serviront à dessiner la carte par la suite.
+
+### Lecture des données de communes
+
+- Récupérer les données de communes sur le site de l'IGN : https://geoservices.ign.fr/adminexpress
+
+C'est un gros jeu de données, cela peut prendre du temps
+
+```{r}
+if (!file.exists(here::here("dev", "ADMIN-EXPRESS_3-2__SHP_LAMB93_FXX_2024-03-25"))) {
+  
+  curl::curl_download(
+    url = "https://data.geopf.fr/telechargement/download/ADMIN-EXPRESS/ADMIN-EXPRESS_3-2__SHP_LAMB93_FXX_2024-03-25/ADMIN-EXPRESS_3-2__SHP_LAMB93_FXX_2024-03-25.7z",
+    destfile = here::here("dev/adminexpress.7z")
+  )
+  
+  archive::archive_extract(
+    here::here("dev/adminexpress.7z"), 
+    dir = here::here("dev")
+  )
+}
+```
+
+### Choix d'une commune en particulier
+
+**/!\ Remplacer les `XXXXXX` par le nom de la ville**
+
+```{r}
+communes_l93 <- st_read(
+  here::here(
+    "dev",
+    "ADMIN-EXPRESS_3-2__SHP_LAMB93_FXX_2024-03-25/ADMIN-EXPRESS/1_DONNEES_LIVRAISON_2024-03-00237/ADE_3-2_SHP_LAMB93_FXX-ED2024-03-25/COMMUNE.shp"
+  )
+)
+
+# Surtout ne pas tenter d'afficher la carte !
+
+# Trouver le nom de votre commune
+
+# Par exemple pour Lille:
+#
+# communes_l93 |> 
+#   st_drop_geometry() |> 
+#   filter(grepl("Lille", NOM))
+
+communes_l93 |>
+  st_drop_geometry() |>
+  filter(
+    grepl(
+      tolower("deauville"), 
+      tolower(NOM)
+    )
+  )
+
+# Récupérer le polygone de votre commune
+#
+# city_l93 <- communes_l93 |>
+#   filter(NOM == "Lille")
+# ou aussi
+# city_l93 <- communes_l93 |>
+#   filter(ID == "COMMUNE_0000000009727244")
+
+city_l93 <- communes_l93 |>
+  filter(NOM == "Deauville")
+# filter(ID == "XXXXXX")
+```
+
+### Stocker les shapefiles de la commune pour le réutiliser plus tard
+
+```{r}
+st_write(
+  city_l93, 
+  dsn = "city_l93.gpkg", 
+  append = FALSE
+)
+```
+
+La carte doit être en coordonnées non projetées
+
+```{r}
+city_wgs84 <- city_l93 |> 
+  st_transform(crs = 4326)
+
+st_write(
+  city_wgs84, 
+  dsn = "city_wgs84.gpkg", 
+  append = FALSE
+)
+```
+
+
+## Affichage de la carte (validation de la préparation)
+
+Partie exploratoire pour visualiser la carte
+
+### Afficher avec leaflet
+
+```{r}
+city_wgs84 |> 
+  leaflet() |> 
+  addTiles() |> 
+  addPolygons()
+```
+
+## La suite
+
+La première partie est terminée. Nous allons commencer la création de grille dans une deuxième étape:
+
+```{r}
+rstudioapi::navigateToFile(
+  file = "city_hex_preparation.qmd", 
+  line = 1
+)
+```

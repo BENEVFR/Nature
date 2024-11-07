@@ -26,7 +26,7 @@ execute:
 ---
 
 ```{r}
-city <- "Paris"
+city <- "Deauville"
 ```
 
 ```{r}
@@ -80,7 +80,7 @@ DT::datatable(data.frame())
 
 ```{r}
 # Calculer les données pour la ville
-dataset <- readxl::read_excel("data/xxxxxx") |>
+dataset <- readxl::read_excel("data/data_deauville.xlsx") |>
   calculate_indicators() |> 
   clean_indicators() 
  
@@ -101,6 +101,7 @@ full_data <- dataset |>
         place = "National"
       )
   )
+
 ```
 
 ## Présentation et analyse

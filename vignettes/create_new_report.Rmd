@@ -37,7 +37,7 @@ Il s'agit de la vignette `create_new_report.Rmd`. Les modifications réalisées 
 Nous allons créer un nouveau dossier qui contiendra l'ensemble des fichiers et données pour l'enquête.
 
 ```{r, eval=FALSE}
-le_nom_de_la_ville <- "creteil"
+le_nom_de_la_ville <- "deauville"
 
 dir.create(
   path = file.path(
@@ -205,7 +205,8 @@ file.copy(
   from = templates,
   to = file.path(
     "..", "dev", tolower(le_nom_de_la_ville), "report"
-  )
+  ), 
+  recursive = TRUE
 )
 ```
 
