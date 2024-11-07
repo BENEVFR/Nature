@@ -1,0 +1,133 @@
+---
+title: "Etape 2 : Préparation des données"
+format: html
+---
+
+```{r}
+library(sf)
+library(dplyr)
+library(leaflet)
+```
+
+Il s'agit de la deuxième étape dans la préparation des données. 
+
+Vérifiez d'avoir bien exécuter les consignes de la première étape. 
+
+Les fichiers `city_l93.gpkg` et `city_wgs84.gpkg` doivent exister. 
+
+```{r}
+stopifnot(
+  file.exists("city_l93.gpkg")
+)
+
+stopifnot(
+  file.exists("city_wgs84.gpkg")
+)
+```
+
+## Préparation des "zones" 
+
+Dans cette partie, nous allons créer les zones d'habitation. 
+
+Cela servira pour collecter les réponses des habitants pendant le questionnaire + visualiser les données
+
+```{r}
+city_l93 <- st_read(
+  "city_l93.gpkg",
+  quiet = TRUE
+)
+
+city_wgs84 <- st_read(
+  "city_wgs84.gpkg",
+  quiet = TRUE
+)
+```
+
+### Découper la commune en zones régulières
+
+La fonction `st_make_grid` permet de créer la grille avec les zones d'habitations.
+Elle prend 2 paramètres que nous pouvons modifiers : 
+
+- `square`: Vrai (`TRUE`) ou faux (`FALSE`). si `FALSE`, créer une grille hexagonale
+
+- `cellsize`: numérique de longueur 1 ou 2 avec la taille de la cellule cible
+
+```{r}
+city_hex_l93 <- city_l93 |>
+  st_make_grid(
+    what = "polygons", 
+    square = FALSE, # TRUE = rectangle, FALSE = hexagones
+    cellsize = c(400, 400) # Dimension en mètre, car shapefile en mètre (lambert 93)
+  ) %>% 
+  st_sf() %>% 
+  mutate(id = 1:n()) %>% 
+  dplyr::select(id, geometry)
+
+st_write(
+  city_hex_l93, 
+  dsn = "city_hex_l93.gpkg", 
+  append = FALSE
+)
+
+city_hex_wgs84 <- city_hex_l93 |> 
+  st_transform(crs = 4326)
+
+st_write(
+  city_hex_wgs84, 
+  dsn = "city_hex_wgs84.gpkg", 
+  append = FALSE
+)
+```
+
+On découpe les "zones" afin de les faire tenir dans la ville
+
+```{r}
+#| message: false
+#| warning: false
+
+city_hex_l93_intersection <- st_intersection(
+  city_hex_wgs84,
+  city_wgs84
+)
+```
+
+## Affichage de la carte (validation de la préparation)
+
+Partie exploratoire pour visualiser la carte
+
+### Afficher avec leaflet
+
+```{r}
+leaflet() |>
+  addProviderTiles(
+    providers$CartoDB.Positron
+  ) |>
+  addPolygons(
+    data = city_wgs84,
+    color = "#000",
+    fillColor = "transparent",
+    weight = 2.3
+  ) |>
+  addPolygons(
+    data = city_hex_l93_intersection,
+    color = "#000",
+    fillColor = "transparent",
+    weight = 2.3,
+    popup = ~ glue::glue(
+      "Vous avez cliqué sur la zone: <b>{id}</b>"
+    ),
+    popupOptions = popupOptions(
+      closeButton = FALSE,
+      closeOnClick = TRUE
+    )
+  )
+```
+
+Vous pouvez retourner sur la vignette pour la suite des préparations. 
+
+```{r}
+rstudioapi::navigateToFile(
+  file = here::here("vignettes", "create_new_report.Rmd"),
+  line = 88
+)
+```
