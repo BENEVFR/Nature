@@ -89,7 +89,7 @@ A data frame with 2532 rows and 110 variables:
 \item{ TPS-TJT }{  numeric }
 \item{ NIVETUDE }{  character }
 \item{ REVENUFOYER }{  numeric }
-\item{ SITCIVILE }{  character }
+\item{ SITCIVILE }{  factor }
 \item{ NBENFANT }{  character }
 \item{ NBPERSFOYER }{  character }
 \item{ SURFACE }{  numeric }
@@ -104,7 +104,7 @@ A data frame with 2532 rows and 110 variables:
 \item{ SEDENT }{  numeric }
 \item{ Q31_CSP }{  numeric }
 \item{ Q32 }{  character }
-\item{ SEXE }{  character }
+\item{ SEXE }{  factor }
 \item{ Année de Naissance }{  numeric }
 \item{ AGE }{  numeric }
 \item{ Code Postal }{  numeric }
