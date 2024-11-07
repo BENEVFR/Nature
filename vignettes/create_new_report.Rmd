@@ -205,7 +205,8 @@ file.copy(
   from = templates,
   to = file.path(
     "..", "dev", tolower(le_nom_de_la_ville), "report"
-  )
+  ), 
+  recursive = TRUE
 )
 ```
 
