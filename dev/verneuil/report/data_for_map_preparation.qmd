@@ -163,8 +163,15 @@ Exécutez le code suivant :
 ```{r}
 bins <- seq(0, 5, by = 1)
 
-my_palette <- colorBin(
-  palette = c("#e8eef8","#a4bbe4","#769ad6", "#4978c9","#1C57BC", "#194ea9","#133C83", "#0e2b5e","#081a38"),
+my_palette_bien_etre <- colorBin(
+  palette = c("#f7d6e6", "#efadce", "#e685b5", "#cd568a", "#C12C6D", "#ab296a", "#801f4f","#561435", "#2b0a1a" ),
+  domain = bins, 
+  bins = length(bins) - 1, 
+  na.color = "transparent"
+)
+
+my_palette_nature <- colorBin(
+  palette = c("#dff1df","#c0e4bf", "#a0d79f", "#81ca7f", "#62BD60", "#4e974c","#3a7139", "#274b26", "#132513" ),
   domain = bins, 
   bins = length(bins) - 1, 
   na.color = "transparent"
@@ -172,7 +179,7 @@ my_palette <- colorBin(
 
 bins2 <- seq(0, 1, by = 0.15)
 
-my_palette2 <- colorBin(
+my_palette_ratio <- colorBin(
   palette = c("#e8eef8","#a4bbe4","#769ad6", "#4978c9","#1C57BC", "#194ea9","#133C83", "#0e2b5e","#081a38"), 
   domain = bins2, 
   bins = length(bins2) - 1, 
@@ -187,13 +194,18 @@ city_hex_l93_intersection_dataset <- city_hex_l93_intersection |>
   left_join(dataset_group_by_localisation, by = c("id" = "Localisation")) |> 
   mutate(
     across(
-      starts_with("critere") & -critere_ratio_bien_etre_nature,
-      ~ my_palette(.x),
+      contains("critere"),
+      ~ my_palette_nature(.x),
+      .names = "{.col}_color"
+    ),
+    across(
+      contains("critere") & contains("bien_etre") & -contains("color"),
+      ~ my_palette_bien_etre(.x),
       .names = "{.col}_color"
     ),
     across(
       critere_ratio_bien_etre_nature,
-      ~ my_palette2(.x),
+      ~ my_palette_ratio(.x),
       .names = "{.col}_color"
     )
   )

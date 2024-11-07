@@ -226,4 +226,63 @@ Une fois générées les données au format `rda` doivent être documentées.
 Finalement, pour modifier les données : il faut changer le fichier brut qui contient les données + relancer le script. 
 
 
+## Comment modifier la couleur d'une carte ? 
 
+Cela se passe dans le fichier `data_for_map_preparation.qmd` : 
+
+A l'intérieur de ce fichier, tu as un code qui ressemble à ça : 
+
+```{r, eval=FALSE}
+bins <- seq(0, 5, by = 1)
+
+my_palette_bien_etre <- colorBin(
+  palette = c("#f7d6e6", "#efadce", "#e685b5", "#cd568a", "#C12C6D", "#ab296a", "#801f4f","#561435", "#2b0a1a" ),
+  domain = bins, 
+  bins = length(bins) - 1, 
+  na.color = "transparent"
+)
+
+my_palette_nature <- colorBin(
+  palette = c("#dff1df","#c0e4bf", "#a0d79f", "#81ca7f", "#62BD60", "#4e974c","#3a7139", "#274b26", "#132513" ),
+  domain = bins, 
+  bins = length(bins) - 1, 
+  na.color = "transparent"
+)
+
+bins2 <- seq(0, 1, by = 0.15)
+
+my_palette_ratio <- colorBin(
+  palette = c("#e8eef8","#a4bbe4","#769ad6", "#4978c9","#1C57BC", "#194ea9","#133C83", "#0e2b5e","#081a38"), 
+  domain = bins2, 
+  bins = length(bins2) - 1, 
+  na.color = "transparent"
+)
+```
+
+Tu peux modifier manuellement les couleurs utilisées par les palettes.
+
+Ensuite, tu dois calculer la couleur associée à ton critère. Cela se passe dans le code qui suit : 
+
+```{r, eval=FALSE}
+city_hex_l93_intersection_dataset <- city_hex_l93_intersection |> 
+  left_join(dataset_group_by_localisation, by = c("id" = "Localisation")) |> 
+  mutate(
+    across(
+      contains("critere"),
+      ~ my_palette_nature(.x),
+      .names = "{.col}_color"
+    ),
+    across(
+      contains("critere") & contains("bien_etre") & -contains("color"),
+      ~ my_palette_bien_etre(.x),
+      .names = "{.col}_color"
+    ),
+    across(
+      critere_ratio_bien_etre_nature,
+      ~ my_palette_ratio(.x),
+      .names = "{.col}_color"
+    )
+  )
+```
+
+Dans ce code, la palette `my_palette_bien_etre` est utulisée pour les critères de bien-être et la palette `my_palette_nature` est utilisée les critères de nature et `my_palette_ratio` pour le ratio de bien-être nature.

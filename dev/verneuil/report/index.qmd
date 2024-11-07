@@ -65,7 +65,7 @@ library(papaja)
 library(gtsummary)
 library(NCA)
 
-library(nature)
+pkgload::load_all()
 
 
 font_add_google("Mulish")
