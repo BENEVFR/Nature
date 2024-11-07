@@ -169,26 +169,26 @@
 <code class="sourceCode R"><span><span class="va">indicators</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calculate_indicators.html">calculate_indicators</a></span><span class="op">(</span><span class="va">survey_answers</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">indicators</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 4,000 × 16</span></span></span>
-<span><span class="co">#&gt;    identifiant_repondant critere_bien_etre_global critere_bien_etre_psy</span></span>
-<span><span class="co">#&gt;                    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>                    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>                 <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>                     1                        1                     1</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>                     2                        4                     4</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>                     3                        4                     4</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>                     4                        5                     5</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>                     5                        3                     3</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>                     6                        1                     1</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>                     7                        2                     2</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>                     8                        2                     2</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>                     9                        2                     2</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>                    10                        1                     1</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 4,000 × 28</span></span></span>
+<span><span class="co">#&gt;    identifiant_repondant Localisation AGE   SEXE  TYPEHABITAT REVENUFOYER SITPRO</span></span>
+<span><span class="co">#&gt;                    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>                     1          157 A4555 A     MAISO       REV2        RETRT </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>                     2          124 A2634 M     APPAR       REV2        RETRT </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>                     3           13 A4555 M     MAIJA       REV1        SSEMP </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>                     4           96 A2634 M     MAIJA       REV2        ETU   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>                     5           73 A4555 M     APPAR       REV1        FOY   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>                     6          129 A5675 F     APBAL       REV5        ETU   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>                     7          105 A1825 M     MAISO       REV2        ETU   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>                     8           95 A4555 F     APPAR       REV4        RETRT </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>                     9          194 A76   M     MAIJA       REV5        RETRT </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>                    10           68 A3544 M     APPAR       REV1        TPSPL </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 3,990 more rows</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 13 more variables: critere_bien_etre_environnement &lt;dbl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 21 more variables: NIVETUDE &lt;chr&gt;, SITCIVILE &lt;chr&gt;, NBPERSFOYER &lt;chr&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   NBENFANT &lt;chr&gt;, AUCUN &lt;chr&gt;, critere_bien_etre_global &lt;dbl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   critere_bien_etre_psy &lt;dbl&gt;, critere_bien_etre_environnement &lt;dbl&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   critere_bien_etre_physique &lt;dbl&gt;, critere_bien_etre_ressources &lt;dbl&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   critere_type_nature_global &lt;dbl&gt;, critere_activ_global &lt;dbl&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   critere_nature_nondomest &lt;dbl&gt;, critere_nature_domestique &lt;dbl&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   critere_nature_proximite &lt;dbl&gt;, critere_exposition_nature_global &lt;dbl&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   critere_activ_social_calme &lt;dbl&gt;, critere_activ_sport &lt;dbl&gt;, …</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;">#   critere_nature_nondomest &lt;dbl&gt;, critere_nature_domestique &lt;dbl&gt;, …</span></span></span></code></pre></div>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

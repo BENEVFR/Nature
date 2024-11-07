@@ -240,6 +240,18 @@ des matières jusqu’à une profondeur de niveau 2
 <p>Le thème par défaut Flatly est modifié par le fichier
 <code>custom.scss</code> qui permet de modifier la couleur du thème,
 etc…</p>
+<p>Pour modifier les couleurs des titres, cela se passe à la fin du
+fichier.</p>
+<p>h1 signifie un titre de niveau 1 h2 signifie un titre de niveau 2</p>
+<pre><code>h1, h4, h5, h6 {
+  color: $primary;
+  font-family: $mulish;
+}
+
+h2, h3 {
+  color: $tertiary;
+  font-family: $mulish;
+}</code></pre>
 </div>
 <div class="section level2">
 <h2 id="comment-intégrer-les-données-issues-du-questionnaire-dune-ville">Comment intégrer les données issues du questionnaire d’une ville
@@ -254,6 +266,86 @@ csv) dans <code>Report</code>,</p></li>
 <li><p>Modifier le script de <code>data_for_map_preparation.qmd</code>
 afin d’utiliser ces données</p></li>
 </ul>
+</div>
+<div class="section level2">
+<h2 id="comment-mettre-à-jour-le-fichier-national-ou-mettre-des-données-dans-le-package">Comment mettre à jour le fichier national (ou mettre des données
+dans le package) ?<a class="anchor" aria-label="anchor" href="#comment-mettre-%C3%A0-jour-le-fichier-national-ou-mettre-des-donn%C3%A9es-dans-le-package"></a>
+</h2>
+<p>Tout se passe dans le dossier <code>data-raw</code>.</p>
+<p>Ce dossier contient :</p>
+<ul>
+<li><p>les données brutes (non transformées en format
+<code>rda</code>),</p></li>
+<li><p>le script R pour - justement - les transformer au format
+<code>rda</code>. Dans l’idée, toutes les données brutes possède un
+fichier R pour les transformer au format <code>rda</code>.</p></li>
+</ul>
+<p>Le code <code>usethis::use_data</code> permet de générer le fichier
+<code>rda</code>.</p>
+<p>Une fois générées les données au format <code>rda</code> doivent être
+documentées.</p>
+<p>Finalement, pour modifier les données : il faut changer le fichier
+brut qui contient les données + relancer le script.</p>
+</div>
+<div class="section level2">
+<h2 id="comment-modifier-la-couleur-dune-carte">Comment modifier la couleur d’une carte ?<a class="anchor" aria-label="anchor" href="#comment-modifier-la-couleur-dune-carte"></a>
+</h2>
+<p>Cela se passe dans le fichier
+<code>data_for_map_preparation.qmd</code> :</p>
+<p>A l’intérieur de ce fichier, tu as un code qui ressemble à ça :</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">bins</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">5</span>, by <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">my_palette_bien_etre</span> <span class="op">&lt;-</span> <span class="fu">colorBin</span><span class="op">(</span></span>
+<span>  palette <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#f7d6e6"</span>, <span class="st">"#efadce"</span>, <span class="st">"#e685b5"</span>, <span class="st">"#cd568a"</span>, <span class="st">"#C12C6D"</span>, <span class="st">"#ab296a"</span>, <span class="st">"#801f4f"</span>,<span class="st">"#561435"</span>, <span class="st">"#2b0a1a"</span> <span class="op">)</span>,</span>
+<span>  domain <span class="op">=</span> <span class="va">bins</span>, </span>
+<span>  bins <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">bins</span><span class="op">)</span> <span class="op">-</span> <span class="fl">1</span>, </span>
+<span>  na.color <span class="op">=</span> <span class="st">"transparent"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">my_palette_nature</span> <span class="op">&lt;-</span> <span class="fu">colorBin</span><span class="op">(</span></span>
+<span>  palette <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#dff1df"</span>,<span class="st">"#c0e4bf"</span>, <span class="st">"#a0d79f"</span>, <span class="st">"#81ca7f"</span>, <span class="st">"#62BD60"</span>, <span class="st">"#4e974c"</span>,<span class="st">"#3a7139"</span>, <span class="st">"#274b26"</span>, <span class="st">"#132513"</span> <span class="op">)</span>,</span>
+<span>  domain <span class="op">=</span> <span class="va">bins</span>, </span>
+<span>  bins <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">bins</span><span class="op">)</span> <span class="op">-</span> <span class="fl">1</span>, </span>
+<span>  na.color <span class="op">=</span> <span class="st">"transparent"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">bins2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span>, by <span class="op">=</span> <span class="fl">0.15</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">my_palette_ratio</span> <span class="op">&lt;-</span> <span class="fu">colorBin</span><span class="op">(</span></span>
+<span>  palette <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#e8eef8"</span>,<span class="st">"#a4bbe4"</span>,<span class="st">"#769ad6"</span>, <span class="st">"#4978c9"</span>,<span class="st">"#1C57BC"</span>, <span class="st">"#194ea9"</span>,<span class="st">"#133C83"</span>, <span class="st">"#0e2b5e"</span>,<span class="st">"#081a38"</span><span class="op">)</span>, </span>
+<span>  domain <span class="op">=</span> <span class="va">bins2</span>, </span>
+<span>  bins <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">bins2</span><span class="op">)</span> <span class="op">-</span> <span class="fl">1</span>, </span>
+<span>  na.color <span class="op">=</span> <span class="st">"transparent"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>Tu peux modifier manuellement les couleurs utilisées par les
+palettes.</p>
+<p>Ensuite, tu dois calculer la couleur associée à ton critère. Cela se
+passe dans le code qui suit :</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">city_hex_l93_intersection_dataset</span> <span class="op">&lt;-</span> <span class="va">city_hex_l93_intersection</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu">left_join</span><span class="op">(</span><span class="va">dataset_group_by_localisation</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"id"</span> <span class="op">=</span> <span class="st">"Localisation"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu">mutate</span><span class="op">(</span></span>
+<span>    <span class="fu">across</span><span class="op">(</span></span>
+<span>      <span class="fu">contains</span><span class="op">(</span><span class="st">"critere"</span><span class="op">)</span>,</span>
+<span>      <span class="op">~</span> <span class="fu">my_palette_nature</span><span class="op">(</span><span class="va">.x</span><span class="op">)</span>,</span>
+<span>      .names <span class="op">=</span> <span class="st">"{.col}_color"</span></span>
+<span>    <span class="op">)</span>,</span>
+<span>    <span class="fu">across</span><span class="op">(</span></span>
+<span>      <span class="fu">contains</span><span class="op">(</span><span class="st">"critere"</span><span class="op">)</span> <span class="op">&amp;</span> <span class="fu">contains</span><span class="op">(</span><span class="st">"bien_etre"</span><span class="op">)</span> <span class="op">&amp;</span> <span class="op">-</span><span class="fu">contains</span><span class="op">(</span><span class="st">"color"</span><span class="op">)</span>,</span>
+<span>      <span class="op">~</span> <span class="fu">my_palette_bien_etre</span><span class="op">(</span><span class="va">.x</span><span class="op">)</span>,</span>
+<span>      .names <span class="op">=</span> <span class="st">"{.col}_color"</span></span>
+<span>    <span class="op">)</span>,</span>
+<span>    <span class="fu">across</span><span class="op">(</span></span>
+<span>      <span class="va">critere_ratio_bien_etre_nature</span>,</span>
+<span>      <span class="op">~</span> <span class="fu">my_palette_ratio</span><span class="op">(</span><span class="va">.x</span><span class="op">)</span>,</span>
+<span>      .names <span class="op">=</span> <span class="st">"{.col}_color"</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">)</span></span></code></pre></div>
+<p>Dans ce code, la palette <code>my_palette_bien_etre</code> est
+utulisée pour les critères de bien-être et la palette
+<code>my_palette_nature</code> est utilisée les critères de nature et
+<code>my_palette_ratio</code> pour le ratio de bien-être nature.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
