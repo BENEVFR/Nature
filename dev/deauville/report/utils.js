@@ -43,7 +43,7 @@ function drawHex(geodata_hex, property) {
     },
     onEachFeature: function(feature, layer) {
       if (feature.properties) {
-        var popupContent = "<p><strong>ID:</strong> " + feature.properties.id + "</p>" + "<p><strong>" + property + ":</strong> " + feature.properties[property] + "</p>";
+        var popupContent = "<p><strong>Répondants:</strong> " + feature.properties.repondants + "</p>" + "<p><strong>" + property + ":</strong> " + feature.properties[property] + "</p>";
 
         layer.bindPopup(popupContent);
         layer.on('mouseover', function() {
