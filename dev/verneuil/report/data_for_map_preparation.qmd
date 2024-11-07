@@ -1,0 +1,352 @@
+---
+title: "Etape : Préparation des données"
+format: html
+---
+
+```{r}
+library(sf)
+library(dplyr)
+library(purrr)
+library(leaflet)
+```
+
+Dans ce fichier, nous allons préparer les données à afficher sur les cartes du rapport.
+
+```{r}
+stopifnot(
+  file.exists("../city_l93.gpkg")
+)
+
+stopifnot(
+  file.exists("../city_wgs84.gpkg")
+)
+
+stopifnot(
+  file.exists("../city_hex_wgs84.gpkg")
+)
+```
+
+## Préparation des "zones" 
+
+Dans cette partie, nous allons créer les zones d'habitation. 
+
+Cela servira pour collecter les réponses des habitants pendant le questionnaire + visualiser les données
+
+```{r}
+city_l93 <- st_read(
+  "../city_l93.gpkg",
+  quiet = TRUE
+)
+
+city_wgs84 <- st_read(
+  "../city_wgs84.gpkg",
+  quiet = TRUE
+)
+
+city_hex_wgs84 <- st_read(
+  "../city_hex_wgs84.gpkg",
+  quiet = TRUE
+)
+
+if (file.exists("../city_grouped_hex_wgs84.gpkg")) {
+  city_grouped_l93 <- st_read(
+    "../city_grouped_hex_wgs84.gpkg",
+    quiet = TRUE
+  )
+}
+
+if (file.exists("../quartiers.rds")) {
+  quartier_ids <- readRDS("../quartiers.rds")
+}
+```
+
+On dessine les zones :
+
+```{r}
+#| message: false
+#| warning: false
+
+city_hex_l93_intersection <- st_intersection(
+  city_hex_wgs84,
+  city_wgs84
+)
+```
+
+### Création du jeu de données pour colorier la carte 
+
+Sinon, à partir des "vraies" données, la fonction `calculate_indicators()` de ce package permet de calculer ces dimensions. 
+
+Le tableau `dataset` est le tableau - global - représentatif des données de l'étude.
+
+Les tableaux `dataset_souspop` et `dataset_souspop2` sont des tableaux représentatifs d'une sous-population de l'étude. 
+
+```{r}
+# Lecture des vraies données de l'enquête 
+# + 
+# agrégation avec la fonction calculate_indicators
+dataset <- readxl::read_excel("data/verneuil_data.xlsx") |>
+  calculate_indicators() |> 
+  clean_indicators() 
+
+dataset
+```
+
+Vérification du nb de répondants par localisations / zones :
+
+```{r}
+dataset_reps_by_localisation <- dataset %>% 
+  count(Localisation, name = "repondants") |> 
+  arrange(repondants)
+
+dataset_reps_by_localisation
+```
+
+
+```{r}
+dataset_group_by_localisation <- dataset |>
+  group_by(Localisation) |> 
+  summarise(
+    across(
+      starts_with("critere"),
+      ~ round(mean(.x), 2)
+    )
+  ) |>
+  left_join(
+    dataset_reps_by_localisation,
+    by = "Localisation"
+  )
+```
+
+##### Calcul des indicateurs pour une zone regroupée
+
+Les zones regroupées ne possèdent pas de données agrégées. Il faut alors les calculer. 
+
+Le code suivant agrège les données selon les zones regroupées :
+
+
+/!\ A ne faire que si il y a des zones groupées
+
+```{r}
+quartier_df <- quartier_ids %>%
+  map(
+    .f = ~ data.frame(
+      id = .x, 
+      zone = min(.x)
+    )
+  ) |> 
+  bind_rows()
+
+dataset_grouped <- dataset |> 
+  left_join(
+    quartier_df,
+    by = "id"
+  ) |> 
+  mutate(
+    zone = coalesce(zone, id)
+  ) |> 
+  group_by(zone) |> 
+  summarise(
+    # sur une colonne
+    # critere_bien_etre_global = mean(critere_bien_etre_global)
+    # Sur toutes les colonnes qui commencent par "critere"
+    across(
+      starts_with("critere"),
+      ~ round(mean(.x , na.rm = TRUE), 2)
+    )
+  )
+```
+
+### Création des couleurs dans les zones
+
+Exécutez le code suivant : 
+
+```{r}
+bins <- seq(0, 5, by = 1)
+
+my_palette_bien_etre <- colorBin(
+  palette = c("#f7d6e6", "#efadce", "#e685b5", "#cd568a", "#C12C6D", "#ab296a", "#801f4f","#561435", "#2b0a1a" ),
+  domain = bins, 
+  bins = length(bins) - 1, 
+  na.color = "transparent"
+)
+
+my_palette_nature <- colorBin(
+  palette = c("#dff1df","#c0e4bf", "#a0d79f", "#81ca7f", "#62BD60", "#4e974c","#3a7139", "#274b26", "#132513" ),
+  domain = bins, 
+  bins = length(bins) - 1, 
+  na.color = "transparent"
+)
+
+bins2 <- seq(0, 1, by = 0.15)
+
+my_palette_ratio <- colorBin(
+  palette = c("#e8eef8","#a4bbe4","#769ad6", "#4978c9","#1C57BC", "#194ea9","#133C83", "#0e2b5e","#081a38"), 
+  domain = bins2, 
+  bins = length(bins2) - 1, 
+  na.color = "transparent"
+)
+```
+
+Nous allons maintenant joindre les coordonées des zones (les hex) avec les données de l'étude. Nous réalisons ici cette opération avec une jointure :
+
+```{r}
+city_hex_l93_intersection_dataset <- city_hex_l93_intersection |> 
+  left_join(dataset_group_by_localisation, by = c("id" = "Localisation")) |> 
+  mutate(
+    across(
+      contains("critere"),
+      ~ my_palette_nature(.x),
+      .names = "{.col}_color"
+    ),
+    across(
+      contains("critere") & contains("bien_etre") & -contains("color"),
+      ~ my_palette_bien_etre(.x),
+      .names = "{.col}_color"
+    ),
+    across(
+      critere_ratio_bien_etre_nature,
+      ~ my_palette_ratio(.x),
+      .names = "{.col}_color"
+    )
+  )
+```
+
+Nous réalisons la même opération pour les zones groupées :
+
+/!\ à éxécuter si il y a des quartiers
+
+```{r}
+city_hex_l93_intersection_dataset_souspop2 <- city_grouped_hex_with_quartiers |> 
+  left_join(
+    dataset_grouped, 
+    by = c("id" = "zone")
+  ) |> 
+  mutate(
+    across(
+      starts_with("critere"),
+      ~ my_palette(.x),
+      .names = "{.col}_color"
+    )
+  )
+```
+
+##### Vérification à l'aide d'une carte
+
+```{r}
+leaflet() |>
+  addProviderTiles(
+    providers$CartoDB.Positron
+  ) |>
+  addPolygons(
+    data = city_wgs84,
+    color = "#000",
+    fillColor = "transparent",
+    weight = 2.3
+  ) |>
+  addPolygons(
+    data = city_hex_l93_intersection_dataset, # modifiez avec les données à utiliser
+    color = "#000",
+    fillColor = ~ critere_bien_etre_global_color,
+    weight = 2.3,
+    popup = ~ glue::glue(
+      "Vous avez cliqué sur la zone: <b>{id}</b>: {critere_bien_etre_global}"
+    ),
+    popupOptions = popupOptions(
+      closeButton = FALSE,
+      closeOnClick = TRUE
+    )
+  )
+```
+
+### Création des fichiers JS pour le rapport
+
+Afin que le rapport possède tous les éléments dont il a besoin pour s'afficher et être réactif, nous allons créer les fichiers qui contiendront les données carto. Il s'agit d'un format dont le rapport a besoin pour être "auto-portant".
+
+Création du fichier pour les contours de la ville. 
+
+Exécutez le code :
+
+```{r}
+if (file.exists("geodata_city.js")) {
+  unlink("geodata_city.js")
+}
+
+city_geojson <- geojsonsf::sf_geojson(
+  sf = city_wgs84 |> 
+    select(geom)
+)
+
+writeLines(
+  paste0("var geodata_city = ", city_geojson),
+  "geodata_city.js"
+)
+```
+
+Ce morceau de code vient de créer un fichier `geodata_city.js` à l'intérieur du dossier `report`.
+
+A l'intérieur de ce fichier, il existe une variable qui se nomme `geodata_city` qui contient la forme des contours de la ville. Cette variable est utilisée dans la fonction `createMap` pour dessiner la carte : 
+
+``` js
+createMap(
+  idElement = "map",
+  geodata_city = geodata_city,
+  geodata_hex = geodata_hex,
+  property = "critere_bien_etre_global",
+  lat = latitude,
+  long = longitude
+);
+```
+
+Nous allons maintenant créer le même fichier qui contiendra les données pour les hex.
+
+Il faudra créer une ou plusieurs variables en fonction des sous-populations utilisées. Ainsi chaque carte possèdera ses propres données. 
+
+Pour automatiser la suite des instructions, nous allons créer une liste avec nos tableaux. 
+
+**/!\ Utiliser le bon nom associé à votre tableau pour le retrouver lors de la création de la carte ensuite**
+
+```{r}
+# Par exemple:
+# list(
+#   nom_que_je_vais_utiliser_ensuite = nom_du_tableau,
+#   nom_que_je_vais_utiliser_ensuite_sous_pop = nom_du_tableau_sous_population
+# )
+
+list_of_dataset <- list(
+  geodata_dataset = city_hex_l93_intersection_dataset
+  # geodata_dataset_souspop = city_hex_l93_intersection_dataset_souspop,
+  # geodata_dataset_souspop2 = city_hex_l93_intersection_dataset_souspop2
+  # utiliser les données groupées si nécessaire
+) 
+```
+
+Exécutez le code :
+
+```{r}
+if (file.exists("geodata_hex.js")) {
+  unlink("geodata_hex.js")
+}
+
+list_of_dataset |> 
+  purrr::map(
+    .f = ~ dplyr::select(
+      .x, 
+      -starts_with("INSEE"), -NOM_M , -STATUT, -POPULATION, -SIREN_EPCI
+    )
+  ) |> 
+  purrr::map(
+    .f = geojsonsf::sf_geojson
+  ) |> 
+  purrr::map2(
+    .y = names(list_of_dataset),
+    .f = ~ glue::glue("var {.y} = {.x}")
+  ) |> 
+  glue::glue_collapse(sep = ";\n\n\n") |> 
+  writeLines(
+    con = "geodata_hex.js"
+  )
+```
+
+La préparation du rapport est terminée. 
+
+Vous pouvez maintenant mettre à jour le fichier `map.js` avec les cartes souhaitées.

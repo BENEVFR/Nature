@@ -180,6 +180,24 @@ https://quarto.org/docs/output-formats/html-themes.html
 
 Le thème par défaut Flatly est modifié par le fichier `custom.scss` qui permet de modifier la couleur du thème, etc...
 
+Pour modifier les couleurs des titres, cela se passe à la fin du fichier.
+
+h1 signifie un titre de niveau 1 
+h2 signifie un titre de niveau 2
+
+```
+h1, h4, h5, h6 {
+  color: $primary;
+  font-family: $mulish;
+}
+
+h2, h3 {
+  color: $tertiary;
+  font-family: $mulish;
+}
+```
+
+
 ## Comment intégrer les données issues du questionnaire d'une ville ? 
 
 Afin d'analyser et d'utiliser les données issues d'un questionnaire, pour une ville, nous recommandons de : 
@@ -189,3 +207,82 @@ Afin d'analyser et d'utiliser les données issues d'un questionnaire, pour une v
 - Lire les données avec la fonction adéquate, 
 
 - Modifier le script de `data_for_map_preparation.qmd` afin d'utiliser ces données
+
+
+## Comment mettre à jour le fichier national (ou mettre des données dans le package) ?
+
+Tout se passe dans le dossier `data-raw`.
+
+Ce dossier contient :
+
+- les données brutes (non transformées en format `rda`),
+
+- le script R pour - justement - les transformer au format `rda`. Dans l'idée, toutes les données brutes possède un fichier R pour les transformer au format `rda`.
+
+Le code `usethis::use_data` permet de générer le fichier `rda`.
+
+Une fois générées les données au format `rda` doivent être documentées.
+
+Finalement, pour modifier les données : il faut changer le fichier brut qui contient les données + relancer le script. 
+
+
+## Comment modifier la couleur d'une carte ? 
+
+Cela se passe dans le fichier `data_for_map_preparation.qmd` : 
+
+A l'intérieur de ce fichier, tu as un code qui ressemble à ça : 
+
+```{r, eval=FALSE}
+bins <- seq(0, 5, by = 1)
+
+my_palette_bien_etre <- colorBin(
+  palette = c("#f7d6e6", "#efadce", "#e685b5", "#cd568a", "#C12C6D", "#ab296a", "#801f4f","#561435", "#2b0a1a" ),
+  domain = bins, 
+  bins = length(bins) - 1, 
+  na.color = "transparent"
+)
+
+my_palette_nature <- colorBin(
+  palette = c("#dff1df","#c0e4bf", "#a0d79f", "#81ca7f", "#62BD60", "#4e974c","#3a7139", "#274b26", "#132513" ),
+  domain = bins, 
+  bins = length(bins) - 1, 
+  na.color = "transparent"
+)
+
+bins2 <- seq(0, 1, by = 0.15)
+
+my_palette_ratio <- colorBin(
+  palette = c("#e8eef8","#a4bbe4","#769ad6", "#4978c9","#1C57BC", "#194ea9","#133C83", "#0e2b5e","#081a38"), 
+  domain = bins2, 
+  bins = length(bins2) - 1, 
+  na.color = "transparent"
+)
+```
+
+Tu peux modifier manuellement les couleurs utilisées par les palettes.
+
+Ensuite, tu dois calculer la couleur associée à ton critère. Cela se passe dans le code qui suit : 
+
+```{r, eval=FALSE}
+city_hex_l93_intersection_dataset <- city_hex_l93_intersection |> 
+  left_join(dataset_group_by_localisation, by = c("id" = "Localisation")) |> 
+  mutate(
+    across(
+      contains("critere"),
+      ~ my_palette_nature(.x),
+      .names = "{.col}_color"
+    ),
+    across(
+      contains("critere") & contains("bien_etre") & -contains("color"),
+      ~ my_palette_bien_etre(.x),
+      .names = "{.col}_color"
+    ),
+    across(
+      critere_ratio_bien_etre_nature,
+      ~ my_palette_ratio(.x),
+      .names = "{.col}_color"
+    )
+  )
+```
+
+Dans ce code, la palette `my_palette_bien_etre` est utulisée pour les critères de bien-être et la palette `my_palette_nature` est utilisée les critères de nature et `my_palette_ratio` pour le ratio de bien-être nature.
