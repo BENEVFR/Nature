@@ -84,11 +84,11 @@ Les tableaux `dataset_souspop` et `dataset_souspop2` sont des tableaux représen
 # Lecture des vraies données de l'enquête 
 # + 
 # agrégation avec la fonction calculate_indicators
-data <- readxl::read_excel("verneuil_data.xlsx") |>
+dataset <- readxl::read_excel("data/verneuil_data.xlsx") |>
   calculate_indicators() |> 
-  clean_indicators()
+  clean_indicators() 
 
-data
+dataset
 ```
 
 Vérification du nb de répondants par localisations / zones :
@@ -164,7 +164,7 @@ Exécutez le code suivant :
 bins <- seq(0, 5, by = 1)
 
 my_palette <- colorBin(
-  palette = "Greens", 
+  palette = c("#e8eef8","#a4bbe4","#769ad6", "#4978c9","#1C57BC", "#194ea9","#133C83", "#0e2b5e","#081a38"),
   domain = bins, 
   bins = length(bins) - 1, 
   na.color = "transparent"
@@ -173,7 +173,7 @@ my_palette <- colorBin(
 bins2 <- seq(0, 1, by = 0.15)
 
 my_palette2 <- colorBin(
-  palette = "Red", 
+  palette = c("#e8eef8","#a4bbe4","#769ad6", "#4978c9","#1C57BC", "#194ea9","#133C83", "#0e2b5e","#081a38"), 
   domain = bins2, 
   bins = length(bins2) - 1, 
   na.color = "transparent"
@@ -195,7 +195,7 @@ city_hex_l93_intersection_dataset <- city_hex_l93_intersection |>
       critere_ratio_bien_etre_nature,
       ~ my_palette2(.x),
       .names = "{.col}_color"
-    ),
+    )
   )
 ```
 

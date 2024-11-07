@@ -3,8 +3,8 @@ var cartes = [];
 document.addEventListener("DOMContentLoaded", function(event) {
   console.log("Maps are Ready!");
 
-  const latitude = 48.9739; /*Remplacez ici la latitude de la ville*/
-  const longitude = 1.9648;  /*Remplacez ici la longitude de la ville*/
+  const latitude = 48.98714060051876; /*Remplacez ici la latitude de la ville*/
+  const longitude = 1.964095198461945;  /*Remplacez ici la longitude de la ville*/
 
   /* */
   /*Ajoutez des cartes dans le rapport*/
