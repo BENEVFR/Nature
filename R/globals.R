@@ -11,5 +11,9 @@ globalVariables(unique(c(
   "Identifiant R\u00e9pondant", "identifiant_repondant",
   "ACT7", "ACT8", "ACT9", "CN16", "CN18", "CN19", "CP1",
   "CP10", "CP2", "CP3", "CP4", "CP5", "CP6", "CP7", "CP8", "CP9",
-  "BIO1", "BIO2", "BIO3", "BIO4", "BIO5", "BIO6", "BIO7"
+  "BIO1", "BIO2", "BIO3", "BIO4", "BIO5", "BIO6", "BIO7",
+  # calculate_indicators:
+  "AGE", "AUCUN", "critere_bien_etre_global", "critere_type_nature_global", "Localisation", "NBENFANT", "NBPERSFOYER", "NIVETUDE", "REVENUFOYER", "SEXE", "SITCIVILE", "SITPRO", "TYPEHABITAT",
+  # clean_indicators:
+  "AGE", "NBENFANT", "NBPERSFOYER", "NIVETUDE", "REVENUFOYER", "SEXE", "SITCIVILE", "SITPRO", "TYPEHABITAT"
 )))

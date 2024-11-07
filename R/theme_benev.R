@@ -13,7 +13,7 @@
 #' @param axis_text_color color text
 #' @param axis_text_size size text
 #' @param ... list of other params
-#' @importFrom ggplot2 theme element_text margin
+#' @importFrom ggplot2 theme element_text margin element_rect element_blank
 #' @importFrom ggtext element_markdown
 #' @return a ggplot theme
 #' @export
