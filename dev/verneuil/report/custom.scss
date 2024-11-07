@@ -23,23 +23,22 @@ $gray-800: #343a40 !default;
 $gray-900: #212529 !default;
 $black:    #000 !default;
 
-$blue:    #2c3e50 !default;
-$indigo:  #6610f2 !default;
-$purple:  #6f42c1 !default;
-$pink:    #e83e8c !default;
-$red:     #e74c3c !default;
-$orange:  #fd7e14 !default;
-$yellow:  #f39c12 !default;
-$green:   #18bc9c !default;
-$teal:    #20c997 !default;
-$cyan:    #3498db !default;
+$blue:    #e8eef8 !default;
+$purple:  #e2d9f3 !default;
+$pink:    #f7d6e6 !default;
+$red:     #f8d7da !default;
+$orange:  #FFE5D0 !default;
+$yellow:  #fff3cd !default;
+$green:   #dff1df !default;
+$cyan:    #e8f8f8 !default;
 
-$primary:       $blue !default;
-$secondary:     $gray-600 !default;
-$success:       $green !default;
-$info:          $cyan !default;
-$warning:       $yellow !default;
-$danger:        $red !default;
+$primary:       #1C57BC !default;
+$secondary:     #62BD60 !default;
+$tertiary:      #C12C6D !default;
+$success:       #58AA56 !default;
+$info:          #1CBCBD !default;
+$warning:       #FFC000 !default;
+$danger:        #dc3545 !default;
 $light:         $gray-200 !default;
 $dark:          $gray-700 !default;
 
@@ -127,7 +126,19 @@ $btn-close-hover-opacity:    1 !default;
 
 
 /*-- scss:rules --*/
-h1, h2, h3, h4, h5, h6 {
-  color: $success;
+h1, h4, h5, h6 {
+  color: $primary;
   font-family: $mulish;
+}
+
+h2, h3 {
+  color: $tertiary;
+  font-family: $mulish;
+}
+
+#logo p {
+  color: $primary;
+  font-family: $mulish;
+  font-size: 2.5rem;
+  font-weight: 700;
 }

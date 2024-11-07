@@ -180,6 +180,24 @@ https://quarto.org/docs/output-formats/html-themes.html
 
 Le thème par défaut Flatly est modifié par le fichier `custom.scss` qui permet de modifier la couleur du thème, etc...
 
+Pour modifier les couleurs des titres, cela se passe à la fin du fichier.
+
+h1 signifie un titre de niveau 1 
+h2 signifie un titre de niveau 2
+
+```
+h1, h4, h5, h6 {
+  color: $primary;
+  font-family: $mulish;
+}
+
+h2, h3 {
+  color: $tertiary;
+  font-family: $mulish;
+}
+```
+
+
 ## Comment intégrer les données issues du questionnaire d'une ville ? 
 
 Afin d'analyser et d'utiliser les données issues d'un questionnaire, pour une ville, nous recommandons de : 
