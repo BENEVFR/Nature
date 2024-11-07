@@ -24,7 +24,13 @@ Plusieurs étapes sont nécessaires pour **créer une nouvelle enquête**:
 
 ## Préparation des données cartographiques
 
-Afin de créer une nouvelle enquête, pour une nouvelle ville, il faut suivre les instructions suivantes : 
+Afin de créer une nouvelle enquête, pour une nouvelle ville, il faut suivre les instructions suivantes.
+
+Ces instructions peuvent être exécutées au sein de la vignette dans le dossier `vignettes` du package `nature`.
+
+Il s'agit de la vignette `create_new_report.Rmd`. Les modifications réalisées dans cette vignette liées au changement du nom de la ville ne sont pas à versionner.
+
+**-> Il est recommandé de réaliser ces opérations dans une nouvelle branche au nom de la ville à enquêter.**
 
 ### Création d'un nouveau dossier (ville) dans ce package
 
@@ -228,7 +234,7 @@ createMap(
 
 `idElement` est l'identifiant qui permet d'associer la carte avec celle dans le rapport `index.qmd` :
 
-```{r, eval=FALSE}
+```r
 div(
   id = "map",
   class = "mt-3",

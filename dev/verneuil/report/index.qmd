@@ -45,7 +45,6 @@ knitr::include_graphics("images/verneuilseine.jpg")
 Rapport sur l'étude de la ville de Verneuil-sur-Seine
 ::::
 
-
 # Bien-être et végétalisation
 
 🚧 CECI EST UN _EXEMPLE_ UTILISANT DES DONNEES FICTIVES 🚧
@@ -65,7 +64,7 @@ library(papaja)
 library(gtsummary)
 library(NCA)
 
-pkgload::load_all()
+library(nature)
 
 
 font_add_google("Mulish")

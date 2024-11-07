@@ -48,7 +48,7 @@ city_wgs84 <- st_read(
 La fonction `st_make_grid` permet de créer la grille avec les zones d'habitations.
 Elle prend 2 paramètres que nous pouvons modifiers : 
 
-- `sauare`: Vrai (`TRUE`) ou faux (`FALSE`). si `FALSE`, créer une grille hexagonale
+- `square`: Vrai (`TRUE`) ou faux (`FALSE`). si `FALSE`, créer une grille hexagonale
 
 - `cellsize`: numérique de longueur 1 ou 2 avec la taille de la cellule cible
 
