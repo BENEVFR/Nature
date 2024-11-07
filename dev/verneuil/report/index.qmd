@@ -84,7 +84,21 @@ dataset <- readxl::read_excel("data/verneuil_data.xlsx") |>
  
 ## Calculer les données nationales en comparaison
 datanat <- donnees_nat |>
- calculate_indicators()
+  calculate_indicators() |> 
+  select(-AGE, -REVENUFOYER)
+  
+
+# Création d'un tableau plus large
+full_data <- dataset |>
+  mutate(
+    place = "Local"
+  ) |> 
+  bind_rows(
+    datanat |> 
+      mutate(
+        place = "National"
+      )
+  )
 ```
 
 ## Présentation et analyse
@@ -99,7 +113,7 @@ Le projet BENEV vise à identifier les zones prioritaires de revégétalisation 
 
 ```{r}
 #| output: asis
-titres <- c("#### Sexe des répondants", "#### Age des répondants", "#### Niveau d'études des répondants")
+titres <- c("Sexe des répondants", "Age des répondants", "Niveau d'études des répondants")
 variables <- c("SEXE", "AGE", "NIVETUDE")
 
 purrr::walk2(
@@ -107,7 +121,7 @@ purrr::walk2(
   .y = variables,
   .f = ~ {
     
-    cat(glue::glue("{.x}\n\n")) # Affiche le titre
+    cat(glue::glue("#### {.x}\n\n")) # Affiche le titre
     
     # Affiche la table
     table <- dataset |>
@@ -117,6 +131,7 @@ purrr::walk2(
         `Pourcentage` = round((n() / nrow(dataset))*100, 2)
       ) |>
       DT::datatable(
+        colnames = c("Catégorie", "Fréquence", "Pourcentage"),
         rownames = FALSE,
         options = list(
           paging = FALSE,
@@ -128,58 +143,8 @@ purrr::walk2(
      )
     
     cat(knitr::knit_print(table))
- 
   }
 )
-```
-
-
-
-
-```{r}
-# # Fonction pour calculer fréquences et pourcentages pour une variable. A DEPLACER DANS FICHIER.R
-# summarize_factor <- function(data, var) {
-#   data %>%
-#     count(!!sym(var)) %>%
-#     mutate(
-#       Frequency = n,
-#       Percentage = round((n / sum(n)) * 100, 2),
-#       Variable = var
-#     ) %>%
-#     rename(Category = !!sym(var)) %>%
-#     select(Variable, Category, Frequency, Percentage)
-# }
-# 
-# # Liste des variables à analyser
-# factor_vars <- c("AGE","SEXE","NIVETUDE","SITCIVILE","NBPERSFOYER","NBENFANT","TYPEHABITAT","REVENUFOYER","SITPRO",
-#                  "AUCUN") 
-# 
-# # Appliquer la fonction à chaque variable facteur et combiner les résultats
-# summary_table <- lapply(factor_vars, function(var) summarize_factor(dataset, var)) %>%
-#   bind_rows() %>%
-#   group_by(Variable) %>%
-#   mutate(Variable = ifelse(row_number() == 1, Variable, "")) %>%
-#   ungroup()
-# 
-# 
-# # Afficher le tableau avec DT
-# datatable(summary_table, 
-#           options = list(pageLength = 10, autoWidth = TRUE),
-#           rownames = FALSE,
-#           caption = 'Tableau récapitulatif des fréquences et pourcentages pour chaque catégorie')
-# 
-# 
-# # Définir les nouveaux noms pour les variables ### ARTHUR: JE N4ARRIVE PAS A CHANGER LE NOM DES VARIABLES SANS PERDRE LES LABELS DES FACTEURS
-# variable_names <- c("AGE" = "Catégorie d'âges", 
-#                     "SEXE" = "Sexe", 
-#                     "TYPEHABITAT" = "Type d'habitation",
-#                     "REVENUFOYER" = "Revenu net annuel du foyer",
-#                     "SITPRO" = "Situation professionnelle",
-#                     "NIVETUDE" = "Niveau d'étude",
-#                     "SITCIVILE" = "Situation civile",
-#                     "NBPERSFOYER" = "Nombre de personnes dans le foyer",
-#                     "NBENFANT" = "Nombre d'enfant",
-#                     "AUCUN" = "Absence de maladie") 
 ```
 
 ### Niveau de bien-être et perception de nature en fonction des caractéristiques de la population
@@ -328,6 +293,67 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris fermentum egesta
 # )
 ```
 :::
+
+## Analyse approfondie
+
+```{r}
+full_data_h <- full_data |> 
+  filter(SEXE == "Homme")
+full_data_f <- full_data |> 
+  filter(SEXE == "Femme")
+
+ttest_h <- t.test(critere_bien_etre_global ~ place, data = full_data_h) |> 
+  broom::tidy() |> 
+  mutate(
+    SEXE = "Homme"
+  ) |> 
+  select(SEXE, estimate, p.value)
+
+ttest_f <- t.test(critere_bien_etre_global ~ place, data = full_data_f) |> 
+  broom::tidy() |> 
+  mutate(
+    SEXE = "Femme"
+  ) |> 
+  select(SEXE, estimate, p.value)
+
+ttest_f <- ttest_h |> bind_rows(ttest_f)
+
+datanat_crit_bien_etreglobal <- datanat |> 
+  group_by(SEXE) |>
+  summarise(
+    critere_bien_etre_global_national = round(mean(critere_bien_etre_global), 2),
+  )
+
+dataset |> 
+  group_by(SEXE) |> 
+  summarise(
+    critere_bien_etre_global = round(mean(critere_bien_etre_global), 2),
+  ) |> 
+  left_join(
+   ttest_f,
+   by = "SEXE"
+  ) |> 
+  left_join(
+    datanat_crit_bien_etreglobal,
+    by = "SEXE"
+  ) |> 
+  mutate(
+    critere_bien_etre_global = case_when(
+      `p.value` < 0.05 & estimate < 0 ~ glue::glue("{critere_bien_etre_global} ({critere_bien_etre_global_national})"),
+      `p.value` < 0.05 & estimate > 0 ~ glue::glue("{critere_bien_etre_global} ({critere_bien_etre_global_national})"),
+      TRUE ~ glue::glue("{critere_bien_etre_global}")
+    )
+  ) |> 
+  select(SEXE, critere_bien_etre_global) |> 
+  DT::datatable(
+    options = list(
+      paging = FALSE,
+      searching = FALSE,
+      ordering = FALSE
+    )
+  )
+```
+
 
 ## Conclusion
 
