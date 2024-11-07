@@ -48,10 +48,12 @@ city_hex_wgs84 <- st_read(
   quiet = TRUE
 )
 
-city_grouped_l93 <- st_read(
-  "../city_grouped_hex_wgs84.gpkg",
-  quiet = TRUE
-)
+if (file.exists("../city_grouped_hex_wgs84.gpkg")) {
+  city_grouped_l93 <- st_read(
+    "../city_grouped_hex_wgs84.gpkg",
+    quiet = TRUE
+  )
+}
 
 if (file.exists("../quartiers.rds")) {
   quartier_ids <- readRDS("../quartiers.rds")
@@ -72,107 +74,89 @@ city_hex_l93_intersection <- st_intersection(
 
 ### Création du jeu de données pour colorier la carte 
 
-**/!\ En l'absence des "vraies" données du formulaire, on reproduit un jeu de données.**
-
-Sinon, à partir des "vraies" données, la fonction `calculate_indicators()` de ce package permet de calculer ces dimensions. 
+À partir des "vraies" données déposées dans le dossier `data`, la fonction `calculate_indicators()` de ce package permet de calculer ces dimensions. 
 
 Le tableau `dataset` est le tableau - global - représentatif des données de l'étude.
 
 Les tableaux `dataset_souspop` et `dataset_souspop2` sont des tableaux représentatifs d'une sous-population de l'étude. 
 
 ```{r}
-dataset <- data.frame(
-  id = 1:nrow(city_hex_wgs84),
-  critere_bien_etre_global = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
-  critere_bien_etre_psy = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
-  critere_bien_etre_environnement = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
-  critere_bien_etre_physique = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
-  critere_bien_etre_ressources = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
-  critere_type_nature_global = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
-  critere_activ_global = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
-  critere_nature_nondomest = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
-  critere_nature_domestique = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
-  critere_nature_proximite = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
-  critere_exposition_nature_global = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
-  critere_activ_social_calme = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
-  critere_activ_sport = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
-  critere_caract_percues_global = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
-  critere_biodiv_global = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2)
-)
+dataset <- readxl::read_excel("data/xxxxxxx") |>
+  calculate_indicators() |> 
+  clean_indicators() 
 
-dataset_souspop <- data.frame(
-  id = 1:nrow(city_hex_wgs84),
-  critere_bien_etre_global = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
-  critere_bien_etre_psy = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
-  critere_bien_etre_environnement = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
-  critere_bien_etre_physique = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
-  critere_bien_etre_ressources = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
-  critere_type_nature_global = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
-  critere_activ_global = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
-  critere_nature_nondomest = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
-  critere_nature_domestique = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
-  critere_nature_proximite = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
-  critere_exposition_nature_global = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
-  critere_activ_social_calme = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
-  critere_activ_sport = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
-  critere_caract_percues_global = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
-  critere_biodiv_global = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2)
-)
-
-dataset_souspop2 <- data.frame(
-  id = 1:nrow(city_hex_wgs84),
-  critere_bien_etre_global = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
-  critere_bien_etre_psy = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
-  critere_bien_etre_environnement = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
-  critere_bien_etre_physique = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
-  critere_bien_etre_ressources = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
-  critere_type_nature_global = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
-  critere_activ_global = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
-  critere_nature_nondomest = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
-  critere_nature_domestique = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
-  critere_nature_proximite = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
-  critere_exposition_nature_global = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
-  critere_activ_social_calme = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
-  critere_activ_sport = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
-  critere_caract_percues_global = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2),
-  critere_biodiv_global = round(runif(nrow(city_hex_wgs84), min = 0, max = 5), digits = 2)
-)
+dataset
 ```
 
+Calcul du nb de répondants par localisations / zones :
+
+```{r}
+dataset_reps_by_localisation <- dataset %>% 
+  count(Localisation, name = "repondants") |> 
+  arrange(repondants)
+
+dataset_reps_by_localisation
+```
+
+Ajout du nombre de répondants par localisation dans le jeu de données :
+
+```{r}
+dataset_group_by_localisation <- dataset |>
+  group_by(Localisation) |> 
+  summarise(
+    across(
+      starts_with("critere"),
+      ~ round(mean(.x), 2)
+    )
+  ) |>
+  left_join(
+    dataset_reps_by_localisation,
+    by = "Localisation"
+  )
+
+dataset_group_by_localisation
+```
+
+**/!\ Reproduire ces opérations précédentes pour des sous-popultions. /!\**
+
 ##### Calcul des indicateurs pour une zone regroupée
+
+/!\ A ne faire que si il y a des zones groupées /!\
 
 Les zones regroupées ne possèdent pas de données agrégées. Il faut alors les calculer. 
 
 Le code suivant agrège les données selon les zones regroupées :
 
 ```{r}
-quartier_df <- quartier_ids %>%
-  map(
-    .f = ~ data.frame(
-      id = .x, 
-      zone = min(.x)
+if (file.exists("../quartiers.rds")) {
+  quartier_df <- quartier_ids %>%
+    map(
+      .f = ~ data.frame(
+        id = .x, 
+        zone = min(.x)
+      )
+    ) %>%
+    bind_rows()
+  
+  dataset_grouped <- dataset |> 
+    left_join(
+      quartier_df,
+      by = "id"
+    ) |> 
+    mutate(
+      zone = coalesce(zone, id)
+    ) |> 
+    group_by(zone) |> 
+    summarise(
+      # sur une colonne
+      # critere_bien_etre_global = mean(critere_bien_etre_global)
+      # Sur toutes les colonnes qui commencent par "critere"
+      across(
+        starts_with("critere"),
+        ~ round(mean(.x , na.rm = TRUE), 2)
+      )
     )
-  ) %>%
-  bind_rows()
-
-dataset_grouped <- dataset |> 
-  left_join(
-    quartier_df,
-    by = "id"
-  ) |> 
-  mutate(
-    zone = coalesce(zone, id)
-  ) |> 
-  group_by(zone) |> 
-  summarise(
-    # sur une colonne
-    # critere_bien_etre_global = mean(critere_bien_etre_global)
-    # Sur toutes les colonnes qui commencent par "critere"
-    across(
-      starts_with("critere"),
-      ~ round(mean(.x , na.rm = TRUE), 2)
-    )
-  )
+}
 ```
 
 ### Création des couleurs dans les zones
@@ -182,10 +166,26 @@ Exécutez le code suivant :
 ```{r}
 bins <- seq(0, 5, by = 1)
 
-my_palette <- colorBin(
-  palette = "Greens", 
+my_palette_bien_etre <- colorBin(
+  palette = c("#f7d6e6", "#efadce", "#e685b5", "#cd568a", "#C12C6D", "#ab296a", "#801f4f","#561435", "#2b0a1a" ),
   domain = bins, 
   bins = length(bins) - 1, 
+  na.color = "transparent"
+)
+
+my_palette_nature <- colorBin(
+  palette = c("#dff1df","#c0e4bf", "#a0d79f", "#81ca7f", "#62BD60", "#4e974c","#3a7139", "#274b26", "#132513" ),
+  domain = bins, 
+  bins = length(bins) - 1, 
+  na.color = "transparent"
+)
+
+bins2 <- seq(0, 1, by = 0.15)
+
+my_palette_ratio <- colorBin(
+  palette = c("#e8eef8","#a4bbe4","#769ad6", "#4978c9","#1C57BC", "#194ea9","#133C83", "#0e2b5e","#081a38"), 
+  domain = bins2, 
+  bins = length(bins2) - 1, 
   na.color = "transparent"
 )
 ```
@@ -194,31 +194,21 @@ Nous allons maintenant joindre les coordonées des zones (les hex) avec les donn
 
 ```{r}
 city_hex_l93_intersection_dataset <- city_hex_l93_intersection |> 
-  left_join(dataset, by = "id") |> 
+  left_join(dataset_group_by_localisation, by = c("id" = "Localisation")) |> 
   mutate(
     across(
-      starts_with("critere"),
-      ~ my_palette(.x),
+      contains("critere"),
+      ~ my_palette_nature(.x),
       .names = "{.col}_color"
-    )
-  )
-
-city_hex_l93_intersection_dataset_souspop <- city_hex_l93_intersection |> 
-  left_join(dataset_souspop, by = "id") |> 
-  mutate(
+    ),
     across(
-      starts_with("critere"),
-      ~ my_palette(.x),
+      contains("critere") & contains("bien_etre") & -contains("color"),
+      ~ my_palette_bien_etre(.x),
       .names = "{.col}_color"
-    )
-  )
-
-city_hex_l93_intersection_dataset_souspop2 <- city_hex_l93_intersection |> 
-  left_join(dataset_souspop2, by = "id") |> 
-  mutate(
+    ),
     across(
-      starts_with("critere"),
-      ~ my_palette(.x),
+      critere_ratio_bien_etre_nature,
+      ~ my_palette_ratio(.x),
       .names = "{.col}_color"
     )
   )
@@ -226,19 +216,23 @@ city_hex_l93_intersection_dataset_souspop2 <- city_hex_l93_intersection |>
 
 Nous réalisons la même opération pour les zones groupées :
 
+/!\ à éxécuter uniquelent s'il y a des quartiers /!\
+
 ```{r}
-city_hex_l93_intersection_dataset_souspop2 <- city_grouped_hex_with_quartiers |> 
-  left_join(
-    dataset_grouped, 
-    by = c("id" = "zone")
-  ) |> 
-  mutate(
-    across(
-      starts_with("critere"),
-      ~ my_palette(.x),
-      .names = "{.col}_color"
+if (file.exists("../city_grouped_hex_wgs84.gpkg")) {
+  city_hex_l93_intersection_dataset_souspop2 <- city_grouped_hex_with_quartiers |> 
+    left_join(
+      dataset_grouped, 
+      by = c("id" = "zone")
+    ) |> 
+    mutate(
+      across(
+        starts_with("critere"),
+        ~ my_palette(.x),
+        .names = "{.col}_color"
+      )
     )
-  )
+}
 ```
 
 ##### Vérification à l'aide d'une carte
@@ -255,7 +249,7 @@ leaflet() |>
     weight = 2.3
   ) |>
   addPolygons(
-    data = city_hex_l93_intersection_dataset_souspop2, # modifiez avec les données à utiliser
+    data = city_hex_l93_intersection_dataset, # modifiez avec les données à utiliser
     color = "#000",
     fillColor = ~ critere_bien_etre_global_color,
     weight = 2.3,
@@ -297,6 +291,8 @@ Ce morceau de code vient de créer un fichier `geodata_city.js` à l'intérieur 
 
 A l'intérieur de ce fichier, il existe une variable qui se nomme `geodata_city` qui contient la forme des contours de la ville. Cette variable est utilisée dans la fonction `createMap` pour dessiner la carte : 
 
+Il faudra insérer ce code dans le fichier `map.js` autant de fois que de cartes à créer.
+
 ``` js
 createMap(
   idElement = "map",
@@ -324,10 +320,10 @@ Pour automatiser la suite des instructions, nous allons créer une liste avec no
 # )
 
 list_of_dataset <- list(
-  geodata_dataset = city_hex_l93_intersection_dataset,
-  geodata_dataset_souspop = city_hex_l93_intersection_dataset_souspop,
-  geodata_dataset_souspop2 = city_hex_l93_intersection_dataset_souspop2
+  geodata_dataset = city_hex_l93_intersection_dataset
   # utiliser les données groupées si nécessaire
+  # geodata_dataset_souspop = city_hex_l93_intersection_dataset_souspop,
+  # geodata_dataset_souspop2 = city_hex_l93_intersection_dataset_souspop2
 ) 
 ```
 
