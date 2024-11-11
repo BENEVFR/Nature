@@ -21,7 +21,8 @@ create_palette_benev <- function(name_palette = "primaire") {
     orange = c("#FFE5D0", "#fecba1", "#feb272", "#fd9843", "#fd7e14", "#ca6510","#984c0c", "#653208", "#331904" ),
     yellow = c("#fff3cd", "#ffe69c", "#ffda6a", "#ffcd39", "#ffc107", "#cc9a06", "#997404","#664d03", "#664d03" ),
     green = c("#dff1df","#c0e4bf", "#a0d79f", "#81ca7f", "#62BD60", "#4e974c","#3a7139", "#274b26", "#132513" ),
-    cyan = c("#e8f8f8", "#baeaeb", "#8dddde", "#60d0d0","#1CBCBD", "#169697", "#107071", "#0b4b4b", "#052525" )
+    cyan = c("#e8f8f8", "#baeaeb", "#8dddde", "#60d0d0","#1CBCBD", "#169697", "#107071", "#0b4b4b", "#052525" ),
+    every = c("#1C57BC","#6f42c1","#C12C6D","#dc3545","#fd7e14","#ffc107","#62BD60","#1CBCBD")
   )
 
   # Va chercher dans la liste de palettes la palette spécifiée dans le paramètre name_palette (par défaut, la palette "continuous")
