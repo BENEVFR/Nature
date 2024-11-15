@@ -3,6 +3,7 @@
 #' @param data answers from survey
 #'
 #' @importFrom dplyr group_by ungroup mutate row_number rowwise select starts_with across
+#' @importFrom BBmisc normalize
 #'
 #' @return a tibble
 #' @export
@@ -88,15 +89,17 @@ calculate_indicators <- function(data) {
 
   Sc_max_B_E <- 5 # max(result$critere_bien_etre_global)
   Sc_max_Nature <- 5 # max(result$critere_type_nature_global)
+  dispersion_bien_etre = sd(result$critere_bien_etre_global, na.rm = TRUE)
+  dispersion_nature = sd(result$critere_type_nature_global, na.rm = TRUE)
 
   result <- result |>
-    rowwise() |>
-    mutate(
-      critere_ratio_bien_etre_nature = ((Sc_max_B_E - critere_bien_etre_global) * (Sc_max_Nature - critere_type_nature_global)) / 16,
-      across(
-        starts_with("critere"),
-        ~ round(.x, digits = 3)
-      )
+      rowwise() |>
+      mutate(
+        critere_ratio_bien_etre_nature = normalize((mean(critere_bien_etre_global, na.rm = TRUE) * mean(critere_type_nature_global, na.rm = TRUE)) - 0.2 * (dispersion_bien_etre + dispersion_nature)),
+        across(
+          starts_with("critere"),
+          ~ round(.x, digits = 3)
+          )
     ) |>
     ungroup() |>
     select(
