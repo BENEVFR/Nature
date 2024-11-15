@@ -95,7 +95,7 @@ calculate_indicators <- function(data) {
   result <- result |>
       rowwise() |>
       mutate(
-        critere_ratio_bien_etre_nature = normalize((mean(critere_bien_etre_global, na.rm = TRUE) * mean(critere_type_nature_global, na.rm = TRUE)) - 0.2 * (dispersion_bien_etre + dispersion_nature)),
+        critere_ratio_bien_etre_nature = (mean(critere_bien_etre_global, na.rm = TRUE) * mean(critere_type_nature_global, na.rm = TRUE)) - 0.2 * (dispersion_bien_etre + dispersion_nature),
         across(
           starts_with("critere"),
           ~ round(.x, digits = 3)
