@@ -74,24 +74,21 @@ city_hex_l93_intersection <- st_intersection(
 
 ### Création du jeu de données pour colorier la carte 
 
-Sinon, à partir des "vraies" données, la fonction `calculate_indicators()` de ce package permet de calculer ces dimensions. 
+À partir des "vraies" données déposées dans le dossier `data`, la fonction `calculate_indicators()` de ce package permet de calculer ces dimensions. 
 
 Le tableau `dataset` est le tableau - global - représentatif des données de l'étude.
 
 Les tableaux `dataset_souspop` et `dataset_souspop2` sont des tableaux représentatifs d'une sous-population de l'étude. 
 
 ```{r}
-# Lecture des vraies données de l'enquête 
-# + 
-# agrégation avec la fonction calculate_indicators
-dataset <- readxl::read_excel("data/verneuil_data.xlsx") |>
+dataset <- readxl::read_excel("data/xxxxxxx") |>
   calculate_indicators() |> 
   clean_indicators() 
 
 dataset
 ```
 
-Vérification du nb de répondants par localisations / zones :
+Calcul du nb de répondants par localisations / zones :
 
 ```{r}
 dataset_reps_by_localisation <- dataset %>% 
@@ -101,6 +98,7 @@ dataset_reps_by_localisation <- dataset %>%
 dataset_reps_by_localisation
 ```
 
+Ajout du nombre de répondants par localisation dans le jeu de données :
 
 ```{r}
 dataset_group_by_localisation <- dataset |>
@@ -115,45 +113,50 @@ dataset_group_by_localisation <- dataset |>
     dataset_reps_by_localisation,
     by = "Localisation"
   )
+
+dataset_group_by_localisation
 ```
 
+**/!\ Reproduire ces opérations précédentes pour des sous-popultions. /!\**
+
 ##### Calcul des indicateurs pour une zone regroupée
+
+/!\ A ne faire que si il y a des zones groupées /!\
 
 Les zones regroupées ne possèdent pas de données agrégées. Il faut alors les calculer. 
 
 Le code suivant agrège les données selon les zones regroupées :
 
-
-/!\ A ne faire que si il y a des zones groupées
-
 ```{r}
-quartier_df <- quartier_ids %>%
-  map(
-    .f = ~ data.frame(
-      id = .x, 
-      zone = min(.x)
+if (file.exists("../quartiers.rds")) {
+  quartier_df <- quartier_ids %>%
+    map(
+      .f = ~ data.frame(
+        id = .x, 
+        zone = min(.x)
+      )
+    ) %>%
+    bind_rows()
+  
+  dataset_grouped <- dataset |> 
+    left_join(
+      quartier_df,
+      by = "id"
+    ) |> 
+    mutate(
+      zone = coalesce(zone, id)
+    ) |> 
+    group_by(zone) |> 
+    summarise(
+      # sur une colonne
+      # critere_bien_etre_global = mean(critere_bien_etre_global)
+      # Sur toutes les colonnes qui commencent par "critere"
+      across(
+        starts_with("critere"),
+        ~ round(mean(.x , na.rm = TRUE), 2)
+      )
     )
-  ) |> 
-  bind_rows()
-
-dataset_grouped <- dataset |> 
-  left_join(
-    quartier_df,
-    by = "id"
-  ) |> 
-  mutate(
-    zone = coalesce(zone, id)
-  ) |> 
-  group_by(zone) |> 
-  summarise(
-    # sur une colonne
-    # critere_bien_etre_global = mean(critere_bien_etre_global)
-    # Sur toutes les colonnes qui commencent par "critere"
-    across(
-      starts_with("critere"),
-      ~ round(mean(.x , na.rm = TRUE), 2)
-    )
-  )
+}
 ```
 
 ### Création des couleurs dans les zones
@@ -213,21 +216,23 @@ city_hex_l93_intersection_dataset <- city_hex_l93_intersection |>
 
 Nous réalisons la même opération pour les zones groupées :
 
-/!\ à éxécuter si il y a des quartiers
+/!\ à éxécuter uniquelent s'il y a des quartiers /!\
 
 ```{r}
-city_hex_l93_intersection_dataset_souspop2 <- city_grouped_hex_with_quartiers |> 
-  left_join(
-    dataset_grouped, 
-    by = c("id" = "zone")
-  ) |> 
-  mutate(
-    across(
-      starts_with("critere"),
-      ~ my_palette(.x),
-      .names = "{.col}_color"
+if (file.exists("../city_grouped_hex_wgs84.gpkg")) {
+  city_hex_l93_intersection_dataset_souspop2 <- city_grouped_hex_with_quartiers |> 
+    left_join(
+      dataset_grouped, 
+      by = c("id" = "zone")
+    ) |> 
+    mutate(
+      across(
+        starts_with("critere"),
+        ~ my_palette(.x),
+        .names = "{.col}_color"
+      )
     )
-  )
+}
 ```
 
 ##### Vérification à l'aide d'une carte
@@ -286,6 +291,8 @@ Ce morceau de code vient de créer un fichier `geodata_city.js` à l'intérieur 
 
 A l'intérieur de ce fichier, il existe une variable qui se nomme `geodata_city` qui contient la forme des contours de la ville. Cette variable est utilisée dans la fonction `createMap` pour dessiner la carte : 
 
+Il faudra insérer ce code dans le fichier `map.js` autant de fois que de cartes à créer.
+
 ``` js
 createMap(
   idElement = "map",
@@ -314,9 +321,9 @@ Pour automatiser la suite des instructions, nous allons créer une liste avec no
 
 list_of_dataset <- list(
   geodata_dataset = city_hex_l93_intersection_dataset
+  # utiliser les données groupées si nécessaire
   # geodata_dataset_souspop = city_hex_l93_intersection_dataset_souspop,
   # geodata_dataset_souspop2 = city_hex_l93_intersection_dataset_souspop2
-  # utiliser les données groupées si nécessaire
 ) 
 ```
 
