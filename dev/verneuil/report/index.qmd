@@ -26,6 +26,10 @@ execute:
 ---
 
 ```{r}
+city <- "Verneuil-sur-Seine"
+```
+
+```{r}
 #| out.width: "100%"
 #| fig.align: "center"
 knitr::include_graphics(system.file("templates", "infographie", "logo_bleu.svg", package = "nature"))
@@ -39,15 +43,13 @@ knitr::include_graphics(system.file("templates", "infographie", "logo_bleu.svg",
 ```{r}
 #| out.width: "40%"
 #| fig.align: "center"
-knitr::include_graphics("images/verneuilseine.jpg")
+#knitr::include_graphics("images/logoville.jpg")
 ```
 
-Rapport sur l'étude de la ville de Verneuil-sur-Seine
+Rapport sur l'étude de la ville de `r city`
 ::::
 
 # Bien-être et végétalisation
-
-🚧 CECI EST UN _EXEMPLE_ UTILISANT DES DONNEES FICTIVES 🚧
 
 ```{r}
 #| message: false
@@ -63,8 +65,10 @@ library(psych)
 library(papaja)
 library(gtsummary)
 library(NCA)
-
 library(nature)
+library(patchwork)
+library(glue)
+library(gridExtra)
 
 
 font_add_google("Mulish")
@@ -74,6 +78,8 @@ showtext_auto()
 # Ne pas supprimer car permet de charger les dépendances à DT
 DT::datatable(data.frame())
 ```
+
+<!--Modifier le chemin pour lire les données de la ville-->
 
 ```{r}
 # Calculer les données pour la ville
@@ -104,7 +110,7 @@ full_data <- dataset |>
 
 ### Introduction
 
-Le projet BENEV vise à identifier les zones prioritaires de revégétalisation dans la ville de Verneuil-sur-Seine. Pour se faire, nous étudions la perception de nature et son incidence sur le bien-être des résidents en ville. Ce rapport présente les analyses effectuées à partir des données collectées auprès des habitants de Verneuil-sur-Seine.
+Le projet BENEV vise à identifier les zones prioritaires de revégétalisation dans la ville de `r city`. Pour se faire, nous étudions la perception de nature et son incidence sur le bien-être des résidents en ville. Ce rapport présente les analyses effectuées à partir des données collectées auprès des habitants de `r city`.
 
 ### Analyse du profil des répondants
 
@@ -144,6 +150,204 @@ purrr::walk2(
     cat(knitr::knit_print(table))
   }
 )
+```
+
+```{r}
+#| output: asis
+# Graphique pour Sexe des répondants
+table_sexe <- dataset |> 
+  group_by(SEXE) |> 
+  summarise(
+    Fréquence = n(),
+    Pourcentage = round((n() / nrow(dataset)) * 100, 2)
+  )
+
+plot_sexe <- ggplot(table_sexe, aes(x = "", y = Pourcentage, fill = SEXE)) +
+  geom_col(color = "black") +
+  geom_label(aes(label = Pourcentage), color = "#C12C6D",
+             position = position_stack(vjust = 0.5),
+             show.legend = FALSE,
+             size= 3) +
+  guides(fill = guide_legend(title = "Sexe")) +
+  scale_fill_manual(values = c("#8DABDD", "#ECBFD3", "#c5b3e6")) +  # Couleurs personnalisées
+  coord_polar(theta = "y") +
+  theme_void() +
+  ggtitle("Sexe des répondants") +
+  theme(
+      plot.title = element_text(
+      family = "Montserrat",           # Change la famille de police (exemple: sans-serif)
+      face = "bold",             # Met le titre en gras
+      size = 10,                 # Augmente la taille du titre
+      margin = margin(b = 20),   # Espace supplémentaire en bas du titre
+      color = "#1C57BC"        # Couleur du texte du titre
+    ),
+    plot.margin = margin(10, 10, 10, 10)
+  )
+
+# Graphique pour Age des répondants
+table_age <- dataset |> 
+  group_by(AGE) |> 
+  summarise(
+    Fréquence = n(),
+    Pourcentage = round((n() / nrow(dataset)) * 100, 2)
+  )
+
+plot_age <- ggplot(table_age, aes(x = "", y = Pourcentage, fill = AGE)) +
+  geom_col(color = "black") +
+  geom_label(aes(label = Pourcentage), color = "#C12C6D",
+             position = position_stack(vjust = 0.5),
+             show.legend = FALSE,
+             size= 3) +
+  guides(fill = guide_legend(title = "Age")) +
+  scale_fill_benev(name_palette = "blue", 9) +  # Couleurs personnalisées
+  coord_polar(theta = "y") +
+  theme_void() +
+  ggtitle("Age des répondants") +
+  theme(
+      plot.title = element_text(
+      family = "Montserrat",           # Change la famille de police (exemple: sans-serif)
+      face = "bold",             # Met le titre en gras
+      size = 10,                 # Augmente la taille du titre
+      margin = margin(b = 20),   # Espace supplémentaire en bas du titre
+      color = "#1C57BC"        # Couleur du texte du titre
+    ),
+    plot.margin = margin(10, 10, 10, 10)
+  )
+
+
+# Graphique pour Situation civile
+table_sitciv <- dataset |> 
+  group_by(SITCIVILE) |> 
+  summarise(
+    Fréquence = n(),
+    Pourcentage = round((n() / nrow(dataset)) * 100, 2)
+  )
+
+plot_sitciv <- ggplot(table_sitciv, aes(x = "", y = Pourcentage, fill = SITCIVILE)) +
+  geom_col(color = "black") +
+  geom_label(aes(label = Pourcentage), color ="#0e2b5e",
+             position = position_stack(vjust = 0.5),
+             show.legend = FALSE,
+             size= 3) +
+  guides(fill = guide_legend(title = "Situation civile")) +
+  scale_fill_benev(name_palette = "pink", 9) +  # Couleurs personnalisées
+  coord_polar(theta = "y") +
+  theme_void() +
+  ggtitle("Situation civile des répondants") +
+  theme(
+      plot.title = element_text(
+      family = "Montserrat",           # Change la famille de police (exemple: sans-serif)
+      face = "bold",             # Met le titre en gras
+      size = 10,                 # Augmente la taille du titre
+      margin = margin(b = 20),   # Espace supplémentaire en bas du titre
+      color = "#1C57BC"        # Couleur du texte du titre
+    ),
+    plot.margin = margin(10, 10, 10, 10)
+  )
+
+
+# Graphique pour Nombre d'enfant
+table_nbenfant <- dataset |> 
+  group_by(NBENFANT) |> 
+  summarise(
+    Fréquence = n(),
+    Pourcentage = round((n() / nrow(dataset)) * 100, 2)
+  )
+
+
+plot_nbenfant <- ggplot(table_nbenfant, aes(x = "", y = Pourcentage, fill =NBENFANT)) +
+  geom_col(color = "black") +
+  geom_label(aes(label = Pourcentage), color ="#0e2b5e",
+             position = position_stack(vjust = 0.5),
+             show.legend = FALSE,
+             size= 3) +
+  guides(fill = guide_legend(title = "Nombre d'enfant")) +
+  scale_fill_manual(values = c("#8DABDD", "#ECBFD3", "#c5b3e6", "#769ad6","#e685b5")) +  # Couleurs personnalisées
+  coord_polar(theta = "y") +
+  theme_void() +
+  ggtitle("Nombre d'enfant des répondants") +
+  theme(
+      plot.title = element_text(
+      family = "Montserrat",           # Change la famille de police (exemple: sans-serif)
+      face = "bold",             # Met le titre en gras
+      size = 10,                 # Augmente la taille du titre
+      margin = margin(b = 20),   # Espace supplémentaire en bas du titre
+      color = "#1C57BC"        # Couleur du texte du titre
+    ),
+    plot.margin = margin(10, 10, 10, 10)
+  )
+
+# Répéter ce modèle pour chaque variable (NIVETUDE, REVENUFOYER, SITCIVILE, SITPRO, TYPEHABITAT, NBPERSFOYER, NBENFANT)
+# Exemple pour Niveau d'études des répondants
+
+# Calcul de la table de fréquences pour la variable NIVETUDE
+table_nivetude <- dataset |> 
+  group_by(NIVETUDE) |> 
+  summarise(
+    Fréquence = n(),
+    Pourcentage = round((n() / nrow(dataset)) * 100, 2)
+  )
+
+# Création de l'histogramme pour la variable NIVETUDE
+plot_nivetude <- ggplot(table_nivetude, aes(x = NIVETUDE, y = Fréquence, fill = NIVETUDE)) +
+  geom_bar(stat = "identity", color = "black") +
+  geom_text(aes(label = paste0(Pourcentage, "%")), vjust = -0.5, color ="#C12C6D", size = 4) +
+  guides(fill = guide_legend(title = "Niveau d'études")) +
+  scale_fill_benev(name_palette = "purle", 9) +  # Couleurs personnalisées
+  theme_minimal() +
+  ggtitle("Niveau d'études des répondants") +
+  xlab("") +
+  ylim(0, max(table_nivetude$Fréquence) * 1.1) +
+  theme(
+      plot.title = element_text(
+      family = "Montserrat",           # Change la famille de police (exemple: sans-serif)
+      face = "bold",             # Met le titre en gras
+      size = 10,                 # Augmente la taille du titre
+      margin = margin(b = 20),   # Espace supplémentaire en bas du titre
+      color = "#1C57BC"        # Couleur du texte du titre
+    ),
+    plot.margin = margin(10, 10, 10, 10),
+    axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1)  # Inclinaison des titres de colonnes
+  )
+
+# Calcul de la table de fréquences pour la variable TYPEHABITAT
+table_typehabitat <- dataset |> 
+   filter(!is.na(TYPEHABITAT)) |> 
+  group_by(TYPEHABITAT) |> 
+  summarise(
+    Fréquence = n(),
+    Pourcentage = round((n() / nrow(dataset)) * 100, 2)
+  )
+
+# Création de l'histogramme pour la variable TYPEHABITAT
+plot_typehabitat <- ggplot(table_typehabitat, aes(x = TYPEHABITAT, y = Fréquence, fill = TYPEHABITAT)) +
+  geom_bar(stat = "identity", color = "black") +
+  geom_text(aes(label = paste0(Pourcentage, "%")), vjust = -0.5, color ="#C12C6D", size = 4) +
+  guides(fill = guide_legend(title = "Type d'habitation")) +
+  scale_fill_benev(name_palette = "green", 9) +  # Couleurs personnalisées
+  theme_minimal() +
+  ggtitle("Type d'habitation des répondants") +
+  xlab("") +
+  ylim(0, max(table_typehabitat$Fréquence, na.rm = TRUE) * 1.1) +
+  theme(
+      plot.title = element_text(
+      family = "Montserrat",           # Change la famille de police (exemple: sans-serif)
+      face = "bold",             # Met le titre en gras
+      size = 10,                 # Augmente la taille du titre
+      margin = margin(b = 20),   # Espace supplémentaire en bas du titre
+      color = "#1C57BC"        # Couleur du texte du titre
+    ),
+    plot.margin = margin(10, 10, 10, 10),
+    axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1)  # Inclinaison des titres de colonnes
+  )
+
+
+# Affichage des graphiques
+grid.arrange(plot_sexe, plot_age, plot_sitciv, plot_nbenfant, ncol = 2, nrow = 2)
+plot_nivetude
+plot_typehabitat
+
+```
 ```
 
 ### Niveau de bien-être et perception de nature en fonction des caractéristiques de la population
@@ -193,31 +397,7 @@ Dans les analyses suivantes, nous étudions dans quelle mesure la perception de 
 #              test.rep=1000, test.p_confidence=0.9, test.p_threshold=0.05), summaries=TRUE, test=FALSE)
 ```
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris fermentum egestas sapien, eget commodo leo finibus vel. Curabitur nibh turpis, suscipit quis vestibulum vitae, suscipit vel ex. Proin consectetur finibus felis id semper. Curabitur rhoncus maximus magna in dictum. Donec in erat nec tellus varius tristique eget eu augue. Etiam commodo, est eu porta ornare, justo urna luctus massa, a ornare nunc enim in augue. Nulla id sollicitudin ante, in malesuada ex. Nulla tortor urna, sagittis quis pellentesque et, cursus non tellus.
-
-```{r, dev.args=list(bg="transparent")}
-#| fig-align: center
-#| 
-tibble::tibble(
-  age = c("0-18", "19-30", "31-50", "51+"),
-  data = c(3.5, 3.9, 4.1, 3.7)
-) |> 
-  ggplot() +
-  aes(x = age, y = data, fill = age) +
-  geom_col() +
-  theme_minimal() +
-  scale_fill_brewer(
-    palette = "Greens"
-  ) +
-  ylim(0, 5) +
-  labs(
-    x = "",
-    y = "Note moyenne de bien-être"
-  ) +
-  theme(legend.position = "none")
-```
-
-## Données cartographiques
+## Données cartographiques de `r city`
 
 Ceci est un rapport d'analyse concernant le bien-être.
 
@@ -248,6 +428,7 @@ div(
 ```
 
 ::: {.panel-tabset .nav-tabs}
+
 <!-- Tous les titres de niveau 2 deviennent un nouvel onglet dans ce layout  -->
 
 ## Cartographie générale
@@ -291,7 +472,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris fermentum egesta
 #   style = "height: 85vh;"
 # )
 ```
-:::
+::::
 
 ## Analyse approfondie
 
