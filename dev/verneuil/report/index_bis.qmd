@@ -741,71 +741,122 @@ html_output
 #  scale_color_benev("primaire",3)
 ```
 
-### Analyse approfondie: Niveau de bien-être et perception de nature en fonction des caractéristiques de la population
+### Exemple d'Analyse approfondie: Niveau de bien-être et perception de nature en fonction des caractéristiques de la population
 
 ```{r}
-full_data_h <- full_data |> 
-  filter(SEXE == "Homme")
-full_data_f <- full_data |> 
-  filter(SEXE == "Femme")
+#full_data_h <- full_data |> 
+#  filter(SEXE == "Homme")
+#full_data_f <- full_data |> 
+#  filter(SEXE == "Femme")
+#full_data$REVENUFOYER
+#ttest_h <- t.test(critere_bien_etre_global ~ place, data = full_data_h) |> 
+#  broom::tidy() |> 
+#  mutate(
+#    SEXE = "Homme"
+#  ) |> 
+#  select(SEXE, estimate, p.value)
 
-ttest_h <- t.test(critere_bien_etre_global ~ place, data = full_data_h) |> 
-  broom::tidy() |> 
-  mutate(
-    SEXE = "Homme"
-  ) |> 
-  select(SEXE, estimate, p.value)
+#ttest_f <- t.test(critere_bien_etre_global ~ place, data = full_data_f) |> 
+#  broom::tidy() |> 
+#  mutate(
+#    SEXE = "Femme"
+#  ) |> 
+#  select(SEXE, estimate, p.value)
 
-ttest_f <- t.test(critere_bien_etre_global ~ place, data = full_data_f) |> 
-  broom::tidy() |> 
-  mutate(
-    SEXE = "Femme"
-  ) |> 
-  select(SEXE, estimate, p.value)
+#ttest_f <- ttest_h |> bind_rows(ttest_f)
 
-ttest_f <- ttest_h |> bind_rows(ttest_f)
+#datanat_crit_bien_etreglobal <- datanat |> 
+#  group_by(SEXE) |>
+#  summarise(
+#    critere_bien_etre_global_national = round(mean(critere_bien_etre_global), 2),
+#  )
 
-datanat_crit_bien_etreglobal <- datanat |> 
-  group_by(SEXE) |>
-  summarise(
-    critere_bien_etre_global_national = round(mean(critere_bien_etre_global), 2),
-  )
-
-dataset |> 
-  group_by(SEXE) |> 
-  summarise(
-    critere_bien_etre_global = round(mean(critere_bien_etre_global), 2),
-  ) |> 
-  left_join(
-   ttest_f,
-   by = "SEXE"
-  ) |> 
-  left_join(
-    datanat_crit_bien_etreglobal,
-    by = "SEXE"
-  ) |> 
-  mutate(
-    critere_bien_etre_global = case_when(
-      `p.value` < 0.05 & estimate < 0 ~ glue::glue("{critere_bien_etre_global} ({critere_bien_etre_global_national})"),
-      `p.value` < 0.05 & estimate > 0 ~ glue::glue("{critere_bien_etre_global} ({critere_bien_etre_global_national})"),
-      TRUE ~ glue::glue("{critere_bien_etre_global}")
-    )
-  ) |> 
-  select(SEXE, critere_bien_etre_global) |> 
-  DT::datatable(
-    options = list(
-      paging = FALSE,
-      searching = FALSE,
-      ordering = FALSE
-    )
-  )
+#dataset |> 
+#  group_by(SEXE) |> 
+#  summarise(
+#    critere_bien_etre_global = round(mean(critere_bien_etre_global), 2),
+#  ) |> 
+#  left_join(
+#   ttest_f,
+#   by = "SEXE"
+#  ) |> 
+#  left_join(
+#    datanat_crit_bien_etreglobal,
+#    by = "SEXE"
+#  ) |> 
+#  mutate(
+#    critere_bien_etre_global = case_when(
+#      `p.value` < 0.05 & estimate < 0 ~ glue::glue("{critere_bien_etre_global} #({critere_bien_etre_global_national})"),
+#      `p.value` < 0.05 & estimate > 0 ~ glue::glue("{critere_bien_etre_global} #({critere_bien_etre_global_national})"),
+#      TRUE ~ glue::glue("{critere_bien_etre_global}")
+#    )
+#  ) |> 
+#  select(SEXE, critere_bien_etre_global) |> 
+#  DT::datatable(
+#    options = list(
+#      paging = FALSE,
+#      searching = FALSE,
+#      ordering = FALSE
+#    )
+#  )
 ```
 
-### Analyses de la nature comme condition nécessaire au bien-être
+```{r}
 
-Dans les analyses suivantes, nous étudions dans quelle mesure la perception de nature est nécessaire pour atteindre des niveaux moyens ou élevés de bien-être. Nous vous présentons ici les résultats les plus intéressants pour les résidents de votre ville.
+# Filtrer les données pour inclure uniquement les deux modalités pertinentes
+filtered_data <- full_data |> 
+  filter(REVENUFOYER %in% c("Moins de 17 999 €", "Plus de 51 000 €")) |> 
+  droplevels()  # Supprime les niveaux inutilisés
+
+# Vérifier que REVENUFOYER contient exactement 2 niveaux
+if (n_distinct(filtered_data$REVENUFOYER) != 2) {
+  stop("La variable REVENUFOYER ne contient pas exactement deux modalités après filtrage.")
+}
+
+# Calcul des moyennes par modalité
+results <- filtered_data |> 
+  group_by(REVENUFOYER) |> 
+  summarise(
+    critere_bien_etre_global = round(mean(critere_bien_etre_global, na.rm = TRUE), 2)
+  ) |> 
+  ungroup()
+
+# Test t pour comparer les deux modalités
+ttest <- t.test(critere_bien_etre_global ~ REVENUFOYER, data = filtered_data, na.action = na.omit) |> 
+  tidy() |> 
+  select(estimate, p.value)
+
+# Ajouter les résultats du test au tableau
+results <- results |> 
+  mutate(
+    `Différence estimée` = round(ttest$estimate, 2),
+    `p-value` = round(ttest$p.value, 3)
+  )
+
+# Présentation des résultats dans un datatable
+datatable(
+  results,
+  options = list(
+    paging = FALSE,
+    searching = FALSE,
+    ordering = FALSE,
+    info = FALSE
+  ),
+  colnames = c("Revenu du foyer", "Critère Bien-Être Global", "Différence Estimée","p-value")
+)
+
+
+```
+
+
+
+
 
 ```{r}
+### Analyses de la nature comme condition nécessaire au bien-être
+
+#Dans les analyses suivantes, nous étudions dans quelle mesure la #perception de nature est nécessaire pour atteindre des niveaux moyens ou #élevés de bien-être. Nous vous présentons ici les résultats les plus #intéressants pour les résidents de votre ville.
+
 #Remplacer par du texte? 
 # nca_analysis(dataset, 
 #              c("critere_type_nature_global","critere_exposition_nature_global"),
@@ -818,8 +869,6 @@ Dans les analyses suivantes, nous étudions dans quelle mesure la perception de 
 ```
 
 ## Données cartographiques de `r city`
-
-Ceci est un rapport d'analyse concernant le bien-être.
 
 Choisir l'indicateur à visualiser dans la carte :
 
@@ -853,7 +902,8 @@ div(
 
 ## Cartographie générale
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris fermentum egestas sapien, eget commodo leo finibus vel. Curabitur nibh turpis, suscipit quis vestibulum vitae, suscipit vel ex. Proin consectetur finibus felis id semper.
+Les cartes ci-dessous présentent les mesures de bien-être et de nature en focntion de la localisation des répondants. Plus la couleur est foncée, plus les notes moyennes sont élevées dans ces lieux de résidence. 
+En passant sur la carte s'affiche le nombre de répondants présent dans l'hexagone ainsi que le score moyen. 
 
 ```{r}
 #| column: screen-inset
@@ -865,9 +915,7 @@ div(
 )
 ```
 
-## Analysis
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris fermentum egestas sapien, eget commodo leo finibus vel. Curabitur nibh turpis, suscipit quis vestibulum vitae, suscipit vel ex. Proin consectetur finibus felis id semper.
 
 ```{r}
 #| column: screen-inset
@@ -879,9 +927,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris fermentum egesta
 # )
 ```
 
-## Nouvel onglet
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris fermentum egestas sapien, eget commodo leo finibus vel. Curabitur nibh turpis, suscipit quis vestibulum vitae, suscipit vel ex. Proin consectetur finibus felis id semper.
 
 ```{r}
 #| column: screen-inset
@@ -898,4 +944,15 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris fermentum egesta
 
 ## Conclusion
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris fermentum egestas sapien, eget commodo leo finibus vel. Curabitur nibh turpis, suscipit quis vestibulum vitae, suscipit vel ex. Proin consectetur finibus felis id semper.
+Les lieux principaux à revégétaliser à  `r city` afin d'optimiser l'impact de la nature sur le bien-être des résidents sont:
+- les abords des rues X et Y, 
+- la cité Z,
+- les cours et passages entre les batiments des rues A, B et C. 
+
+Pour aller plus loin: 
+- la zone de résidence Est allant de la rue V à la rue W. 
+- les abords des batiments des rues S, T, U. 
+
+
+Concernant le type de végetalisation, la nature est principalement de type domestiqué actuellement. La création de zones de nature moins domestiquée tels que des parterres autonomes, des friches urbaines, des plantes sauvages pourrait enrichir la biodiversité et stimuler la perception des résidents d'une nature complémentaire. 
+
