@@ -1,14 +1,23 @@
 document.addEventListener("DOMContentLoaded", function(event) {
   Swal.fire({
-    title: "Bienvenue sur l'enquête Bien-Être",
+  title: "<strong>Bienvenue sur l'enquête Bien-Être et Nature en ville.</strong>",
     html: `
-Mesdames, Messieurs, <br>La végétalisation et la préservation de la nature sont un axe prioritaire du développement de la ville. Afin d’évaluer les résultats des actions menées et prioriser les actions futures, nous vous remercions de bien vouloir répondre à cette enquête portant sur votre bien-être et votre perception de la nature à proximité de votre domicile. Cette enquête est réalisée avec l’aide de deux chercheuses et est entièrement anonyme.
-
-Si vous acceptez de participer à notre enquête, merci de cliquer sur "J'ai compris" puis de localiser votre lieu de résidence sur la carte qui s'affiche.
-
-Vous remerciant pour votre contribution,<br>
-Bien cordialement,<br>
-Votre maire
+      <p style="font-size: 1.1em; line-height: 1.5em;">
+        <strong>Mesdames, Messieurs,</strong><br><br>
+        La végétalisation et la préservation de la nature sont un axe prioritaire du développement de la ville.
+        Afin d’évaluer les résultats des actions menées et prioriser les actions futures, nous vous remercions de bien vouloir répondre
+        à cette enquête portant sur votre bien-être et votre perception de la nature à proximité de votre domicile.<br><br>
+        Cette enquête est réalisée avec l’aide de deux chercheuses et est <strong>entièrement anonyme</strong>.
+      </p>
+      <p style="font-size: 1.1em; line-height: 1.5em; margin-top: 20px;">
+        Si vous acceptez de participer à notre enquête, merci de cliquer sur "<strong>J'ai compris</strong>"
+        puis de <strong>localiser votre lieu de résidence sur la carte qui s'affiche</strong>.
+      </p>
+      <p style="font-size: 1.1em; line-height: 1.5em; margin-top: 20px;">
+        Vous remerciant pour votre contribution,<br>
+        <strong>Bien cordialement,</strong><br>
+        <em>Votre maire</em>
+      </p>
     `,
     showDenyButton: true,
     confirmButtonText: "J'ai compris",
