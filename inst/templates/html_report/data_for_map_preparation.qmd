@@ -101,14 +101,18 @@ dataset_reps_by_localisation
 Ajout du nombre de répondants par localisation dans le jeu de données :
 
 ```{r}
-dataset_group_by_localisation <- dataset |>
+dataset_group_by_localisation <- dataset |> 
   group_by(Localisation) |> 
   summarise(
     across(
       starts_with("critere"),
-      ~ round(mean(.x), 2)
+      ~ ifelse(
+        cur_column() == "critere_ratio_bien_etre_nature", 
+        round(min(.x, na.rm = TRUE), 2), 
+        round(mean(.x, na.rm = TRUE), 2)
+      )
     )
-  ) |>
+  ) |> 
   left_join(
     dataset_reps_by_localisation,
     by = "Localisation"
