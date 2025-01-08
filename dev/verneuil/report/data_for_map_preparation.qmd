@@ -128,7 +128,7 @@ dataset_group_by_localisation <- dataset |>
         cur_column() == "critere_ratio_bien_etre_nature", 
         round(min(.x, na.rm = TRUE), 2), 
         round(mean(.x, na.rm = TRUE), 2)
-      )
+      ) 
     )
   ) |> 
   left_join(

@@ -8,6 +8,7 @@ library(sf)
 library(dplyr)
 library(purrr)
 library(leaflet)
+library(nature)
 ```
 
 Dans ce fichier, nous allons préparer les données à afficher sur les cartes du rapport.
@@ -81,7 +82,7 @@ Le tableau `dataset` est le tableau - global - représentatif des données de l'
 Les tableaux `dataset_souspop` et `dataset_souspop2` sont des tableaux représentatifs d'une sous-population de l'étude. 
 
 ```{r}
-dataset <- readxl::read_excel("data/xxxxxxx") |>
+dataset <- readxl::read_excel("data/pontault_data.xlsx") |>
   calculate_indicators() |> 
   clean_indicators() 
 
@@ -101,14 +102,18 @@ dataset_reps_by_localisation
 Ajout du nombre de répondants par localisation dans le jeu de données :
 
 ```{r}
-dataset_group_by_localisation <- dataset |>
+dataset_group_by_localisation <- dataset |> 
   group_by(Localisation) |> 
   summarise(
     across(
       starts_with("critere"),
-      ~ round(mean(.x), 2)
+      ~ ifelse(
+        cur_column() == "critere_ratio_bien_etre_nature", 
+        round(min(.x, na.rm = TRUE), 2), 
+        round(mean(.x, na.rm = TRUE), 2)
+      )
     )
-  ) |>
+  ) |> 
   left_join(
     dataset_reps_by_localisation,
     by = "Localisation"
