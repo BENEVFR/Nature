@@ -8,7 +8,6 @@ library(sf)
 library(dplyr)
 library(purrr)
 library(leaflet)
-library(nature)
 ```
 
 Dans ce fichier, nous allons préparer les données à afficher sur les cartes du rapport.
@@ -82,7 +81,7 @@ Le tableau `dataset` est le tableau - global - représentatif des données de l'
 Les tableaux `dataset_souspop` et `dataset_souspop2` sont des tableaux représentatifs d'une sous-population de l'étude. 
 
 ```{r}
-dataset <- readxl::read_excel("data/pontault_data.xlsx") |>
+dataset <- readxl::read_excel("data/xxxxxxx") |>
   calculate_indicators() |> 
   clean_indicators() 
 
@@ -102,18 +101,14 @@ dataset_reps_by_localisation
 Ajout du nombre de répondants par localisation dans le jeu de données :
 
 ```{r}
-dataset_group_by_localisation <- dataset |> 
+dataset_group_by_localisation <- dataset |>
   group_by(Localisation) |> 
   summarise(
     across(
       starts_with("critere"),
-      ~ ifelse(
-        cur_column() == "critere_ratio_bien_etre_nature", 
-        round(min(.x, na.rm = TRUE), 2), 
-        round(mean(.x, na.rm = TRUE), 2)
-      )
+      ~ round(mean(.x), 2)
     )
-  ) |> 
+  ) |>
   left_join(
     dataset_reps_by_localisation,
     by = "Localisation"
@@ -188,7 +183,7 @@ my_palette_nature <- colorBin(
 bins2 <- seq(0, 1, by = 0.15)
 
 my_palette_ratio <- colorBin(
-  palette = c("#081a38", "#0e2b5e","#133C83","#194ea9","#1C57BC","#4978c9","#769ad6","#a4bbe4","#e8eef8"), 
+  palette = c("#e8eef8","#a4bbe4","#769ad6", "#4978c9","#1C57BC", "#194ea9","#133C83", "#0e2b5e","#081a38"), 
   domain = bins2, 
   bins = length(bins2) - 1, 
   na.color = "transparent"
