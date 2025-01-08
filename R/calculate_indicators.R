@@ -92,7 +92,7 @@ calculate_indicators <- function(data) {
   result <- result |>
     rowwise() |>
     mutate(
-      critere_ratio_bien_etre_nature = ( critere_bien_etre_global) * (critere_type_nature_global),
+      critere_ratio_bien_etre_nature = (Sc_max_B_E - critere_bien_etre_global) * (Sc_max_Nature - critere_type_nature_global)/16,
       across(
         starts_with("critere"),
         ~ round(.x, digits = 3)
