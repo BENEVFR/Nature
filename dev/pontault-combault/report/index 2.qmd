@@ -1,0 +1,958 @@
+---
+title: ""
+format:
+  html:
+    self-contained: true
+    toc: true
+    toc-expand: 2
+    toc-title: Naviguer dans le rapport
+    theme: 
+      - flatly
+      - custom.scss
+    include-in-header:
+      text: |
+        <script src="https://cdn.jsdelivr.net/npm/treeselectjs@0.10.0/dist/treeselectjs.umd.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/treeselectjs@0.10.0/dist/treeselectjs.css" />
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+        <script src="https://unpkg.com/leaflet-providers@latest/leaflet-providers.js"></script>
+        <script type="text/javascript" src="geodata_hex.js"></script>
+        <script type="text/javascript" src="geodata_city.js"></script>
+        <script type="text/javascript" src="utils.js"></script>
+        <script type="text/javascript" src="map.js"></script>
+        <script type="text/javascript" src="treeSelect.js"></script>
+execute:
+  echo: false
+---
+
+```{r}
+city <- "Pontault-Combault"
+```
+
+```{r}
+#| out.width: "100%"
+#| fig.align: "center"
+knitr::include_graphics(system.file("templates", "infographie", "logo_bleu.svg", package = "nature"))
+```
+
+:::: {#logo layout="[25, 65]"}
+
+<!--Si tu souhaites ajouter plus d'espace pour ton logo, tu peux modifier les valeurs du paramètre `layout` dans le chunk ci-dessus.-->
+<!--+ d'infos ici : https://quarto.org/docs/computations/execution-options.html-->
+
+```{r}
+#| out.width: "40%"
+#| fig.align: "center"
+#knitr::include_graphics("images/logo-verneuil-sur-seine.jpeg")
+```
+
+Rapport sur l'étude de la ville de `r city`
+::::
+
+# Bien-être et végétalisation
+
+```{r}
+#| message: false
+#| warning: false
+
+library(dplyr)
+library(shiny)
+library(ggplot2)
+library(DT)
+library(ggtext)
+library(showtext)
+library(psych)
+library(papaja)
+library(gtsummary)
+library(NCA)
+library(nature)
+library(patchwork)
+library(glue)
+library(gridExtra)
+library(htmltools)
+library(broom)
+
+
+
+font_add_google("Mulish")
+font_add_google("Montserrat")
+showtext_auto()
+
+# Ne pas supprimer car permet de charger les dépendances à DT
+DT::datatable(data.frame())
+```
+
+<!--Modifier le chemin pour lire les données de la ville-->
+
+```{r}
+# Calculer les données pour la ville
+ dataset <- readxl::read_excel("data/pontault_data.xlsx") |>
+  calculate_indicators() |> 
+  clean_indicators() 
+ 
+## Calculer les données nationales en comparaison
+datanat <- donnees_nat |>
+  calculate_indicators() |> 
+  select(-AGE, -REVENUFOYER)
+  
+
+# Création d'un tableau plus large
+full_data <- dataset |>
+  mutate(
+    place = "Local"
+  ) |> 
+  bind_rows(
+    datanat |> 
+      mutate(
+        place = "National"
+      )
+  )
+```
+
+
+## Présentation et analyse
+
+### Introduction
+
+Le projet BENEV vise à identifier les zones prioritaires de revégétalisation dans la ville de `r city`. Pour ce faire, nous étudions la perception de nature et son incidence sur le bien-être des résidents en ville. Ce rapport présente les analyses effectuées à partir des données collectées auprès des habitants de `r city`.
+
+### Analyse du profil des répondants
+
+**`r nrow(dataset)` citoyens** résidant en ville ont complété le questionnaire entre le 1er octobre et le 20 décembre 2024. Voici leurs statistiques descriptives.
+
+
+```{r}
+#| output: asis
+# Graphique pour Sexe des répondants
+table_sexe <- dataset |> 
+  group_by(SEXE) |> 
+  summarise(
+    Fréquence = n(),
+    Pourcentage = round((n() / nrow(dataset)) * 100, 2)
+  )
+
+plot_sexe <- ggplot(table_sexe, aes(x = "", y = Pourcentage, fill = SEXE)) +
+  geom_col(color = "black") +
+  geom_label(aes(label = Pourcentage), 
+             color = "black",
+             fontface = "bold",
+             position = position_stack(vjust = 0.5),
+             show.legend = FALSE,
+             size= 3) +
+  guides(fill = guide_legend(title = "Sexe")) +
+  scale_fill_manual(values = c("#8DABDD", "#ECBFD3", "#c5b3e6")) +  # Couleurs personnalisées
+  coord_polar(theta = "y") +
+  theme_void() +
+  ggtitle("Sexe des répondants") +
+  theme(
+      plot.title = element_text(
+      family = "Montserrat",           # Change la famille de police (exemple: sans-serif)
+      face = "bold",             # Met le titre en gras
+      size = 10,                 # Augmente la taille du titre
+      margin = margin(b = 20),   # Espace supplémentaire en bas du titre
+      color = "#1C57BC"        # Couleur du texte du titre
+    ),
+    plot.margin = margin(10, 10, 10, 10)
+  )
+
+# Graphique pour Age des répondants
+table_age <- dataset |> 
+  group_by(AGE) |> 
+  summarise(
+    Fréquence = n(),
+    Pourcentage = round((n() / nrow(dataset)) * 100, 2)
+  )
+
+plot_age <- ggplot(table_age, aes(x = "", y = Pourcentage, fill = AGE)) +
+  geom_col(color = "black") +
+  geom_label(aes(label = Pourcentage), 
+             color = "black",
+             fontface = "bold",
+             position = position_stack(vjust = 0.5),
+             show.legend = FALSE,
+             size= 3) +
+  guides(fill = guide_legend(title = "Age")) +
+  scale_fill_benev(name_palette = "blue", 9) +  # Couleurs personnalisées
+  coord_polar(theta = "y") +
+  theme_void() +
+  ggtitle("Age des répondants") +
+  theme(
+      plot.title = element_text(
+      family = "Montserrat",           # Change la famille de police (exemple: sans-serif)
+      face = "bold",             # Met le titre en gras
+      size = 10,                 # Augmente la taille du titre
+      margin = margin(b = 20),   # Espace supplémentaire en bas du titre
+      color = "#1C57BC"        # Couleur du texte du titre
+    ),
+    plot.margin = margin(10, 10, 10, 10)
+  )
+
+
+# Graphique pour Situation civile
+table_sitciv <- dataset |> 
+  group_by(SITCIVILE) |> 
+  summarise(
+    Fréquence = n(),
+    Pourcentage = round((n() / nrow(dataset)) * 100, 2)
+  )
+
+plot_sitciv <- ggplot(table_sitciv, aes(x = "", y = Pourcentage, fill = SITCIVILE)) +
+  geom_col(color = "black") +
+  geom_label(aes(label = Pourcentage), 
+             color ="#0e2b5e",
+             fontface = "bold",
+             position = position_stack(vjust = 0.5),
+             show.legend = FALSE,
+             size= 3) +
+  guides(fill = guide_legend(title = "Situation civile")) +
+  scale_fill_benev(name_palette = "pink", 9) +  # Couleurs personnalisées
+  coord_polar(theta = "y") +
+  theme_void() +
+  ggtitle("Situation civile des répondants") +
+  theme(
+      plot.title = element_text(
+      family = "Montserrat",           # Change la famille de police (exemple: sans-serif)
+      face = "bold",             # Met le titre en gras
+      size = 10,                 # Augmente la taille du titre
+      margin = margin(b = 20),   # Espace supplémentaire en bas du titre
+      color = "#1C57BC"        # Couleur du texte du titre
+    ),
+    plot.margin = margin(10, 10, 10, 10)
+  )
+
+
+# Graphique pour Nombre d'enfants
+table_nbenfant <- dataset |> 
+  group_by(NBENFANT) |> 
+  summarise(
+    Fréquence = n(),
+    Pourcentage = round((n() / nrow(dataset)) * 100, 2)
+  )
+
+
+plot_nbenfant <- ggplot(table_nbenfant, aes(x = "", y = Pourcentage, fill =NBENFANT)) +
+  geom_col(color = "black") +
+  geom_label(aes(label = Pourcentage),
+             color ="#0e2b5e",
+             fontface = "bold",
+             position = position_stack(vjust = 0.5),
+             show.legend = FALSE,
+             size= 3) +
+  guides(fill = guide_legend(title = "Nombre d'enfants")) +
+  scale_fill_manual(values = c("#8DABDD", "#ECBFD3", "#c5b3e6", "#769ad6","#e685b5")) +  # Couleurs personnalisées
+  coord_polar(theta = "y") +
+  theme_void() +
+  ggtitle("Nombre d'enfants des répondants") +
+  theme(
+      plot.title = element_text(
+      family = "Montserrat",           # Change la famille de police (exemple: sans-serif)
+      face = "bold",             # Met le titre en gras
+      size = 10,                 # Augmente la taille du titre
+      margin = margin(b = 20),   # Espace supplémentaire en bas du titre
+      color = "#1C57BC"        # Couleur du texte du titre
+    ),
+    plot.margin = margin(10, 10, 10, 10)
+  )
+
+# Répéter ce modèle pour chaque variable (NIVETUDE, REVENUFOYER, SITCIVILE, SITPRO, TYPEHABITAT, NBPERSFOYER, NBENFANT)
+# Exemple pour Niveau d'études des répondants
+
+# Calcul de la table de fréquences pour la variable NIVETUDE
+table_nivetude <- dataset |> 
+  group_by(NIVETUDE) |> 
+  summarise(
+    Fréquence = n(),
+    Pourcentage = round((n() / nrow(dataset)) * 100, 2)
+  )
+
+# Création de l'histogramme pour la variable NIVETUDE
+plot_nivetude <- ggplot(table_nivetude, aes(x = NIVETUDE, y = Fréquence, fill = NIVETUDE)) +
+  geom_bar(stat = "identity", color = "black") +
+  geom_text(aes(label = paste0(Pourcentage, "%")), vjust = -0.5, color ="#C12C6D", size = 4) +
+  guides(fill = guide_legend(title = "Niveaux d'études")) +
+  scale_fill_benev(name_palette = "pink", 9) +  # Couleurs personnalisées
+  theme_minimal() +
+  ggtitle("Niveaux d'études des répondants") +
+  xlab("") +
+  ylim(0, max(table_nivetude$Fréquence) * 1.1) +
+  theme(
+      plot.title = element_text(
+      family = "Montserrat",           # Change la famille de police (exemple: sans-serif)
+      face = "bold",             # Met le titre en gras
+      size = 10,                 # Augmente la taille du titre
+      margin = margin(b = 20),   # Espace supplémentaire en bas du titre
+      color = "#1C57BC"        # Couleur du texte du titre
+    ),
+    plot.margin = margin(10, 10, 10, 10),
+    axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1)  # Inclinaison des titres de colonnes
+  )
+
+# Calcul de la table de fréquences pour la variable TYPEHABITAT
+table_typehabitat <- dataset |> 
+   filter(!is.na(TYPEHABITAT)) |> 
+  group_by(TYPEHABITAT) |> 
+  summarise(
+    Fréquence = n(),
+    Pourcentage = round((n() / nrow(dataset)) * 100, 2)
+  )
+
+# Création de l'histogramme pour la variable TYPEHABITAT
+plot_typehabitat <- ggplot(table_typehabitat, aes(x = TYPEHABITAT, y = Fréquence, fill = TYPEHABITAT)) +
+  geom_bar(stat = "identity", color = "black") +
+  geom_text(aes(label = paste0(Pourcentage, "%")), vjust = -0.5, color ="#C12C6D", size = 4) +
+  guides(fill = guide_legend(title = "Type d'habitation")) +
+  scale_fill_benev(name_palette = "blue", 9) +  # Couleurs personnalisées
+  theme_minimal() +
+  ggtitle("Type d'habitation des répondants") +
+  xlab("") +
+  ylim(0, max(table_typehabitat$Fréquence, na.rm = TRUE) * 1.1) +
+  theme(
+      plot.title = element_text(
+      family = "Montserrat",           # Change la famille de police (exemple: sans-serif)
+      face = "bold",             # Met le titre en gras
+      size = 10,                 # Augmente la taille du titre
+      margin = margin(b = 20),   # Espace supplémentaire en bas du titre
+      color = "#1C57BC"        # Couleur du texte du titre
+    ),
+    plot.margin = margin(10, 10, 10, 10),
+    axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1)  # Inclinaison des titres de colonnes
+  )
+
+
+# Affichage des graphiques
+grid.arrange(plot_sexe, plot_age, plot_sitciv, plot_nbenfant, ncol = 2, nrow = 2)
+plot_nivetude
+plot_typehabitat
+
+```
+
+
+### Niveaux de bien-être et perception de nature
+
+Les tableaux ci-dessous présentent les niveaux de bien-être et de perception de nature des habitants de `r city`. Nous mettons également en évidence l'existence de différences significatives avec notre échantillon national. Ainsi la moyenne pour notre échantillon national apparaît entre parenthèses lorsqu'elle est significativement différente de la moyenne des habitants de `r city`.
+
+## Niveaux de bien-être
+Nous avons interrogé les résidents sur leur niveau de bien-être au cours de la dernière semaine dans leur lieu de résidence. 
+L'échelle de bien-être que nous utilisons permet d'obtenir une note de bien-être global et de distinguer les facettes suivantes : le bien-être psychologique, physique, lié à l'environnement (perception que l'on vit dans un environnement sain et satisfaisant) et lié aux ressources (satisfaction quant à notre capacité à nous déplacer, à pratiquer des loisirs, à accéder aux informations). 
+Plus les notes sont élevées, plus les résidents ont des niveaux de bien-être élevés. 
+
+```{r}
+# Liste des critères à traiter
+criteres <- c("critere_bien_etre_global", "critere_bien_etre_psy", "critere_bien_etre_environnement", 
+              "critere_bien_etre_physique", "critere_bien_etre_ressources")
+
+# Fonction pour calculer les moyennes et tests pour chaque critère
+calcul_criteres <- function(data, datanat, critere) {
+  # Test t pour le critère
+  ttest <- t.test(data[[critere]] ~ place, data = data) |> 
+    tidy() |> 
+    mutate(variable = critere) |> 
+    select(variable, estimate, p.value)
+  
+  # Moyenne nationale pour le critère
+  datanat_mean <- datanat |> 
+    summarise(mean_value = round(mean(.data[[critere]]), 2)) |> 
+    mutate(variable = critere)
+  
+  # Moyenne globale pour le critère
+  dataset_mean <- data |> 
+    summarise(mean_value = round(mean(.data[[critere]]), 2)) |> 
+    mutate(variable = critere)
+  
+  # Combiner et formater les résultats
+  result <- dataset_mean |> 
+    left_join(ttest, by = "variable") |> 
+    left_join(datanat_mean, by = "variable") |> 
+    mutate(
+      mean_value = case_when(
+        p.value < 0.05 & estimate < 0 ~ glue("{mean_value.x} ({mean_value.y})"),
+        p.value < 0.05 & estimate > 0 ~ glue("{mean_value.x} ({mean_value.y})"),
+        TRUE ~ glue("{mean_value.x}")
+      )
+    ) |> 
+    select(variable, mean_value)
+  
+  return(result)
+}
+
+# Appliquer la fonction pour chaque critère
+results <- bind_rows(lapply(criteres, calcul_criteres, data = full_data, datanat = datanat))
+
+# Ajouter des noms explicites pour chaque critère dans une nouvelle colonne "Critère"
+results <- results |> 
+  mutate(Critère = case_when(
+    variable == "critere_bien_etre_global" ~ "Bien-être global",
+    variable == "critere_bien_etre_psy" ~ "Bien-être psychologique",
+    variable == "critere_bien_etre_environnement" ~ "Bien-être environnemental",
+    variable == "critere_bien_etre_physique" ~ "Bien-être physique",
+    variable == "critere_bien_etre_ressources" ~ "Bien-être ressources",
+    TRUE ~ "Inconnu"  # Par défaut si une variable inattendue apparaît
+  )) |> 
+  select(Critère, `Note moyenne` = mean_value)  # Renommer la colonne et réorganiser
+
+# Générer le tableau avec DT
+datatable_with_note <- DT::datatable(
+  results,
+  options = list(
+    paging = FALSE,
+    searching = FALSE,
+    ordering = FALSE,
+    info = FALSE 
+  )
+)
+
+# Ajouter la note en dessous
+html_output <- tagList(
+  datatable_with_note,
+  tags$p(
+    "Entre parenthèses sont présentées les moyennes à l’échelle nationale. La note minimale théorique est 1 et la note maximale théorique est 5.",
+    style = "font-style: italic; font-size: 90%; margin-top: 10px;"
+  )
+)
+
+# Afficher l'objet HTML
+html_output
+```
+
+## Perception de nature autour du lieu de résidence
+Nous avons interrogé les résidents sur les types d'espaces verts et de nature à proximité de leur lieu de résidence (qu'ils voient de chez eux ou auquel ils ont accès en moins de 15 min à pied). Ces types d'espaces verts sont catégorisés en trois dimensions : la nature de proximité comme les parterres de fleurs et les toits végétalisés ; la nature domestiquée comme les parcs et jardins publics et la nature non-domestiquée comme les bois, les prairies. 
+Plus les notes sont élevées, plus les résidents ont accès à ces types de nature autour de leur lieu de résidence. 
+
+```{r}
+
+# Liste des critères à traiter
+criteres <- c("critere_type_nature_global", "critere_nature_nondomest", "critere_nature_domestique", "critere_nature_proximite", "critere_exposition_nature_global",  "critere_biodiv_global")
+
+# Fonction pour calculer les moyennes et tests pour chaque critère
+calcul_criteres <- function(data, datanat, critere) {
+  # Test t pour le critère
+  ttest <- t.test(data[[critere]] ~ place, data = data) |> 
+    tidy() |> 
+    mutate(variable = critere) |> 
+    select(variable, estimate, p.value)
+  
+  # Moyenne nationale pour le critère
+  datanat_mean <- datanat |> 
+    summarise(mean_value = round(mean(.data[[critere]]), 2)) |> 
+    mutate(variable = critere)
+  
+  # Moyenne globale pour le critère
+  dataset_mean <- data |> 
+    summarise(mean_value = round(mean(.data[[critere]]), 2)) |> 
+    mutate(variable = critere)
+  
+  # Combiner et formater les résultats
+  result <- dataset_mean |> 
+    left_join(ttest, by = "variable") |> 
+    left_join(datanat_mean, by = "variable") |> 
+    mutate(
+      mean_value = case_when(
+        p.value < 0.05 & estimate < 0 ~ glue("{mean_value.x} ({mean_value.y})"),
+        p.value < 0.05 & estimate > 0 ~ glue("{mean_value.x} ({mean_value.y})"),
+        TRUE ~ glue("{mean_value.x}")
+      )
+    ) |> 
+    select(variable, mean_value)
+  
+  return(result)
+}
+
+# Appliquer la fonction pour chaque critère
+results <- bind_rows(lapply(criteres, calcul_criteres, data = full_data, datanat = datanat))
+
+# Ajouter des noms explicites pour chaque critère dans une nouvelle colonne "Critère"
+results <- results |> 
+  mutate(Critère = case_when(
+    variable == "critere_type_nature_global" ~ "Perception de nature globale",
+    variable == "critere_nature_nondomest" ~ "Perception de nature non-domestiquée",
+    variable == "critere_nature_domestique" ~ "Perception de nature domestiquée",
+    variable == "critere_nature_proximite" ~ "Perception de nature de proximité",
+    variable == "critere_exposition_nature_global" ~ "Fréquence d'exposition à la nature",
+    variable == "critere_biodiv_global" ~ "Perception de biodiversité",
+    TRUE ~ "Inconnu"  # Par défaut si une variable inattendue apparaît
+  )) |> 
+  select(Critère, `Note moyenne` = mean_value)  # Renommer la colonne et réorganiser
+
+# Générer le tableau avec DT
+datatable_with_note <- DT::datatable(
+  results,
+  options = list(
+    paging = FALSE,
+    searching = FALSE,
+    ordering = FALSE,
+    info = FALSE 
+  )
+)
+
+# Ajouter la note en dessous
+html_output <- tagList(
+  datatable_with_note,
+  tags$p(
+    "Entre parenthèses sont présentées les moyennes à l’échelle nationale. La note minimale théorique est 1 et la note maximale théorique est 5.",
+    style = "font-style: italic; font-size: 90%; margin-top: 10px;"
+  )
+)
+
+# Afficher l'objet HTML
+html_output
+```
+## Caractéristiques des lieux de nature autour du lieu de résidence
+Nous avons interrogé les résidents sur leur satisfaction concernant certaines caractéristiques des environnements naturels à proximité de leur lieu de résidence. 
+Plus les notes sont élevées, plus les résidents sont satisfaits de ces caractéristiques. 
+
+```{r}
+# Calculer les données pour la ville
+ dataset_CP <- readxl::read_excel("data/pontault_data.xlsx") |>
+ mutate(
+      identifiant_repondant = row_number()
+    ) |>
+  select(   identifiant_repondant,
+      Localisation,
+      AGE,
+      SEXE,
+      TYPEHABITAT,
+      REVENUFOYER,
+      SITPRO,
+      NIVETUDE,
+      SITCIVILE,
+      NBPERSFOYER,
+      NBENFANT,
+      AUCUN,
+      starts_with("CP"),)
+  
+ ## Calculer les données nationales en comparaison
+datanat_CP <- donnees_nat |>
+mutate(
+      identifiant_repondant = row_number()
+    ) |>
+  select(   identifiant_repondant,
+      Localisation,
+      AGE,
+      SEXE,
+      TYPEHABITAT,
+      REVENUFOYER,
+      SITPRO,
+      NIVETUDE,
+      SITCIVILE,
+      NBPERSFOYER,
+      NBENFANT,
+      AUCUN,
+      starts_with("CP"),
+    -AGE, -REVENUFOYER)
+  
+
+# Création d'un tableau plus large
+full_data_CP <- dataset_CP |>
+  mutate(
+    place = "Local"
+  ) |> 
+  bind_rows(
+    datanat_CP |> 
+      mutate(
+        place = "National"
+      )
+  )
+
+# Liste des critères à traiter
+criteres <- c("CP1","CP2","CP3","CP4","CP5", "CP6","CP7","CP8","CP9","CP10")
+
+# Fonction pour calculer les moyennes et tests pour chaque critère
+calcul_criteres <- function(data, datanat, critere) {
+  # Test t pour le critère
+  ttest <- t.test(data[[critere]] ~ place, data = data) |> 
+    tidy() |> 
+    mutate(variable = critere) |> 
+    select(variable, estimate, p.value)
+  
+  # Moyenne nationale pour le critère
+  datanat_mean <- datanat |> 
+    summarise(mean_value = round(mean(.data[[critere]],na.rm= TRUE), 2)) |> 
+    mutate(variable = critere)
+  
+  # Moyenne globale pour le critère
+  dataset_mean <- data |> 
+    summarise(mean_value = round(mean(.data[[critere]],na.rm= TRUE), 2)) |> 
+    mutate(variable = critere)
+  
+  # Combiner et formater les résultats
+  result <- dataset_mean |> 
+    left_join(ttest, by = "variable") |> 
+    left_join(datanat_mean, by = "variable") |> 
+    mutate(
+      mean_value = case_when(
+        p.value < 0.05 & estimate < 0 ~ glue("{mean_value.x} ({mean_value.y})"),
+        p.value < 0.05 & estimate > 0 ~ glue("{mean_value.x} ({mean_value.y})"),
+        TRUE ~ glue("{mean_value.x}")
+      )
+    ) |> 
+    select(variable, mean_value)
+  
+  return(result)
+}
+
+# Appliquer la fonction pour chaque critère
+results <- bind_rows(lapply(criteres, calcul_criteres, data = full_data_CP, datanat = datanat_CP))
+
+# Ajouter des noms explicites pour chaque critère dans une nouvelle colonne "Critère"
+results <- results |> 
+  mutate(Critère = case_when(
+    variable == "CP1" ~ "La sécurité",
+    variable == "CP2" ~ "La propreté",
+    variable == "CP3" ~ "L’esthétique, la beauté des lieux",
+    variable == "CP4" ~ "Le coût (coût d’accès, d’entretien)",
+    variable == "CP5" ~ "Les horaires d’ouverture",
+    variable == "CP6" ~ "La signalétique",
+    variable == "CP7" ~ "La facilité d’accès",
+    variable == "CP8" ~ "Les espaces de mobilité",
+    variable == "CP9" ~ "Les espaces ou installations permettant le repos",
+    variable == "CP10" ~ "Les espaces ou installations permettant le loisir",
+    TRUE ~ "Inconnu"  # Par défaut si une variable inattendue apparaît
+  )) |> 
+  select(Critère, `Note moyenne` = mean_value)  # Renommer la colonne et réorganiser
+
+# Générer le tableau avec DT
+datatable_with_note <- DT::datatable(
+  results,
+  options = list(
+    paging = FALSE,
+    searching = FALSE,
+    ordering = FALSE,
+    info = FALSE 
+  )
+)
+
+# Ajouter la note en dessous
+html_output <- tagList(
+  datatable_with_note,
+  tags$p(
+    "Entre parenthèses sont présentées les moyennes à l’échelle nationale. La note minimale théorique est 1 et la note maximale théorique est 5.",
+    style = "font-style: italic; font-size: 90%; margin-top: 10px;"
+  )
+)
+
+# Afficher l'objet HTML
+html_output
+```
+## Activités dans la nature
+
+Nous avons interrogé les résidents sur la fréquence à laquelle ils effectuaient certaines activités dans la nature à proximité de le lieu de résidence. Ces activités sont regroupées en activités sociales et/ou calmes et activités sportives. 
+Plus les notes sont élevées, plus les résidents effectuent fréquemment ces activités dans les lieux de nature autour de chez eux. 
+
+```{r}
+
+# Liste des critères à traiter
+criteres <- c("critere_activ_global", "critere_activ_social_calme", "critere_activ_sport")
+
+# Fonction pour calculer les moyennes et tests pour chaque critère
+calcul_criteres <- function(data, datanat, critere) {
+  # Test t pour le critère
+  ttest <- t.test(data[[critere]] ~ place, data = data) |> 
+    tidy() |> 
+    mutate(variable = critere) |> 
+    select(variable, estimate, p.value)
+  
+  # Moyenne nationale pour le critère
+  datanat_mean <- datanat |> 
+    summarise(mean_value = round(mean(.data[[critere]]), 2)) |> 
+    mutate(variable = critere)
+  
+  # Moyenne globale pour le critère
+  dataset_mean <- data |> 
+    summarise(mean_value = round(mean(.data[[critere]]), 2)) |> 
+    mutate(variable = critere)
+  
+  # Combiner et formater les résultats
+  result <- dataset_mean |> 
+    left_join(ttest, by = "variable") |> 
+    left_join(datanat_mean, by = "variable") |> 
+    mutate(
+      mean_value = case_when(
+        p.value < 0.05 & estimate < 0 ~ glue("{mean_value.x} ({mean_value.y})"),
+        p.value < 0.05 & estimate > 0 ~ glue("{mean_value.x} ({mean_value.y})"),
+        TRUE ~ glue("{mean_value.x}")
+      )
+    ) |> 
+    select(variable, mean_value)
+  
+  return(result)
+}
+
+# Appliquer la fonction pour chaque critère
+results <- bind_rows(lapply(criteres, calcul_criteres, data = full_data, datanat = datanat))
+
+# Ajouter des noms explicites pour chaque critère dans une nouvelle colonne "Critère"
+results <- results |> 
+  mutate(Critère = case_when(
+    variable == "critere_activ_global" ~ "Fréquence d'activités globales",
+    variable == "critere_activ_social_calme" ~ "Fréquence d'activités sociales et/ou calmes",
+    variable == "critere_activ_sport" ~ "Fréquence d'activités sportives",
+    TRUE ~ "Inconnu"  # Par défaut si une variable inattendue apparaît
+  )) |> 
+  select(Critère, `Note moyenne` = mean_value)  # Renommer la colonne et réorganiser
+
+# Générer le tableau avec DT
+datatable_with_note <- DT::datatable(
+  results,
+  options = list(
+    paging = FALSE,
+    searching = FALSE,
+    ordering = FALSE,
+    info = FALSE 
+  )
+)
+
+# Ajouter la note en dessous
+html_output <- tagList(
+  datatable_with_note,
+  tags$p(
+    "Entre parenthèses sont présentées les moyennes à l’échelle nationale. La note minimale théorique est 1 et la note maximale théorique est 5.",
+    style = "font-style: italic; font-size: 90%; margin-top: 10px;"
+  )
+)
+
+# Afficher l'objet HTML
+html_output
+```
+
+```{r, dev.args=list(bg="transparent")}
+#| fig-align: center
+#| 
+# dataset %>% 
+#   group_by(SEXE) %>% 
+#   summarise(
+#     note_critere_bien_etre = round(mean(critere_bien_etre_global), 2)
+#   ) %>% 
+#   ggplot() +
+#   aes(x = SEXE, y = note_critere_bien_etre, fill = SEXE) +
+#   geom_col() +
+#   theme_benev() +
+#   scale_fill_benev() +
+#   ylim(0, 5) +
+#   labs(
+#     x = "",
+#     y = "Note moyenne de bien-être"
+#   ) +
+#   theme(legend.position = "none")
+
+# A basic scatterplot with color depending on SEXE
+#ggplot(dataset, aes(x=critere_type_nature_global, y=critere_bien_etre_global, color=SEXE)) + 
+#    geom_point() +
+#    theme_benev() + 
+#  scale_color_benev("primaire",3)
+```
+
+### Exemple d'analyse approfondie : Niveaux de bien-être et perception de nature en fonction des caractéristiques de la population
+
+```{r}
+#full_data_h <- full_data |> 
+#  filter(SEXE == "Homme")
+#full_data_f <- full_data |> 
+#  filter(SEXE == "Femme")
+#full_data$REVENUFOYER
+#ttest_h <- t.test(critere_bien_etre_global ~ place, data = full_data_h) |> 
+#  broom::tidy() |> 
+#  mutate(
+#    SEXE = "Homme"
+#  ) |> 
+#  select(SEXE, estimate, p.value)
+
+#ttest_f <- t.test(critere_bien_etre_global ~ place, data = full_data_f) |> 
+#  broom::tidy() |> 
+#  mutate(
+#    SEXE = "Femme"
+#  ) |> 
+#  select(SEXE, estimate, p.value)
+
+#ttest_f <- ttest_h |> bind_rows(ttest_f)
+
+#datanat_crit_bien_etreglobal <- datanat |> 
+#  group_by(SEXE) |>
+#  summarise(
+#    critere_bien_etre_global_national = round(mean(critere_bien_etre_global), 2),
+#  )
+
+#dataset |> 
+#  group_by(SEXE) |> 
+#  summarise(
+#    critere_bien_etre_global = round(mean(critere_bien_etre_global), 2),
+#  ) |> 
+#  left_join(
+#   ttest_f,
+#   by = "SEXE"
+#  ) |> 
+#  left_join(
+#    datanat_crit_bien_etreglobal,
+#    by = "SEXE"
+#  ) |> 
+#  mutate(
+#    critere_bien_etre_global = case_when(
+#      `p.value` < 0.05 & estimate < 0 ~ glue::glue("{critere_bien_etre_global} #({critere_bien_etre_global_national})"),
+#      `p.value` < 0.05 & estimate > 0 ~ glue::glue("{critere_bien_etre_global} #({critere_bien_etre_global_national})"),
+#      TRUE ~ glue::glue("{critere_bien_etre_global}")
+#    )
+#  ) |> 
+#  select(SEXE, critere_bien_etre_global) |> 
+#  DT::datatable(
+#    options = list(
+#      paging = FALSE,
+#      searching = FALSE,
+#      ordering = FALSE
+#    )
+#  )
+```
+
+```{r}
+
+# Filtrer les données pour inclure uniquement les deux modalités pertinentes
+filtered_data <- full_data |> 
+  filter(REVENUFOYER %in% c("Moins de 17 999 €", "Plus de 51 000 €")) |> 
+  droplevels()  # Supprime les niveaux inutilisés
+
+# Vérifier que REVENUFOYER contient exactement 2 niveaux
+if (n_distinct(filtered_data$REVENUFOYER) != 2) {
+  stop("La variable REVENUFOYER ne contient pas exactement deux modalités après filtrage.")
+}
+
+# Calcul des moyennes par modalité
+results <- filtered_data |> 
+  group_by(REVENUFOYER) |> 
+  summarise(
+    critere_bien_etre_global = round(mean(critere_bien_etre_global, na.rm = TRUE), 2)
+  ) |> 
+  ungroup()
+
+# Test t pour comparer les deux modalités
+ttest <- t.test(critere_bien_etre_global ~ REVENUFOYER, data = filtered_data, na.action = na.omit) |> 
+  tidy() |> 
+  select(estimate, p.value)
+
+# Ajouter les résultats du test au tableau
+results <- results |> 
+  mutate(
+    `Différence estimée` = round(ttest$estimate, 2),
+    `p-value` = round(ttest$p.value, 3)
+  )
+
+# Présentation des résultats dans un datatable
+datatable(
+  results,
+  options = list(
+    paging = FALSE,
+    searching = FALSE,
+    ordering = FALSE,
+    info = FALSE
+  ),
+  colnames = c("Revenu du foyer", "Critère Bien-Être Global", "Différence Estimée","p-value")
+)
+
+
+```
+
+
+
+
+
+```{r}
+### Analyses de la nature comme condition nécessaire au bien-être
+
+#Dans les analyses suivantes, nous étudions dans quelle mesure la #perception de nature est nécessaire pour atteindre des niveaux moyens ou #élevés de bien-être. Nous vous présentons ici les résultats les plus #intéressants pour les résidents de votre ville.
+
+#Remplacer par du texte? 
+# nca_analysis(dataset, 
+#              c("critere_type_nature_global","critere_exposition_nature_global"),
+#              "critere_bien_etre_global", 
+#              test.rep=1000, test.p_confidence=0.9, test.p_threshold=0.05)
+# nca_output(nca_analysis(dataset, 
+#              c("critere_type_nature_global","critere_exposition_nature_global"),
+#              "critere_bien_etre_global", 
+#              test.rep=1000, test.p_confidence=0.9, test.p_threshold=0.05), summaries=TRUE, test=FALSE)
+```
+
+## Données cartographiques de `r city`
+
+Choisir l'indicateur à visualiser dans la carte :
+
+```{r}
+#| layout-nrow: 1
+#| output: asis
+
+shiny::tags$div(
+  id = "treeselect-container"
+)
+
+div(
+  class = "form-check form-switch",
+  shiny::tags$input(
+    class = "form-check-input",
+    type = "checkbox",
+    id = "hidemapinfos",
+    onchange="changeOpacity()"
+  ),
+  shiny::tags$label(
+    class = "form-check-label",
+    `for` = "hidemapinfos",
+    "Cacher les infos en dessous des couleurs"
+  )
+)
+```
+
+::: {.panel-tabset .nav-tabs}
+
+<!-- Tous les titres de niveau 2 deviennent un nouvel onglet dans ce layout  -->
+
+## Cartographie générale
+
+Les cartes ci-dessous présentent les mesures de bien-être et de nature en fonction de la localisation des répondants. Plus la couleur est foncée, plus les notes moyennes sont élevées dans ces lieux de résidence. 
+En passant sur la carte s'affiche le nombre de répondants présent dans l'hexagone ainsi que le score moyen. 
+
+```{r}
+#| column: screen-inset
+
+div(
+  id = "map",
+  class = "mt-3",
+  style = "height: 85vh;"
+)
+```
+
+
+
+```{r}
+#| column: screen-inset
+
+# div(
+#   id = "map2",
+#   class = "mt-3",
+#   style = "height: 85vh;"
+# )
+```
+
+
+
+```{r}
+#| column: screen-inset
+
+# div(
+#   id = "map3",
+#   class = "mt-3",
+#   style = "height: 85vh;"
+# )
+```
+::::
+
+
+
+## Conclusion
+
+Les lieux principaux à revégétaliser à  `r city` afin d'optimiser l'impact de la nature sur le bien-être des résidents sont :
+- les abords des rues X et Y, 
+- la cité Z,
+- les cours et passages entre les batiments des rues A, B et C. 
+
+Pour aller plus loin : 
+- la zone de résidence Est allant de la rue V à la rue W. 
+- les abords des bâtiments des rues S, T, U. 
+
+
+Concernant le type de végétalisation, la nature est principalement de type domestiqué actuellement. La création de zones de nature moins domestiquée telles que des parterres autonomes, des friches urbaines, des plantes sauvages pourrait enrichir la biodiversité et stimuler la perception des résidents d'une nature complémentaire. 
+

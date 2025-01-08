@@ -37,7 +37,7 @@ Il s'agit de la vignette `create_new_report.Rmd`. Les modifications réalisées 
 Nous allons créer un nouveau dossier qui contiendra l'ensemble des fichiers et données pour l'enquête.
 
 ```{r, eval=FALSE}
-le_nom_de_la_ville <- "deauville"
+le_nom_de_la_ville <- "Pontault-Combault"
 
 dir.create(
   path = file.path(

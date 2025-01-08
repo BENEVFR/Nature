@@ -26,7 +26,7 @@ execute:
 ---
 
 ```{r}
-city <- "Pontault-Combault"
+city <- "Paris"
 ```
 
 ```{r}
@@ -66,9 +66,6 @@ library(papaja)
 library(gtsummary)
 library(NCA)
 library(nature)
-library(patchwork)
-library(glue)
-library(gridExtra)
 
 
 font_add_google("Mulish")
@@ -83,7 +80,7 @@ DT::datatable(data.frame())
 
 ```{r}
 # Calculer les données pour la ville
-dataset <- readxl::read_excel("data/verneuil_data.xlsx") |>
+dataset <- readxl::read_excel("data/pontault_data.xlsx") |>
   calculate_indicators() |> 
   clean_indicators() 
  
@@ -150,204 +147,6 @@ purrr::walk2(
     cat(knitr::knit_print(table))
   }
 )
-```
-
-```{r}
-#| output: asis
-# Graphique pour Sexe des répondants
-table_sexe <- dataset |> 
-  group_by(SEXE) |> 
-  summarise(
-    Fréquence = n(),
-    Pourcentage = round((n() / nrow(dataset)) * 100, 2)
-  )
-
-plot_sexe <- ggplot(table_sexe, aes(x = "", y = Pourcentage, fill = SEXE)) +
-  geom_col(color = "black") +
-  geom_label(aes(label = Pourcentage), color = "#C12C6D",
-             position = position_stack(vjust = 0.5),
-             show.legend = FALSE,
-             size= 3) +
-  guides(fill = guide_legend(title = "Sexe")) +
-  scale_fill_manual(values = c("#8DABDD", "#ECBFD3", "#c5b3e6")) +  # Couleurs personnalisées
-  coord_polar(theta = "y") +
-  theme_void() +
-  ggtitle("Sexe des répondants") +
-  theme(
-      plot.title = element_text(
-      family = "Montserrat",           # Change la famille de police (exemple: sans-serif)
-      face = "bold",             # Met le titre en gras
-      size = 10,                 # Augmente la taille du titre
-      margin = margin(b = 20),   # Espace supplémentaire en bas du titre
-      color = "#1C57BC"        # Couleur du texte du titre
-    ),
-    plot.margin = margin(10, 10, 10, 10)
-  )
-
-# Graphique pour Age des répondants
-table_age <- dataset |> 
-  group_by(AGE) |> 
-  summarise(
-    Fréquence = n(),
-    Pourcentage = round((n() / nrow(dataset)) * 100, 2)
-  )
-
-plot_age <- ggplot(table_age, aes(x = "", y = Pourcentage, fill = AGE)) +
-  geom_col(color = "black") +
-  geom_label(aes(label = Pourcentage), color = "#C12C6D",
-             position = position_stack(vjust = 0.5),
-             show.legend = FALSE,
-             size= 3) +
-  guides(fill = guide_legend(title = "Age")) +
-  scale_fill_benev(name_palette = "blue", 9) +  # Couleurs personnalisées
-  coord_polar(theta = "y") +
-  theme_void() +
-  ggtitle("Age des répondants") +
-  theme(
-      plot.title = element_text(
-      family = "Montserrat",           # Change la famille de police (exemple: sans-serif)
-      face = "bold",             # Met le titre en gras
-      size = 10,                 # Augmente la taille du titre
-      margin = margin(b = 20),   # Espace supplémentaire en bas du titre
-      color = "#1C57BC"        # Couleur du texte du titre
-    ),
-    plot.margin = margin(10, 10, 10, 10)
-  )
-
-
-# Graphique pour Situation civile
-table_sitciv <- dataset |> 
-  group_by(SITCIVILE) |> 
-  summarise(
-    Fréquence = n(),
-    Pourcentage = round((n() / nrow(dataset)) * 100, 2)
-  )
-
-plot_sitciv <- ggplot(table_sitciv, aes(x = "", y = Pourcentage, fill = SITCIVILE)) +
-  geom_col(color = "black") +
-  geom_label(aes(label = Pourcentage), color ="#0e2b5e",
-             position = position_stack(vjust = 0.5),
-             show.legend = FALSE,
-             size= 3) +
-  guides(fill = guide_legend(title = "Situation civile")) +
-  scale_fill_benev(name_palette = "pink", 9) +  # Couleurs personnalisées
-  coord_polar(theta = "y") +
-  theme_void() +
-  ggtitle("Situation civile des répondants") +
-  theme(
-      plot.title = element_text(
-      family = "Montserrat",           # Change la famille de police (exemple: sans-serif)
-      face = "bold",             # Met le titre en gras
-      size = 10,                 # Augmente la taille du titre
-      margin = margin(b = 20),   # Espace supplémentaire en bas du titre
-      color = "#1C57BC"        # Couleur du texte du titre
-    ),
-    plot.margin = margin(10, 10, 10, 10)
-  )
-
-
-# Graphique pour Nombre d'enfant
-table_nbenfant <- dataset |> 
-  group_by(NBENFANT) |> 
-  summarise(
-    Fréquence = n(),
-    Pourcentage = round((n() / nrow(dataset)) * 100, 2)
-  )
-
-
-plot_nbenfant <- ggplot(table_nbenfant, aes(x = "", y = Pourcentage, fill =NBENFANT)) +
-  geom_col(color = "black") +
-  geom_label(aes(label = Pourcentage), color ="#0e2b5e",
-             position = position_stack(vjust = 0.5),
-             show.legend = FALSE,
-             size= 3) +
-  guides(fill = guide_legend(title = "Nombre d'enfant")) +
-  scale_fill_manual(values = c("#8DABDD", "#ECBFD3", "#c5b3e6", "#769ad6","#e685b5")) +  # Couleurs personnalisées
-  coord_polar(theta = "y") +
-  theme_void() +
-  ggtitle("Nombre d'enfant des répondants") +
-  theme(
-      plot.title = element_text(
-      family = "Montserrat",           # Change la famille de police (exemple: sans-serif)
-      face = "bold",             # Met le titre en gras
-      size = 10,                 # Augmente la taille du titre
-      margin = margin(b = 20),   # Espace supplémentaire en bas du titre
-      color = "#1C57BC"        # Couleur du texte du titre
-    ),
-    plot.margin = margin(10, 10, 10, 10)
-  )
-
-# Répéter ce modèle pour chaque variable (NIVETUDE, REVENUFOYER, SITCIVILE, SITPRO, TYPEHABITAT, NBPERSFOYER, NBENFANT)
-# Exemple pour Niveau d'études des répondants
-
-# Calcul de la table de fréquences pour la variable NIVETUDE
-table_nivetude <- dataset |> 
-  group_by(NIVETUDE) |> 
-  summarise(
-    Fréquence = n(),
-    Pourcentage = round((n() / nrow(dataset)) * 100, 2)
-  )
-
-# Création de l'histogramme pour la variable NIVETUDE
-plot_nivetude <- ggplot(table_nivetude, aes(x = NIVETUDE, y = Fréquence, fill = NIVETUDE)) +
-  geom_bar(stat = "identity", color = "black") +
-  geom_text(aes(label = paste0(Pourcentage, "%")), vjust = -0.5, color ="#C12C6D", size = 4) +
-  guides(fill = guide_legend(title = "Niveau d'études")) +
-  scale_fill_benev(name_palette = "purle", 9) +  # Couleurs personnalisées
-  theme_minimal() +
-  ggtitle("Niveau d'études des répondants") +
-  xlab("") +
-  ylim(0, max(table_nivetude$Fréquence) * 1.1) +
-  theme(
-      plot.title = element_text(
-      family = "Montserrat",           # Change la famille de police (exemple: sans-serif)
-      face = "bold",             # Met le titre en gras
-      size = 10,                 # Augmente la taille du titre
-      margin = margin(b = 20),   # Espace supplémentaire en bas du titre
-      color = "#1C57BC"        # Couleur du texte du titre
-    ),
-    plot.margin = margin(10, 10, 10, 10),
-    axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1)  # Inclinaison des titres de colonnes
-  )
-
-# Calcul de la table de fréquences pour la variable TYPEHABITAT
-table_typehabitat <- dataset |> 
-   filter(!is.na(TYPEHABITAT)) |> 
-  group_by(TYPEHABITAT) |> 
-  summarise(
-    Fréquence = n(),
-    Pourcentage = round((n() / nrow(dataset)) * 100, 2)
-  )
-
-# Création de l'histogramme pour la variable TYPEHABITAT
-plot_typehabitat <- ggplot(table_typehabitat, aes(x = TYPEHABITAT, y = Fréquence, fill = TYPEHABITAT)) +
-  geom_bar(stat = "identity", color = "black") +
-  geom_text(aes(label = paste0(Pourcentage, "%")), vjust = -0.5, color ="#C12C6D", size = 4) +
-  guides(fill = guide_legend(title = "Type d'habitation")) +
-  scale_fill_benev(name_palette = "green", 9) +  # Couleurs personnalisées
-  theme_minimal() +
-  ggtitle("Type d'habitation des répondants") +
-  xlab("") +
-  ylim(0, max(table_typehabitat$Fréquence, na.rm = TRUE) * 1.1) +
-  theme(
-      plot.title = element_text(
-      family = "Montserrat",           # Change la famille de police (exemple: sans-serif)
-      face = "bold",             # Met le titre en gras
-      size = 10,                 # Augmente la taille du titre
-      margin = margin(b = 20),   # Espace supplémentaire en bas du titre
-      color = "#1C57BC"        # Couleur du texte du titre
-    ),
-    plot.margin = margin(10, 10, 10, 10),
-    axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1)  # Inclinaison des titres de colonnes
-  )
-
-
-# Affichage des graphiques
-grid.arrange(plot_sexe, plot_age, plot_sitciv, plot_nbenfant, ncol = 2, nrow = 2)
-plot_nivetude
-plot_typehabitat
-
-```
 ```
 
 ### Niveau de bien-être et perception de nature en fonction des caractéristiques de la population
